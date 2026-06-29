@@ -66,6 +66,7 @@ function Bottle({ variant, label }: { variant: Product["bottle"]; label: string 
       loading="lazy"
       width={1024}
       height={1024}
+      style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
     />
   );
 }
