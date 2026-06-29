@@ -81,7 +81,7 @@ function Index() {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
+  
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
   // Persist
@@ -154,12 +154,6 @@ function Index() {
       setCartOpen(false);
       showToast("شكراً لطلبك! تم إتمام الدفع.");
     }, 1200);
-  }
-  function subscribe(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.includes("@")) { showToast("الرجاء إدخال بريد صحيح"); return; }
-    showToast("تم اشتراكك! تحقق من بريدك.");
-    setEmail("");
   }
 
   const visibleProducts = useMemo(() => {
