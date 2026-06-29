@@ -192,8 +192,6 @@ function Index() {
         <ul className="nav-links">
           <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>Collections</a></li>
           <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
-          <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Notre Maison</a></li>
-          <li><a href="#about" onClick={(e) => { e.preventDefault(); scrollTo("about"); }}>Newsletter</a></li>
         </ul>
         <div className="nav-right">
           <button className="nav-icon-btn" aria-label="Search" onClick={() => setSearchOpen(true)}>
@@ -211,10 +209,8 @@ function Index() {
 
       {mobileOpen && (
         <div className="mobile-menu open">
-          <a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>Collections</a>
-          <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a>
-          <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Notre Maison</a>
-          <a href="#about" onClick={(e) => { e.preventDefault(); scrollTo("about"); }}>Newsletter</a>
+          <a href="#collections" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("collections"); }}>Collections</a>
+          <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
         </div>
       )}
 
@@ -237,14 +233,8 @@ function Index() {
           <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
           <div className="hero-actions">
             <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }} className="btn-gold">اكتشف المجموعة</a>
-            <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }} className="btn-outline-light">قصتنا</a>
+            <a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }} className="btn-outline-light">المجموعات</a>
           </div>
-        </div>
-        <div className="hero-stats">
-          <div className="hero-stat"><div className="stat-n">73+</div><div className="stat-l">عطراً حصرياً</div></div>
-          <div className="hero-stat"><div className="stat-n">12</div><div className="stat-l">دولة حول العالم</div></div>
-          <div className="hero-stat"><div className="stat-n">98%</div><div className="stat-l">رضا العملاء</div></div>
-          <div className="hero-stat"><div className="stat-n">15</div><div className="stat-l">سنة خبرة</div></div>
         </div>
       </section>
 
