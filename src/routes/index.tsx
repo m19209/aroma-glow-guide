@@ -238,18 +238,6 @@ function Index() {
         </div>
       </section>
 
-      {/* MARQUEE */}
-      <div className="marquee-wrap">
-        <div className="marquee-track">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <span key={i} style={{ display: "inline-flex", gap: 56 }}>
-              {["Premium Quality", "Finest Ingredients", "Long Lasting Fragrance", "Timeless Elegance", "شحن مجاني فوق ٣٠٠ ريال", "عطور أصلية مضمونة ١٠٠٪"].map((t, j) => (
-                <span key={j} className="mitem"><span className="mdot" />{t}</span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
 
       {/* CATEGORIES */}
       <section id="collections">
@@ -337,31 +325,6 @@ function Index() {
         </div>
       </section>
 
-      {/* FEATURES */}
-      <div className="features" id="features">
-        {[
-          { i: "👑", t: "Premium Quality", d: "عطور من أعلى درجات الجودة العالمية" },
-          { i: "🌿", t: "Finest Ingredients", d: "مكونات طبيعية نقية من أندر بقاع العالم" },
-          { i: "✨", t: "Long Lasting", d: "ثبات استثنائي يدوم طوال اليوم وما بعده" },
-          { i: "💎", t: "Timeless Elegance", d: "تغليف فاخر يليق بمستوى عطورنا" },
-        ].map((f, i) => (
-          <div className="feat-item" key={i}>
-            <div className="feat-icon">{f.i}</div>
-            <div className="feat-title">{f.t}</div>
-            <div className="feat-desc">{f.d}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* NEWSLETTER */}
-      <div className="newsletter" id="about">
-        <h2>Rejoignez <span>Velore</span></h2>
-        <p>اشترك وكن أول من يعلم بالمجموعات الحصرية الجديدة. خصم ١٥٪ على أول طلب.</p>
-        <form className="nl-form" onSubmit={subscribe}>
-          <input className="nl-input" type="email" placeholder="بريدك الإلكتروني..." value={email} onChange={(e) => setEmail(e.target.value)} />
-          <button className="nl-btn" type="submit">Join Now</button>
-        </form>
-      </div>
 
       {/* FOOTER */}
       <footer>
