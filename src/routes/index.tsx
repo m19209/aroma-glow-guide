@@ -343,7 +343,7 @@ function Index() {
         <div className="footer-col">
           <h4>Maison</h4>
           <ul>
-            <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>قصتنا</a></li>
+            <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>المجموعات</a></li>
             <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>المجموعات</a></li>
             <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>العطور</a></li>
           </ul>
