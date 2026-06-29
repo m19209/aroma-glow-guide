@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect } from "react";
-
-const VELORE_CSS = "\n*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }\n\n:root {\n  --white:     #FFFFFF;\n  --off-white: #FAFAF8;\n  --pearl:     #F6F2EA;\n  --pearl2:    #EDE8DC;\n  --gold:      #C9A84C;\n  --gold-deep: #A6832E;\n  --gold-lt:   #E2C97A;\n  --gold-pale: #F0E4B8;\n  --gold-dim:  #8B6F28;\n  --charcoal:  #1A1612;\n  --text:      #2C2418;\n  --muted:     #7A6B50;\n  --muted2:    #9B8E78;\n  --border:    rgba(201,168,76,.18);\n  --border2:   rgba(201,168,76,.35);\n  --border3:   rgba(201,168,76,.6);\n  --shadow:    rgba(26,22,18,.08);\n  --shadow2:   rgba(26,22,18,.14);\n}\n\nhtml { scroll-behavior: smooth; }\nbody { background: var(--white); color: var(--text); font-family: 'Cairo', sans-serif; font-weight: 300; overflow-x: hidden; }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   NAVBAR\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\nnav {\n  position: fixed; top: 0; left: 0; right: 0; z-index: 300;\n  display: flex; align-items: center; justify-content: space-between;\n  padding: 0 56px;\n  height: 76px;\n  background: rgba(255,255,255,0);\n  transition: background .4s, box-shadow .4s, height .3s;\n}\nnav.scrolled {\n  background: rgba(255,255,255,.97);\n  backdrop-filter: blur(20px);\n  box-shadow: 0 1px 0 var(--border), 0 8px 32px var(--shadow);\n  height: 68px;\n}\n\n.nav-logo {\n  display: flex; align-items: center; gap: 10px;\n  text-decoration: none; flex-shrink: 0;\n}\n.nav-logo img {\n  height: 52px; width: 52px; object-fit: contain;\n  transition: height .3s;\n}\nnav.scrolled .nav-logo img { height: 44px; width: 44px; }\n\n.nav-links {\n  display: flex; gap: 0; list-style: none;\n  position: absolute; left: 50%; transform: translateX(-50%);\n}\n.nav-links a {\n  color: rgba(255,255,255,.82); text-decoration: none;\n  font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;\n  transition: color .25s; font-family: 'Cinzel', serif; font-weight: 400;\n  padding: 8px 22px; border-radius: 2px;\n  position: relative;\n}\n.nav-links a::after {\n  content: ''; position: absolute; bottom: 2px; left: 50%; right: 50%;\n  height: 1px; background: var(--gold);\n  transition: left .25s, right .25s;\n}\n.nav-links a:hover::after { left: 22px; right: 22px; }\nnav.scrolled .nav-links a { color: var(--muted); }\n.nav-links a:hover { color: var(--gold); }\nnav.scrolled .nav-links a:hover { color: var(--gold-deep); }\n\n.nav-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }\n\n.nav-icon-btn {\n  width: 38px; height: 38px; border-radius: 50%;\n  border: 1px solid rgba(255,255,255,.3);\n  display: flex; align-items: center; justify-content: center;\n  cursor: pointer; color: rgba(255,255,255,.8);\n  font-size: 1rem; transition: all .2s; background: transparent;\n}\nnav.scrolled .nav-icon-btn { border-color: var(--border2); color: var(--muted); }\n.nav-icon-btn:hover { background: rgba(201,168,76,.12); border-color: var(--border3); color: var(--gold); }\n\n.nav-cart-btn {\n  display: flex; align-items: center; gap: 8px;\n  background: var(--gold); color: var(--charcoal);\n  font-size: .62rem; letter-spacing: .2em; text-transform: uppercase;\n  padding: 10px 22px; border-radius: 2px; cursor: pointer;\n  font-family: 'Cinzel', serif; font-weight: 700; border: none;\n  transition: background .25s, transform .2s; box-shadow: 0 4px 16px rgba(201,168,76,.35);\n}\n.nav-cart-btn:hover { background: var(--gold-lt); transform: translateY(-1px); }\n\n.nav-hamburger {\n  display: none; flex-direction: column; gap: 5px; cursor: pointer;\n  padding: 8px; background: none; border: none;\n}\n.nav-hamburger span { display: block; width: 22px; height: 2px; background: rgba(255,255,255,.85); border-radius: 2px; transition: all .3s; }\nnav.scrolled .nav-hamburger span { background: var(--charcoal); }\n\n/* Mobile menu */\n.mobile-menu {\n  display: none; position: fixed; top: 68px; left: 0; right: 0; z-index: 299;\n  background: rgba(255,255,255,.98); backdrop-filter: blur(20px);\n  padding: 24px 32px 32px; box-shadow: 0 16px 48px var(--shadow2);\n  border-bottom: 1px solid var(--border);\n  flex-direction: column; gap: 4px;\n}\n.mobile-menu.open { display: flex; }\n.mobile-menu a {\n  color: var(--text); text-decoration: none; font-family: 'Cinzel', serif;\n  font-size: .82rem; letter-spacing: .18em; text-transform: uppercase;\n  padding: 14px 0; border-bottom: 1px solid var(--border);\n  transition: color .2s, padding-right .2s;\n}\n.mobile-menu a:hover { color: var(--gold-deep); padding-right: 8px; }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   HERO\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n.hero {\n  position: relative; min-height: 100vh;\n  display: flex; align-items: center; justify-content: center;\n  overflow: hidden;\n}\n.hero-video {\n  position: absolute; inset: 0; z-index: 0;\n  width: 100%; height: 100%;\n  object-fit: cover; object-position: center;\n}\n.hero-overlay {\n  position: absolute; inset: 0; z-index: 1;\n  background: linear-gradient(\n    to bottom,\n    rgba(10,8,6,.72) 0%,\n    rgba(10,8,6,.38) 45%,\n    rgba(10,8,6,.8) 100%\n  );\n}\n.hero-vignette {\n  position: absolute; inset: 0; z-index: 2; pointer-events: none;\n  box-shadow: inset 0 0 120px rgba(0,0,0,.6);\n}\n\n.hero-content {\n  position: relative; z-index: 3;\n  text-align: center; padding: 140px 40px 100px;\n  max-width: 880px;\n}\n\n.hero-ornament {\n  display: flex; align-items: center; justify-content: center; gap: 16px;\n  margin-bottom: 30px;\n}\n.orn-line { width: 60px; height: 1px; background: linear-gradient(to left, var(--gold), transparent); }\n.orn-line.right { background: linear-gradient(to right, var(--gold), transparent); }\n.orn-diamond { width: 6px; height: 6px; background: var(--gold); transform: rotate(45deg); }\n\n.hero-eyebrow {\n  font-family: 'Cinzel', serif;\n  font-size: .62rem; letter-spacing: .5em; text-transform: uppercase;\n  color: var(--gold); margin-bottom: 26px; font-weight: 400;\n}\n.hero-title {\n  font-family: 'Cinzel', serif;\n  font-size: clamp(3.6rem, 8vw, 7rem);\n  line-height: .95; font-weight: 700; color: #FFFFFF;\n  margin-bottom: 8px;\n  text-shadow: 0 0 80px rgba(201,168,76,.3), 0 4px 40px rgba(0,0,0,.5);\n  letter-spacing: .18em;\n}\n.hero-title-sub {\n  font-family: 'Cinzel', serif;\n  font-size: .75rem; letter-spacing: .55em; color: rgba(201,168,76,.7);\n  margin-bottom: 34px; text-transform: uppercase;\n}\n.hero-desc {\n  font-size: .9rem; line-height: 2; color: rgba(255,255,255,.55);\n  max-width: 460px; margin: 0 auto 52px;\n}\n.hero-actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }\n\n.btn-gold {\n  display: inline-block; background: var(--gold);\n  color: var(--charcoal); font-size: .65rem; letter-spacing: .28em;\n  text-transform: uppercase; padding: 15px 48px; border-radius: 2px;\n  text-decoration: none; font-weight: 700; font-family: 'Cinzel', serif;\n  transition: background .25s, transform .2s, box-shadow .25s;\n  box-shadow: 0 4px 28px rgba(201,168,76,.35);\n}\n.btn-gold:hover { background: var(--gold-lt); transform: translateY(-2px); box-shadow: 0 8px 40px rgba(201,168,76,.5); }\n\n.btn-outline-light {\n  display: inline-block;\n  border: 1px solid rgba(255,255,255,.45); color: rgba(255,255,255,.85);\n  font-size: .65rem; letter-spacing: .28em; text-transform: uppercase;\n  padding: 15px 40px; border-radius: 2px; text-decoration: none;\n  font-family: 'Cinzel', serif; font-weight: 400;\n  transition: background .25s, border-color .25s;\n}\n.btn-outline-light:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.7); }\n\n/* Stats */\n.hero-stats {\n  position: absolute; bottom: 0; left: 0; right: 0; z-index: 3;\n  display: flex; justify-content: center;\n  background: rgba(10,8,6,.65); backdrop-filter: blur(16px);\n  border-top: 1px solid rgba(201,168,76,.18);\n}\n.hero-stat { flex: 1; max-width: 200px; padding: 22px 16px; text-align: center; border-left: 1px solid rgba(201,168,76,.15); }\n.hero-stat:first-child { border-left: none; }\n.stat-n { font-family: 'Cinzel', serif; font-size: 1.8rem; color: var(--gold); line-height: 1; font-weight: 600; }\n.stat-l { font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(201,168,76,.55); margin-top: 6px; font-family: 'Cinzel', serif; }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   MARQUEE\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n.marquee-wrap {\n  border-top: 1px solid var(--border);\n  border-bottom: 1px solid var(--border);\n  padding: 14px 0; overflow: hidden;\n  background: var(--pearl);\n}\n.marquee-track { display: flex; gap: 56px; animation: marq 28s linear infinite; white-space: nowrap; }\n@keyframes marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }\n.mitem { display: inline-flex; align-items: center; gap: 16px; font-size: .64rem; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); font-family: 'Cinzel', serif; }\n.mdot { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; opacity: .7; flex-shrink: 0; }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   SECTION HEADER\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n.section-header { text-align: center; padding: 80px 60px 52px; background: var(--white); }\n.section-eyebrow {\n  display: inline-flex; align-items: center; gap: 16px;\n  font-size: .6rem; letter-spacing: .45em; text-transform: uppercase;\n  color: var(--gold-deep); margin-bottom: 18px; font-family: 'Cinzel', serif;\n}\n.section-eyebrow::before, .section-eyebrow::after {\n  content: ''; width: 32px; height: 1px; background: var(--gold-dim); opacity: .5;\n}\n.section-title {\n  font-family: 'Cinzel', serif;\n  font-size: clamp(2rem, 4vw, 3rem);\n  font-weight: 600; color: var(--charcoal); line-height: 1.15; letter-spacing: .08em;\n}\n.section-title em { font-style: italic; color: var(--gold-deep); font-family: 'Cormorant Garamond', serif; font-size: 1.1em; }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   CATEGORIES\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n.categories { padding: 0 48px 80px; background: var(--white); }\n.cat-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }\n.cat-card {\n  position: relative; height: 260px; border-radius: 4px; overflow: hidden;\n  cursor: pointer; border: 1px solid var(--border);\n  transition: border-color .35s, box-shadow .35s, transform .35s;\n  box-shadow: 0 4px 24px var(--shadow);\n}\n.cat-card:hover { border-color: var(--border2); box-shadow: 0 12px 48px var(--shadow2), 0 0 0 1px var(--border2); transform: translateY(-5px); }\n.cat-card:hover .cat-bg { transform: scale(1.06); }\n.cat-bg { position: absolute; inset: 0; transition: transform .55s cubic-bezier(.22,.61,.36,1); }\n.cat-oriental { background: linear-gradient(135deg, #3D1A06 0%, #1A0A02 100%); }\n.cat-floral   { background: linear-gradient(135deg, #2A1030 0%, #0E0618 100%); }\n.cat-woody    { background: linear-gradient(135deg, #1A1206 0%, #0A0802 100%); }\n.cat-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 5rem; opacity: .12; }\n.cat-glow {\n  position: absolute; inset: 0;\n  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,.1) 0%, transparent 70%);\n}\n.cat-info {\n  position: absolute; inset: 0;\n  background: linear-gradient(to top, rgba(10,8,6,.9) 0%, rgba(10,8,6,.1) 55%, transparent 100%);\n  display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 32px;\n}\n.cat-name { font-family: 'Cinzel', serif; font-size: 1.15rem; font-weight: 600; color: #FFFFFF; margin-bottom: 6px; letter-spacing: .12em; }\n.cat-count { font-size: .6rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold); font-family: 'Cinzel', serif; }\n.cat-line { width: 30px; height: 1px; background: var(--gold); margin: 0 auto 12px; opacity: .6; }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   DIVIDER\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n.divider {\n  display: flex; align-items: center; gap: 20px;\n  padding: 0 64px 56px; background: var(--white);\n}\n.div-line { flex: 1; height: 1px; background: var(--border); }\n.div-ornament {\n  display: flex; align-items: center; gap: 10px; color: var(--gold-dim);\n  font-size: .7rem;\n}\n.div-diamond { width: 5px; height: 5px; background: var(--gold); transform: rotate(45deg); opacity: .6; }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   PRODUCTS\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n.products { padding: 0 48px 100px; background: var(--off-white); }\n\n.section-header.products-header {\n  background: var(--off-white);\n}\n\n.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px,1fr)); gap: 24px; }\n\n/* Product Card */\n.pcard {\n  background: var(--white);\n  border: 1px solid var(--border);\n  border-radius: 4px;\n  overflow: hidden; cursor: pointer; position: relative;\n  transition: transform .35s cubic-bezier(.22,.61,.36,1), box-shadow .35s, border-color .35s;\n  box-shadow: 0 2px 16px var(--shadow);\n  display: flex; flex-direction: column;\n}\n.pcard:hover {\n  transform: translateY(-8px);\n  box-shadow: 0 20px 56px var(--shadow2), 0 0 0 1px var(--border2);\n  border-color: var(--border2);\n}\n.pcard:hover .pimg-inner { transform: scale(1.05); }\n\n.pbadge {\n  position: absolute; top: 14px; right: 14px; z-index: 3;\n  font-size: .55rem; letter-spacing: .2em; text-transform: uppercase;\n  padding: 5px 12px; border-radius: 2px; font-weight: 700; font-family: 'Cinzel', serif;\n}\n.badge-new     { background: var(--gold); color: var(--charcoal); }\n.badge-sale    { background: #C0392B; color: #FFFFFF; }\n.badge-hot     { background: var(--pearl); color: var(--gold-deep); border: 1px solid var(--border2); }\n.badge-limited { background: transparent; color: var(--gold-deep); border: 1px solid var(--border2); }\n\n.pimg-wrap {\n  position: relative; height: 300px; overflow: hidden;\n  background: linear-gradient(135deg, var(--pearl) 0%, var(--pearl2) 100%);\n}\n.pimg-inner {\n  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;\n  transition: transform .5s cubic-bezier(.22,.61,.36,1);\n}\n.pbottle {\n  width: 112px;\n  filter: drop-shadow(0 20px 40px rgba(26,22,18,.2)) drop-shadow(0 6px 12px rgba(26,22,18,.12));\n}\n.pimg-glow {\n  position: absolute; inset: 0; pointer-events: none;\n  background: radial-gradient(ellipse 70% 55% at 50% 38%, rgba(201,168,76,.1) 0%, transparent 70%);\n}\n\n/* No more hover-only overlay \u2014 we show a real button below */\n\n.pinfo { padding: 20px 20px 0; border-top: 1px solid var(--border); flex: 1; }\n.pfamily { font-size: .56rem; letter-spacing: .32em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 6px; font-family: 'Cinzel', serif; }\n.pname { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400; color: var(--charcoal); margin-bottom: 8px; font-style: italic; }\n.pnotes { font-size: .72rem; color: var(--muted2); margin-bottom: 16px; line-height: 1.65; }\n.pfooter { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }\n.pprice { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--gold-deep); font-weight: 600; }\n.pprice-old { font-size: .75rem; color: rgba(122,107,80,.5); text-decoration: line-through; margin-left: 6px; }\n.pright { display: flex; align-items: center; gap: 8px; }\n.pvol { font-size: .58rem; letter-spacing: .12em; border: 1px solid var(--border); color: var(--muted2); padding: 3px 10px; border-radius: 2px; font-family: 'Cinzel', serif; }\n.pwish {\n  width: 34px; height: 34px; border-radius: 50%;\n  border: 1px solid var(--border); background: transparent;\n  display: flex; align-items: center; justify-content: center;\n  cursor: pointer; font-size: .9rem; color: var(--muted2);\n  transition: border-color .2s, color .2s, background .2s;\n}\n.pwish:hover { border-color: var(--gold); color: var(--gold-deep); background: var(--pearl); }\n\n/* \u2b07 PERSISTENT BUY BUTTON \u2014 always visible */\n.pcard-buy {\n  display: block; width: calc(100% - 40px); margin: 0 20px 20px;\n  background: var(--charcoal); color: var(--gold);\n  border: none; border-radius: 2px; padding: 12px 0;\n  font-family: 'Cinzel', serif; font-size: .62rem;\n  letter-spacing: .26em; text-transform: uppercase; font-weight: 600;\n  cursor: pointer; text-align: center; text-decoration: none;\n  transition: background .25s, color .25s, transform .2s, box-shadow .2s;\n  box-shadow: 0 2px 8px var(--shadow);\n}\n.pcard-buy:hover {\n  background: var(--gold); color: var(--charcoal);\n  transform: translateY(-1px); box-shadow: 0 6px 20px rgba(201,168,76,.3);\n}\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   FEATURES STRIP\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n.features {\n  display: grid; grid-template-columns: repeat(4,1fr);\n  background: var(--pearl);\n  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);\n}\n.feat-item { padding: 46px 28px; text-align: center; border-left: 1px solid var(--border); }\n.feat-item:last-child { border-left: none; }\n.feat-icon {\n  width: 54px; height: 54px; margin: 0 auto 18px;\n  border: 1px solid var(--border2); border-radius: 50%;\n  display: flex; align-items: center; justify-content: center; font-size: 1.3rem;\n  background: var(--white);\n}\n.feat-title { font-family: 'Cinzel', serif; font-size: .88rem; font-weight: 600; color: var(--charcoal); margin-bottom: 10px; letter-spacing: .08em; }\n.feat-desc { font-size: .74rem; color: var(--muted); line-height: 1.7; }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   NEWSLETTER\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n.newsletter {\n  padding: 96px 60px; text-align: center;\n  background: var(--charcoal);\n  position: relative; overflow: hidden;\n}\n.newsletter::before {\n  content: 'V'; font-family: 'Cinzel', serif;\n  font-size: 32rem; font-weight: 700;\n  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);\n  color: rgba(201,168,76,.04); line-height: 1; pointer-events: none;\n}\n.newsletter h2 { font-family: 'Cinzel', serif; font-size: 2.2rem; font-weight: 600; color: var(--pearl); margin-bottom: 10px; letter-spacing: .1em; }\n.newsletter h2 span { color: var(--gold); font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.15em; }\n.newsletter p { font-size: .84rem; color: var(--muted); max-width: 380px; margin: 0 auto 36px; line-height: 1.8; }\n.nl-form {\n  display: flex; max-width: 480px; margin: 0 auto;\n  border: 1px solid rgba(201,168,76,.35); border-radius: 2px; overflow: hidden;\n}\n.nl-input { flex: 1; border: none; outline: none; background: rgba(255,255,255,.06); padding: 15px 20px; color: var(--pearl); font-family: 'Cairo', sans-serif; font-size: .84rem; }\n.nl-input::placeholder { color: var(--muted); }\n.nl-btn { background: var(--gold); border: none; padding: 15px 30px; color: var(--charcoal); font-family: 'Cinzel', serif; font-size: .62rem; letter-spacing: .22em; text-transform: uppercase; font-weight: 700; cursor: pointer; transition: background .2s; white-space: nowrap; }\n.nl-btn:hover { background: var(--gold-lt); }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   FOOTER\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\nfooter { background: var(--off-white); border-top: 1px solid var(--border); padding: 64px 60px 40px; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; }\n.footer-logo-wrap { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }\n.footer-logo-img { height: 56px; width: 56px; object-fit: contain; }\n.footer-logo-name { font-family: 'Cinzel', serif; font-size: 1.4rem; color: var(--gold-deep); letter-spacing: .22em; font-weight: 600; }\n.footer-logo-sub { font-size: .52rem; letter-spacing: .35em; color: var(--muted2); font-family: 'Cinzel', serif; display: block; }\n.footer-tagline { font-size: .78rem; color: var(--muted); line-height: 1.9; max-width: 220px; }\n.footer-socials { display: flex; gap: 10px; margin-top: 24px; }\n.social-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--white); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: .85rem; color: var(--muted); transition: border-color .2s, color .2s, background .2s; }\n.social-btn:hover { border-color: var(--gold); color: var(--gold-deep); background: var(--pearl); }\n.footer-col h4 { font-size: .6rem; letter-spacing: .35em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 22px; font-family: 'Cinzel', serif; font-weight: 600; }\n.footer-col ul { list-style: none; }\n.footer-col li { margin-bottom: 12px; }\n.footer-col a { color: var(--muted2); text-decoration: none; font-size: .78rem; transition: color .2s; }\n.footer-col a:hover { color: var(--charcoal); }\n.footer-bottom { background: var(--pearl); border-top: 1px solid var(--border); padding: 18px 60px; display: flex; justify-content: space-between; align-items: center; }\n.footer-bottom p { font-size: .66rem; color: var(--muted2); font-family: 'Cinzel', serif; letter-spacing: .1em; }\n.pay-chips { display: flex; gap: 8px; }\n.pay-chip { border: 1px solid var(--border2); border-radius: 3px; padding: 4px 11px; font-size: .6rem; color: var(--muted2); letter-spacing: .06em; font-family: 'Cinzel', serif; background: var(--white); }\n\n/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n   RESPONSIVE\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */\n@media (max-width: 900px) {\n  nav { padding: 0 20px; }\n  .nav-links { display: none; }\n  .nav-hamburger { display: flex; }\n  .nav-cart-btn span.cart-label { display: none; }\n  .hero-content { padding: 110px 24px 90px; }\n  .hero-title { font-size: 3rem; }\n  .hero-stats { display: none; }\n  .categories { padding: 0 20px 60px; }\n  .cat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }\n  .products { padding: 0 20px 60px; }\n  .products-grid { grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); }\n  .features { grid-template-columns: repeat(2,1fr); }\n  .feat-item:nth-child(2) { border-left: none; }\n  footer { grid-template-columns: 1fr 1fr; padding: 48px 24px 32px; gap: 32px; }\n  .newsletter { padding: 64px 24px; }\n  .footer-bottom { padding: 18px 24px; flex-direction: column; gap: 12px; }\n  .section-header { padding: 60px 24px 40px; }\n  .divider { padding: 0 24px 48px; }\n}\n@media (max-width: 540px) {\n  .cat-grid { grid-template-columns: 1fr; }\n  .features { grid-template-columns: 1fr 1fr; }\n  .footer-bottom { flex-direction: column; align-items: flex-start; }\n  .pay-chips { flex-wrap: wrap; }\n}\n\n.nav-logo-text { font-family: 'Cinzel', serif; font-size: 1.6rem; font-weight: 700; color: #FFFFFF; letter-spacing: .25em; transition: color .25s, font-size .3s; }\nnav.scrolled .nav-logo-text { color: var(--charcoal); font-size: 1.4rem; }\n";
-const VELORE_HTML = "\n\n<!-- \u2550\u2550 NAV \u2550\u2550 -->\n<nav id=\"mainNav\">\n  <a href=\"#\" class=\"nav-logo\">\n    <span class=\"nav-logo-text\">VELORE</span>\n  </a>\n  <ul class=\"nav-links\">\n    <li><a href=\"#collections\">Collections</a></li>\n    <li><a href=\"#products\">Parfums</a></li>\n    <li><a href=\"#cadeaux\">Cadeaux</a></li>\n    <li><a href=\"#about\">Notre Histoire</a></li>\n  </ul>\n  <div class=\"nav-right\">\n    <button class=\"nav-icon-btn\" aria-label=\"Search\">\n      <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\">\n        <circle cx=\"11\" cy=\"11\" r=\"8\"/><line x1=\"21\" y1=\"21\" x2=\"16.65\" y2=\"16.65\"/>\n      </svg>\n    </button>\n    <button class=\"nav-cart-btn\">\n      <svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.2\">\n        <path d=\"M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z\"/><line x1=\"3\" y1=\"6\" x2=\"21\" y2=\"6\"/>\n        <path d=\"M16 10a4 4 0 01-8 0\"/>\n      </svg>\n      <span class=\"cart-label\">\u0627\u0644\u062d\u0642\u064a\u0628\u0629 (0)</span>\n    </button>\n    <button class=\"nav-hamburger\" id=\"hamburger\" aria-label=\"Menu\">\n      <span></span><span></span><span></span>\n    </button>\n  </div>\n</nav>\n\n<!-- Mobile Menu -->\n<div class=\"mobile-menu\" id=\"mobileMenu\">\n  <a href=\"#collections\" >Collections</a>\n  <a href=\"#products\" >Parfums</a>\n  <a href=\"#cadeaux\" >Cadeaux</a>\n  <a href=\"#about\" >Notre Histoire</a>\n</div>\n\n<!-- \u2550\u2550 HERO VIDEO \u2550\u2550 -->\n<section class=\"hero\">\n  <video class=\"hero-video\" autoplay muted loop playsinline preload=\"auto\">\n    <source src=\"https://www.dropbox.com/scl/fi/otbgvp5emmg3ulf020xxx/Perfume-Blender-3D-Animation-b3d-blender-houdini-cgi-productads-perfume-blender3D.mp4?rlkey=g92ylnm82zb4i3z6gq8gtvzci&st=82jej8qb&dl=1\" type=\"video/mp4\">\n  </video>\n  <div class=\"hero-overlay\"></div>\n  <div class=\"hero-vignette\"></div>\n  <div class=\"hero-content\">\n    <div class=\"hero-ornament\">\n      <div class=\"orn-line\"></div>\n      <div class=\"orn-diamond\"></div>\n      <div class=\"orn-line right\"></div>\n    </div>\n    <div class=\"hero-eyebrow\">Maison de Parfum \u00b7 Depuis 2010</div>\n    <h1 class=\"hero-title\">VELORE</h1>\n    <div class=\"hero-title-sub\">\u2726 &nbsp; Eau de Parfum &nbsp; \u2726</div>\n    <p class=\"hero-desc\">\u0639\u0637\u0648\u0631 \u0641\u0627\u062e\u0631\u0629 \u0645\u064f\u0633\u062a\u0648\u062d\u0627\u0629 \u0645\u0646 \u0623\u0639\u0645\u0642 \u0627\u0644\u0644\u062d\u0638\u0627\u062a \u0627\u0644\u0625\u0646\u0633\u0627\u0646\u064a\u0629 \u2014 \u0645\u064f\u0642\u0637\u064e\u0651\u0631\u0629 \u0628\u0639\u0646\u0627\u064a\u0629 \u0645\u0646 \u0623\u0646\u062f\u0631 \u0627\u0644\u0645\u0643\u0648\u0646\u0627\u062a \u0644\u062a\u062a\u0631\u0643 \u0623\u062b\u0631\u0627\u064b \u0644\u0627 \u064a\u064f\u0646\u0633\u0649.</p>\n    <div class=\"hero-actions\">\n      <a href=\"#products\" class=\"btn-gold\">\u0627\u0643\u062a\u0634\u0641 \u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0629</a>\n      <a href=\"#about\" class=\"btn-outline-light\">\u0642\u0635\u062a\u0646\u0627</a>\n    </div>\n  </div>\n  <div class=\"hero-stats\">\n    <div class=\"hero-stat\"><div class=\"stat-n\">73+</div><div class=\"stat-l\">\u0639\u0637\u0631\u0627\u064b \u062d\u0635\u0631\u064a\u0627\u064b</div></div>\n    <div class=\"hero-stat\"><div class=\"stat-n\">12</div><div class=\"stat-l\">\u062f\u0648\u0644\u0629 \u062d\u0648\u0644 \u0627\u0644\u0639\u0627\u0644\u0645</div></div>\n    <div class=\"hero-stat\"><div class=\"stat-n\">98%</div><div class=\"stat-l\">\u0631\u0636\u0627 \u0627\u0644\u0639\u0645\u0644\u0627\u0621</div></div>\n    <div class=\"hero-stat\"><div class=\"stat-n\">15</div><div class=\"stat-l\">\u0633\u0646\u0629 \u062e\u0628\u0631\u0629</div></div>\n  </div>\n</section>\n\n<!-- \u2550\u2550 MARQUEE \u2550\u2550 -->\n<div class=\"marquee-wrap\">\n  <div class=\"marquee-track\">\n    <span class=\"mitem\"><span class=\"mdot\"></span>Premium Quality</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>Finest Ingredients</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>Long Lasting Fragrance</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>Timeless Elegance</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>\u0634\u062d\u0646 \u0645\u062c\u0627\u0646\u064a \u0641\u0648\u0642 \u0663\u0660\u0660 \u0631\u064a\u0627\u0644</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>\u0639\u0637\u0648\u0631 \u0623\u0635\u0644\u064a\u0629 \u0645\u0636\u0645\u0648\u0646\u0629 \u0661\u0660\u0660\u066a</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>Premium Quality</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>Finest Ingredients</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>Long Lasting Fragrance</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>Timeless Elegance</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>\u0634\u062d\u0646 \u0645\u062c\u0627\u0646\u064a \u0641\u0648\u0642 \u0663\u0660\u0660 \u0631\u064a\u0627\u0644</span>\n    <span class=\"mitem\"><span class=\"mdot\"></span>\u0639\u0637\u0648\u0631 \u0623\u0635\u0644\u064a\u0629 \u0645\u0636\u0645\u0648\u0646\u0629 \u0661\u0660\u0660\u066a</span>\n  </div>\n</div>\n\n<!-- \u2550\u2550 CATEGORIES \u2550\u2550 -->\n<section id=\"collections\">\n  <div class=\"section-header\">\n    <div class=\"section-eyebrow\">Collections Exclusives</div>\n    <h2 class=\"section-title\">\u0627\u062e\u062a\u0631 <em>\u0639\u0627\u0644\u0645\u0643</em></h2>\n  </div>\n  <div class=\"categories\">\n    <div class=\"cat-grid\">\n      <div class=\"cat-card\">\n        <div class=\"cat-bg cat-oriental\"></div>\n        <div class=\"cat-glow\"></div>\n        <div class=\"cat-icon\">\ud83c\udf19</div>\n        <div class=\"cat-info\">\n          <div class=\"cat-line\"></div>\n          <div class=\"cat-name\">Oriental</div>\n          <div class=\"cat-count\">\u0662\u0664 \u0639\u0637\u0631\u0627\u064b</div>\n        </div>\n      </div>\n      <div class=\"cat-card\">\n        <div class=\"cat-bg cat-floral\"></div>\n        <div class=\"cat-glow\"></div>\n        <div class=\"cat-icon\">\ud83c\udf38</div>\n        <div class=\"cat-info\">\n          <div class=\"cat-line\"></div>\n          <div class=\"cat-name\">Floral</div>\n          <div class=\"cat-count\">\u0661\u0668 \u0639\u0637\u0631\u0627\u064b</div>\n        </div>\n      </div>\n      <div class=\"cat-card\">\n        <div class=\"cat-bg cat-woody\"></div>\n        <div class=\"cat-glow\"></div>\n        <div class=\"cat-icon\">\ud83c\udf3f</div>\n        <div class=\"cat-info\">\n          <div class=\"cat-line\"></div>\n          <div class=\"cat-name\">Oud & Wood</div>\n          <div class=\"cat-count\">\u0663\u0661 \u0639\u0637\u0631\u0627\u064b</div>\n        </div>\n      </div>\n    </div>\n  </div>\n</section>\n\n<div class=\"divider\">\n  <div class=\"div-line\"></div>\n  <div class=\"div-ornament\">\n    <div class=\"div-diamond\"></div>\n    <span style=\"font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.3em;color:var(--gold-dim)\">VELORE</span>\n    <div class=\"div-diamond\"></div>\n  </div>\n  <div class=\"div-line\"></div>\n</div>\n\n<!-- \u2550\u2550 PRODUCTS \u2550\u2550 -->\n<section id=\"products\">\n  <div class=\"section-header products-header\">\n    <div class=\"section-eyebrow\">Best Sellers</div>\n    <h2 class=\"section-title\">\u0639\u0637\u0648\u0631 <em>\u062a\u064f\u0639\u0631\u0650\u0651\u0641\u0643</em></h2>\n  </div>\n  <div class=\"products\">\n    <div class=\"products-grid\">\n\n      <!-- P1 -->\n      <div class=\"pcard\">\n        <span class=\"pbadge badge-new\">NEW</span>\n        <div class=\"pimg-wrap\">\n          <div class=\"pimg-glow\"></div>\n          <div class=\"pimg-inner\">\n            <svg class=\"pbottle\" viewBox=\"0 0 110 200\" fill=\"none\">\n              <defs>\n                <linearGradient id=\"v1\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0%\" stop-color=\"#1A1510\"/><stop offset=\"35%\" stop-color=\"#2E2518\"/><stop offset=\"65%\" stop-color=\"#3A3020\"/><stop offset=\"100%\" stop-color=\"#150F08\"/></linearGradient>\n                <linearGradient id=\"v1g\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C9A84C\"/><stop offset=\"100%\" stop-color=\"#7A5A18\"/></linearGradient>\n                <filter id=\"fsv1\"><feGaussianBlur stdDeviation=\"5\"/></filter>\n              </defs>\n              <ellipse cx=\"55\" cy=\"190\" rx=\"32\" ry=\"7\" fill=\"rgba(201,168,76,.15)\" filter=\"url(#fsv1)\"/>\n              <rect x=\"16\" y=\"50\" width=\"78\" height=\"134\" rx=\"6\" fill=\"url(#v1)\" stroke=\"rgba(201,168,76,.35)\" stroke-width=\".8\"/>\n              <rect x=\"19\" y=\"55\" width=\"6\" height=\"122\" rx=\"3\" fill=\"rgba(201,168,76,.15)\"/>\n              <rect x=\"86\" y=\"50\" width=\"8\" height=\"134\" rx=\"0\" fill=\"rgba(0,0,0,.35)\" style=\"border-radius:0 6px 6px 0\"/>\n              <rect x=\"38\" y=\"22\" width=\"34\" height=\"30\" rx=\"4\" fill=\"url(#v1)\" stroke=\"rgba(201,168,76,.25)\" stroke-width=\".8\"/>\n              <rect x=\"30\" y=\"6\" width=\"50\" height=\"18\" rx=\"3\" fill=\"url(#v1g)\"/>\n              <rect x=\"34\" y=\"7\" width=\"9\" height=\"14\" rx=\"2\" fill=\"rgba(255,255,255,.18)\"/>\n              <rect x=\"22\" y=\"88\" width=\"66\" height=\"64\" rx=\"2\" fill=\"rgba(201,168,76,.07)\" stroke=\"rgba(201,168,76,.3)\" stroke-width=\".6\"/>\n              <text x=\"55\" y=\"106\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"7\" fill=\"rgba(201,168,76,.95)\" letter-spacing=\"1\">V</text>\n              <line x1=\"35\" y1=\"110\" x2=\"75\" y2=\"110\" stroke=\"rgba(201,168,76,.25)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"122\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"6.5\" fill=\"rgba(201,168,76,.9)\" letter-spacing=\"3\">VELORE</text>\n              <text x=\"55\" y=\"135\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"4\" fill=\"rgba(201,168,76,.55)\" letter-spacing=\"2.5\">NOIR ABSOLU</text>\n              <line x1=\"35\" y1=\"141\" x2=\"75\" y2=\"141\" stroke=\"rgba(201,168,76,.2)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"150\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"3.5\" fill=\"rgba(201,168,76,.4)\" letter-spacing=\"1.5\">EAU DE PARFUM</text>\n            </svg>\n          </div>\n        </div>\n        <div class=\"pinfo\">\n          <div class=\"pfamily\">Oriental \u00b7 Wood</div>\n          <div class=\"pname\">Noir Absolu</div>\n          <div class=\"pnotes\">\u0627\u0644\u0639\u0646\u0628\u0631 \u00b7 \u0627\u0644\u0645\u0633\u0643 \u0627\u0644\u0623\u0633\u0648\u062f \u00b7 \u062e\u0634\u0628 \u0627\u0644\u0639\u0648\u062f \u00b7 \u0627\u0644\u0641\u0627\u0646\u064a\u0644\u064a\u0627</div>\n          <div class=\"pfooter\">\n            <span class=\"pprice\">\u0664\u0669\u0665 \u0631.\u0633</span>\n            <div class=\"pright\"><span class=\"pvol\">50 ML</span><div class=\"pwish\">\u2661</div></div>\n          </div>\n        </div>\n        <button class=\"pcard-buy\">Add to Cart \u2014 \u0623\u0636\u0641 \u0644\u0644\u062d\u0642\u064a\u0628\u0629</button>\n      </div>\n\n      <!-- P2 -->\n      <div class=\"pcard\">\n        <span class=\"pbadge badge-hot\">BEST SELLER</span>\n        <div class=\"pimg-wrap\">\n          <div class=\"pimg-glow\"></div>\n          <div class=\"pimg-inner\">\n            <svg class=\"pbottle\" viewBox=\"0 0 110 200\" fill=\"none\">\n              <defs>\n                <linearGradient id=\"v2\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0%\" stop-color=\"#1A0E14\"/><stop offset=\"40%\" stop-color=\"#2A1820\"/><stop offset=\"100%\" stop-color=\"#100810\"/></linearGradient>\n                <linearGradient id=\"v2g\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C9A84C\"/><stop offset=\"100%\" stop-color=\"#7A5A18\"/></linearGradient>\n                <filter id=\"fsv2\"><feGaussianBlur stdDeviation=\"5\"/></filter>\n              </defs>\n              <ellipse cx=\"55\" cy=\"188\" rx=\"28\" ry=\"6\" fill=\"rgba(201,168,76,.15)\" filter=\"url(#fsv2)\"/>\n              <path d=\"M22 76 Q20 108 20 138 Q20 166 22 178 Q28 192 55 192 Q82 192 88 178 Q90 166 90 138 Q90 108 88 76 Z\" fill=\"url(#v2)\" stroke=\"rgba(201,168,76,.35)\" stroke-width=\".8\"/>\n              <path d=\"M26 76 Q24 108 24 142\" stroke=\"rgba(201,168,76,.12)\" stroke-width=\"5\" stroke-linecap=\"round\" fill=\"none\"/>\n              <rect x=\"40\" y=\"34\" width=\"30\" height=\"44\" rx=\"4\" fill=\"url(#v2)\" stroke=\"rgba(201,168,76,.22)\" stroke-width=\".8\"/>\n              <path d=\"M22 76 Q32 65 40 63 L70 63 Q78 65 88 76 Z\" fill=\"url(#v2)\"/>\n              <ellipse cx=\"55\" cy=\"28\" rx=\"22\" ry=\"10\" fill=\"url(#v2g)\"/>\n              <rect x=\"62\" y=\"16\" width=\"22\" height=\"5\" rx=\"2.5\" fill=\"url(#v2g)\"/>\n              <rect x=\"80\" y=\"4\" width=\"5\" height=\"14\" rx=\"2.5\" fill=\"url(#v2g)\"/>\n              <rect x=\"24\" y=\"94\" width=\"62\" height=\"60\" rx=\"2\" fill=\"rgba(201,168,76,.07)\" stroke=\"rgba(201,168,76,.28)\" stroke-width=\".6\"/>\n              <text x=\"55\" y=\"112\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"7\" fill=\"rgba(201,168,76,.95)\" letter-spacing=\"1\">V</text>\n              <line x1=\"32\" y1=\"116\" x2=\"78\" y2=\"116\" stroke=\"rgba(201,168,76,.22)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"128\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"6.5\" fill=\"rgba(201,168,76,.9)\" letter-spacing=\"3\">VELORE</text>\n              <text x=\"55\" y=\"141\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"4\" fill=\"rgba(201,168,76,.55)\" letter-spacing=\"2\">ROSE ROYALE</text>\n              <line x1=\"32\" y1=\"147\" x2=\"78\" y2=\"147\" stroke=\"rgba(201,168,76,.18)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"155\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"3.5\" fill=\"rgba(201,168,76,.4)\" letter-spacing=\"1.5\">75 ML \u00b7 EDP</text>\n            </svg>\n          </div>\n        </div>\n        <div class=\"pinfo\">\n          <div class=\"pfamily\">Floral \u00b7 Musky</div>\n          <div class=\"pname\">Rose Royale</div>\n          <div class=\"pnotes\">\u0648\u0631\u062f\u0629 \u0627\u0644\u0637\u0627\u0626\u0641 \u00b7 \u0627\u0644\u064a\u0627\u0633\u0645\u064a\u0646 \u00b7 \u0627\u0644\u0645\u0633\u0643 \u0627\u0644\u0623\u0628\u064a\u0636 \u00b7 \u0627\u0644\u062e\u0648\u062e</div>\n          <div class=\"pfooter\">\n            <div><span class=\"pprice-old\">\u0666\u0665\u0660</span><span class=\"pprice\">\u0665\u0662\u0660 \u0631.\u0633</span></div>\n            <div class=\"pright\"><span class=\"pvol\">75 ML</span><div class=\"pwish\">\u2661</div></div>\n          </div>\n        </div>\n        <button class=\"pcard-buy\">Add to Cart \u2014 \u0623\u0636\u0641 \u0644\u0644\u062d\u0642\u064a\u0628\u0629</button>\n      </div>\n\n      <!-- P3 -->\n      <div class=\"pcard\">\n        <span class=\"pbadge badge-limited\">LIMITED</span>\n        <div class=\"pimg-wrap\">\n          <div class=\"pimg-glow\"></div>\n          <div class=\"pimg-inner\">\n            <svg class=\"pbottle\" viewBox=\"0 0 110 200\" fill=\"none\">\n              <defs>\n                <linearGradient id=\"v3\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0%\" stop-color=\"#180E04\"/><stop offset=\"40%\" stop-color=\"#2A1A08\"/><stop offset=\"100%\" stop-color=\"#100A02\"/></linearGradient>\n                <linearGradient id=\"v3g\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C9A84C\"/><stop offset=\"100%\" stop-color=\"#7A5A18\"/></linearGradient>\n                <filter id=\"fsv3\"><feGaussianBlur stdDeviation=\"5\"/></filter>\n              </defs>\n              <ellipse cx=\"55\" cy=\"190\" rx=\"32\" ry=\"6\" fill=\"rgba(201,168,76,.16)\" filter=\"url(#fsv3)\"/>\n              <rect x=\"14\" y=\"52\" width=\"82\" height=\"132\" rx=\"3\" fill=\"url(#v3)\" stroke=\"rgba(201,168,76,.38)\" stroke-width=\".8\"/>\n              <rect x=\"18\" y=\"57\" width=\"6\" height=\"120\" rx=\"3\" fill=\"rgba(201,168,76,.12)\"/>\n              <rect x=\"88\" y=\"52\" width=\"8\" height=\"132\" rx=\"0\" fill=\"rgba(0,0,0,.3)\" style=\"border-radius:0 3px 3px 0\"/>\n              <rect x=\"14\" y=\"54\" width=\"82\" height=\"2\" fill=\"rgba(201,168,76,.4)\"/>\n              <rect x=\"14\" y=\"180\" width=\"82\" height=\"2\" fill=\"rgba(201,168,76,.4)\"/>\n              <rect x=\"36\" y=\"22\" width=\"38\" height=\"32\" rx=\"2\" fill=\"url(#v3)\" stroke=\"rgba(201,168,76,.28)\" stroke-width=\".8\"/>\n              <rect x=\"32\" y=\"6\" width=\"46\" height=\"18\" rx=\"2\" fill=\"url(#v3g)\"/>\n              <rect x=\"36\" y=\"7\" width=\"9\" height=\"14\" rx=\"1\" fill=\"rgba(255,255,255,.18)\"/>\n              <rect x=\"20\" y=\"88\" width=\"70\" height=\"66\" rx=\"2\" fill=\"rgba(201,168,76,.08)\" stroke=\"rgba(201,168,76,.32)\" stroke-width=\".6\"/>\n              <text x=\"55\" y=\"107\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"7\" fill=\"rgba(201,168,76,.95)\" letter-spacing=\"1\">V</text>\n              <line x1=\"28\" y1=\"111\" x2=\"82\" y2=\"111\" stroke=\"rgba(201,168,76,.25)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"123\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"6.5\" fill=\"rgba(201,168,76,.9)\" letter-spacing=\"3\">VELORE</text>\n              <text x=\"55\" y=\"137\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"4\" fill=\"rgba(201,168,76,.55)\" letter-spacing=\"2\">OUD IMPERIALE</text>\n              <line x1=\"28\" y1=\"143\" x2=\"82\" y2=\"143\" stroke=\"rgba(201,168,76,.2)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"152\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"3.5\" fill=\"rgba(201,168,76,.4)\" letter-spacing=\"1.5\">100 ML \u00b7 PARFUM</text>\n            </svg>\n          </div>\n        </div>\n        <div class=\"pinfo\">\n          <div class=\"pfamily\">Oud \u00b7 Amber</div>\n          <div class=\"pname\">Oud Imp\u00e9riale</div>\n          <div class=\"pnotes\">\u0627\u0644\u0639\u0648\u062f \u0627\u0644\u0647\u0646\u062f\u064a \u00b7 \u0627\u0644\u0635\u0646\u062f\u0644 \u00b7 \u0627\u0644\u0643\u0647\u0631\u0645\u0627\u0646 \u00b7 \u0627\u0644\u0645\u0633\u0643 \u0627\u0644\u0645\u0644\u0643\u064a</div>\n          <div class=\"pfooter\">\n            <span class=\"pprice\">\u0668\u0669\u0660 \u0631.\u0633</span>\n            <div class=\"pright\"><span class=\"pvol\">100 ML</span><div class=\"pwish\">\u2661</div></div>\n          </div>\n        </div>\n        <button class=\"pcard-buy\">Add to Cart \u2014 \u0623\u0636\u0641 \u0644\u0644\u062d\u0642\u064a\u0628\u0629</button>\n      </div>\n\n      <!-- P4 -->\n      <div class=\"pcard\">\n        <span class=\"pbadge badge-sale\">SALE 20%</span>\n        <div class=\"pimg-wrap\">\n          <div class=\"pimg-glow\"></div>\n          <div class=\"pimg-inner\">\n            <svg class=\"pbottle\" viewBox=\"0 0 110 200\" fill=\"none\">\n              <defs>\n                <linearGradient id=\"v4\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0%\" stop-color=\"#080E18\"/><stop offset=\"40%\" stop-color=\"#101C2E\"/><stop offset=\"100%\" stop-color=\"#050A12\"/></linearGradient>\n                <linearGradient id=\"v4g\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C9A84C\"/><stop offset=\"100%\" stop-color=\"#7A5A18\"/></linearGradient>\n                <filter id=\"fsv4\"><feGaussianBlur stdDeviation=\"5\"/></filter>\n              </defs>\n              <ellipse cx=\"55\" cy=\"188\" rx=\"26\" ry=\"5\" fill=\"rgba(201,168,76,.14)\" filter=\"url(#fsv4)\"/>\n              <path d=\"M34 60 L26 182 Q26 192 55 192 Q84 192 84 182 L76 60 Z\" fill=\"url(#v4)\" stroke=\"rgba(201,168,76,.3)\" stroke-width=\".8\"/>\n              <path d=\"M38 60 L30 176\" stroke=\"rgba(201,168,76,.1)\" stroke-width=\"5\" stroke-linecap=\"round\" fill=\"none\"/>\n              <rect x=\"40\" y=\"26\" width=\"30\" height=\"36\" rx=\"5\" fill=\"url(#v4)\" stroke=\"rgba(201,168,76,.22)\" stroke-width=\".8\"/>\n              <ellipse cx=\"55\" cy=\"18\" rx=\"18\" ry=\"10\" fill=\"url(#v4g)\"/>\n              <rect x=\"50\" y=\"6\" width=\"10\" height=\"13\" rx=\"5\" fill=\"url(#v4g)\"/>\n              <rect x=\"28\" y=\"96\" width=\"54\" height=\"56\" rx=\"2\" fill=\"rgba(201,168,76,.07)\" stroke=\"rgba(201,168,76,.28)\" stroke-width=\".6\"/>\n              <text x=\"55\" y=\"113\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"7\" fill=\"rgba(201,168,76,.95)\" letter-spacing=\"1\">V</text>\n              <line x1=\"34\" y1=\"117\" x2=\"76\" y2=\"117\" stroke=\"rgba(201,168,76,.22)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"129\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"6.5\" fill=\"rgba(201,168,76,.9)\" letter-spacing=\"3\">VELORE</text>\n              <text x=\"55\" y=\"142\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"4\" fill=\"rgba(201,168,76,.5)\" letter-spacing=\"2\">AZUR NUIT</text>\n              <line x1=\"34\" y1=\"148\" x2=\"76\" y2=\"148\" stroke=\"rgba(201,168,76,.18)\" stroke-width=\".5\"/>\n            </svg>\n          </div>\n        </div>\n        <div class=\"pinfo\">\n          <div class=\"pfamily\">Aquatic \u00b7 Fresh</div>\n          <div class=\"pname\">Azur Nuit</div>\n          <div class=\"pnotes\">\u0627\u0644\u0644\u064a\u0645\u0648\u0646 \u00b7 \u0628\u064a\u0631\u063a\u0627\u0645\u0648 \u00b7 \u0627\u0644\u0647\u0648\u0627\u0621 \u0627\u0644\u0628\u062d\u0631\u064a \u00b7 \u0627\u0644\u0633\u064a\u062f\u0631</div>\n          <div class=\"pfooter\">\n            <div><span class=\"pprice-old\">\u0663\u0668\u0660</span><span class=\"pprice\">\u0663\u0660\u0664 \u0631.\u0633</span></div>\n            <div class=\"pright\"><span class=\"pvol\">50 ML</span><div class=\"pwish\">\u2661</div></div>\n          </div>\n        </div>\n        <button class=\"pcard-buy\">Add to Cart \u2014 \u0623\u0636\u0641 \u0644\u0644\u062d\u0642\u064a\u0628\u0629</button>\n      </div>\n\n      <!-- P5 -->\n      <div class=\"pcard\">\n        <div class=\"pimg-wrap\">\n          <div class=\"pimg-glow\"></div>\n          <div class=\"pimg-inner\">\n            <svg class=\"pbottle\" viewBox=\"0 0 110 200\" fill=\"none\">\n              <defs>\n                <linearGradient id=\"v5\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0%\" stop-color=\"#0A1208\"/><stop offset=\"40%\" stop-color=\"#141E10\"/><stop offset=\"100%\" stop-color=\"#080E06\"/></linearGradient>\n                <linearGradient id=\"v5g\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C9A84C\"/><stop offset=\"100%\" stop-color=\"#7A5A18\"/></linearGradient>\n                <filter id=\"fsv5\"><feGaussianBlur stdDeviation=\"5\"/></filter>\n              </defs>\n              <ellipse cx=\"55\" cy=\"188\" rx=\"30\" ry=\"6\" fill=\"rgba(201,168,76,.14)\" filter=\"url(#fsv5)\"/>\n              <ellipse cx=\"55\" cy=\"126\" rx=\"37\" ry=\"60\" fill=\"url(#v5)\" stroke=\"rgba(201,168,76,.3)\" stroke-width=\".8\"/>\n              <ellipse cx=\"42\" cy=\"115\" rx=\"5\" ry=\"30\" fill=\"rgba(201,168,76,.1)\"/>\n              <rect x=\"42\" y=\"30\" width=\"26\" height=\"36\" rx=\"4\" fill=\"url(#v5)\" stroke=\"rgba(201,168,76,.2)\" stroke-width=\".8\"/>\n              <rect x=\"36\" y=\"10\" width=\"38\" height=\"22\" rx=\"11\" fill=\"url(#v5g)\"/>\n              <rect x=\"24\" y=\"92\" width=\"62\" height=\"58\" rx=\"2\" fill=\"rgba(201,168,76,.07)\" stroke=\"rgba(201,168,76,.28)\" stroke-width=\".6\"/>\n              <text x=\"55\" y=\"110\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"7\" fill=\"rgba(201,168,76,.95)\" letter-spacing=\"1\">V</text>\n              <line x1=\"30\" y1=\"114\" x2=\"80\" y2=\"114\" stroke=\"rgba(201,168,76,.22)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"126\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"6.5\" fill=\"rgba(201,168,76,.9)\" letter-spacing=\"3\">VELORE</text>\n              <text x=\"55\" y=\"139\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"4\" fill=\"rgba(201,168,76,.5)\" letter-spacing=\"2\">VERT SACR\u00c9</text>\n              <line x1=\"30\" y1=\"145\" x2=\"80\" y2=\"145\" stroke=\"rgba(201,168,76,.18)\" stroke-width=\".5\"/>\n            </svg>\n          </div>\n        </div>\n        <div class=\"pinfo\">\n          <div class=\"pfamily\">Green \u00b7 Woody</div>\n          <div class=\"pname\">Vert Sacr\u00e9</div>\n          <div class=\"pnotes\">\u0623\u0648\u0631\u0627\u0642 \u0627\u0644\u0628\u0646\u0641\u0633\u062c \u00b7 \u0627\u0644\u0646\u0639\u0646\u0627\u0639 \u00b7 \u062e\u0634\u0628 \u0627\u0644\u0635\u0646\u062f\u0644 \u00b7 \u0627\u0644\u0645\u0633\u0643</div>\n          <div class=\"pfooter\">\n            <span class=\"pprice\">\u0664\u0662\u0660 \u0631.\u0633</span>\n            <div class=\"pright\"><span class=\"pvol\">75 ML</span><div class=\"pwish\">\u2661</div></div>\n          </div>\n        </div>\n        <button class=\"pcard-buy\">Add to Cart \u2014 \u0623\u0636\u0641 \u0644\u0644\u062d\u0642\u064a\u0628\u0629</button>\n      </div>\n\n      <!-- P6 -->\n      <div class=\"pcard\">\n        <span class=\"pbadge badge-new\">NEW</span>\n        <div class=\"pimg-wrap\">\n          <div class=\"pimg-glow\"></div>\n          <div class=\"pimg-inner\">\n            <svg class=\"pbottle\" viewBox=\"0 0 110 200\" fill=\"none\">\n              <defs>\n                <linearGradient id=\"v6\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"0\"><stop offset=\"0%\" stop-color=\"#180808\"/><stop offset=\"40%\" stop-color=\"#281010\"/><stop offset=\"100%\" stop-color=\"#100404\"/></linearGradient>\n                <linearGradient id=\"v6g\" x1=\"0\" y1=\"0\" x2=\"0\" y2=\"1\"><stop offset=\"0%\" stop-color=\"#C9A84C\"/><stop offset=\"100%\" stop-color=\"#7A5A18\"/></linearGradient>\n                <filter id=\"fsv6\"><feGaussianBlur stdDeviation=\"5\"/></filter>\n              </defs>\n              <ellipse cx=\"55\" cy=\"190\" rx=\"36\" ry=\"6\" fill=\"rgba(201,168,76,.14)\" filter=\"url(#fsv6)\"/>\n              <rect x=\"10\" y=\"58\" width=\"90\" height=\"128\" rx=\"10\" fill=\"url(#v6)\" stroke=\"rgba(201,168,76,.32)\" stroke-width=\".8\"/>\n              <rect x=\"14\" y=\"63\" width=\"7\" height=\"116\" rx=\"3.5\" fill=\"rgba(201,168,76,.12)\"/>\n              <rect x=\"90\" y=\"58\" width=\"10\" height=\"128\" rx=\"0\" fill=\"rgba(0,0,0,.3)\" style=\"border-radius:0 10px 10px 0\"/>\n              <rect x=\"36\" y=\"24\" width=\"38\" height=\"36\" rx=\"6\" fill=\"url(#v6)\" stroke=\"rgba(201,168,76,.22)\" stroke-width=\".8\"/>\n              <rect x=\"28\" y=\"6\" width=\"54\" height=\"20\" rx=\"10\" fill=\"url(#v6g)\"/>\n              <rect x=\"32\" y=\"8\" width=\"10\" height=\"16\" rx=\"5\" fill=\"rgba(255,255,255,.18)\"/>\n              <rect x=\"18\" y=\"96\" width=\"74\" height=\"64\" rx=\"2\" fill=\"rgba(201,168,76,.07)\" stroke=\"rgba(201,168,76,.3)\" stroke-width=\".6\"/>\n              <text x=\"55\" y=\"115\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"7\" fill=\"rgba(201,168,76,.95)\" letter-spacing=\"1\">V</text>\n              <line x1=\"24\" y1=\"119\" x2=\"86\" y2=\"119\" stroke=\"rgba(201,168,76,.25)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"131\" text-anchor=\"middle\" font-family=\"Cinzel,serif\" font-size=\"6.5\" fill=\"rgba(201,168,76,.9)\" letter-spacing=\"3\">VELORE</text>\n              <text x=\"55\" y=\"145\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"4\" fill=\"rgba(201,168,76,.55)\" letter-spacing=\"2\">VELVET ROSE</text>\n              <line x1=\"24\" y1=\"151\" x2=\"86\" y2=\"151\" stroke=\"rgba(201,168,76,.18)\" stroke-width=\".5\"/>\n              <text x=\"55\" y=\"158\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"3.5\" fill=\"rgba(201,168,76,.4)\" letter-spacing=\"1.5\">100 ML</text>\n            </svg>\n          </div>\n        </div>\n        <div class=\"pinfo\">\n          <div class=\"pfamily\">Floral \u00b7 Luxe</div>\n          <div class=\"pname\">Velvet Rose</div>\n          <div class=\"pnotes\">\u0627\u0644\u0648\u0631\u062f\u0629 \u0627\u0644\u062c\u0648\u0631\u062c\u064a\u0629 \u00b7 \u0627\u0644\u0641\u0631\u0627\u0648\u0644\u0629 \u00b7 \u0627\u0644\u0645\u0633\u0643 \u0627\u0644\u0648\u0631\u062f\u064a \u00b7 \u0627\u0644\u0628\u0627\u062a\u0634\u0648\u0644\u064a</div>\n          <div class=\"pfooter\">\n            <span class=\"pprice\">\u0667\u0662\u0660 \u0631.\u0633</span>\n            <div class=\"pright\"><span class=\"pvol\">100 ML</span><div class=\"pwish\">\u2661</div></div>\n          </div>\n        </div>\n        <button class=\"pcard-buy\">Add to Cart \u2014 \u0623\u0636\u0641 \u0644\u0644\u062d\u0642\u064a\u0628\u0629</button>\n      </div>\n\n    </div>\n  </div>\n</section>\n\n<!-- \u2550\u2550 FEATURES \u2550\u2550 -->\n<div class=\"features\">\n  <div class=\"feat-item\">\n    <div class=\"feat-icon\">\ud83d\udc51</div>\n    <div class=\"feat-title\">Premium Quality</div>\n    <div class=\"feat-desc\">\u0639\u0637\u0648\u0631 \u0645\u0646 \u0623\u0639\u0644\u0649 \u062f\u0631\u062c\u0627\u062a \u0627\u0644\u062c\u0648\u062f\u0629 \u0627\u0644\u0639\u0627\u0644\u0645\u064a\u0629</div>\n  </div>\n  <div class=\"feat-item\">\n    <div class=\"feat-icon\">\ud83c\udf3f</div>\n    <div class=\"feat-title\">Finest Ingredients</div>\n    <div class=\"feat-desc\">\u0645\u0643\u0648\u0646\u0627\u062a \u0637\u0628\u064a\u0639\u064a\u0629 \u0646\u0642\u064a\u0629 \u0645\u0646 \u0623\u0646\u062f\u0631 \u0628\u0642\u0627\u0639 \u0627\u0644\u0639\u0627\u0644\u0645</div>\n  </div>\n  <div class=\"feat-item\">\n    <div class=\"feat-icon\">\u2728</div>\n    <div class=\"feat-title\">Long Lasting</div>\n    <div class=\"feat-desc\">\u062b\u0628\u0627\u062a \u0627\u0633\u062a\u062b\u0646\u0627\u0626\u064a \u064a\u062f\u0648\u0645 \u0637\u0648\u0627\u0644 \u0627\u0644\u064a\u0648\u0645 \u0648\u0645\u0627 \u0628\u0639\u062f\u0647</div>\n  </div>\n  <div class=\"feat-item\">\n    <div class=\"feat-icon\">\ud83d\udc8e</div>\n    <div class=\"feat-title\">Timeless Elegance</div>\n    <div class=\"feat-desc\">\u062a\u063a\u0644\u064a\u0641 \u0641\u0627\u062e\u0631 \u064a\u0644\u064a\u0642 \u0628\u0645\u0633\u062a\u0648\u0649 \u0639\u0637\u0648\u0631\u0646\u0627</div>\n  </div>\n</div>\n\n<!-- \u2550\u2550 NEWSLETTER \u2550\u2550 -->\n<div class=\"newsletter\" id=\"about\">\n  <h2>Rejoignez <span>Velore</span></h2>\n  <p>\u0627\u0634\u062a\u0631\u0643 \u0648\u0643\u0646 \u0623\u0648\u0644 \u0645\u0646 \u064a\u0639\u0644\u0645 \u0628\u0627\u0644\u0645\u062c\u0645\u0648\u0639\u0627\u062a \u0627\u0644\u062d\u0635\u0631\u064a\u0629 \u0627\u0644\u062c\u062f\u064a\u062f\u0629. \u062e\u0635\u0645 \u0661\u0665\u066a \u0639\u0644\u0649 \u0623\u0648\u0644 \u0637\u0644\u0628.</p>\n  <div class=\"nl-form\">\n    <input class=\"nl-input\" type=\"email\" placeholder=\"\u0628\u0631\u064a\u062f\u0643 \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a...\"/>\n    <button class=\"nl-btn\">Join Now</button>\n  </div>\n</div>\n\n<!-- \u2550\u2550 FOOTER \u2550\u2550 -->\n<footer>\n  <div class=\"footer-brand\">\n    <div class=\"footer-logo-wrap\">\n      <span class=\"nav-logo-text\">VELORE</span>\n      <div>\n        <div class=\"footer-logo-name\">VELORE</div>\n        <span class=\"footer-logo-sub\">Eau de Parfum</span>\n      </div>\n    </div>\n    <p class=\"footer-tagline\">\u0646\u0624\u0645\u0646 \u0628\u0623\u0646 \u0627\u0644\u0639\u0637\u0631 \u0647\u0648 \u0623\u0639\u0645\u0642 \u0644\u063a\u0629 \u0635\u0627\u0645\u062a\u0629 \u2014 \u0646\u0635\u0646\u0639 \u0631\u0648\u0627\u0626\u062d \u062a\u0631\u0648\u064a \u0642\u0635\u062a\u0643.</p>\n    <div class=\"footer-socials\">\n      <div class=\"social-btn\">\ud835\udd4f</div>\n      <div class=\"social-btn\">\ud83d\udcf8</div>\n      <div class=\"social-btn\">\u25b6</div>\n      <div class=\"social-btn\">\ud83d\udcac</div>\n    </div>\n  </div>\n  <div class=\"footer-col\">\n    <h4>Shop</h4>\n    <ul>\n      <li><a href=\"#\">New Arrivals</a></li>\n      <li><a href=\"#\">Best Sellers</a></li>\n      <li><a href=\"#\">Sale</a></li>\n      <li><a href=\"#\">Gift Sets</a></li>\n    </ul>\n  </div>\n  <div class=\"footer-col\">\n    <h4>Help</h4>\n    <ul>\n      <li><a href=\"#\">Track Order</a></li>\n      <li><a href=\"#\">Returns</a></li>\n      <li><a href=\"#\">Shipping</a></li>\n      <li><a href=\"#\">FAQ</a></li>\n    </ul>\n  </div>\n  <div class=\"footer-col\">\n    <h4>About</h4>\n    <ul>\n      <li><a href=\"#\">Our Story</a></li>\n      <li><a href=\"#\">Ingredients</a></li>\n      <li><a href=\"#\">Sustainability</a></li>\n      <li><a href=\"#\">Journal</a></li>\n    </ul>\n  </div>\n</footer>\n<div class=\"footer-bottom\">\n  <p>\u00a9 2025 VELORE \u00b7 EAU DE PARFUM \u00b7 ALL RIGHTS RESERVED</p>\n  <div class=\"pay-chips\">\n    <span class=\"pay-chip\">VISA</span>\n    <span class=\"pay-chip\">MC</span>\n    <span class=\"pay-chip\">\u0645\u062f\u0649</span>\n    <span class=\"pay-chip\">APPLE PAY</span>\n    <span class=\"pay-chip\">STC</span>\n  </div>\n</div>\n\n\n";
+import { useEffect, useMemo, useState } from "react";
+import { VELORE_CSS } from "@/lib/velore-styles";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -16,51 +14,499 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+type Product = {
+  id: string;
+  name: string;
+  family: string;
+  notes: string;
+  price: number;
+  oldPrice?: number;
+  volume: string;
+  badge?: { label: string; variant: "new" | "sale" | "hot" | "limited" };
+  bottle: "noir" | "rose" | "oud" | "azur" | "vert" | "velvet";
+  label: string;
+};
+
+const PRODUCTS: Product[] = [
+  { id: "p1", name: "Noir Absolu", family: "Oriental · Wood", notes: "العنبر · المسك الأسود · خشب العود · الفانيليا", price: 495, volume: "50 ML", badge: { label: "NEW", variant: "new" }, bottle: "noir", label: "NOIR ABSOLU" },
+  { id: "p2", name: "Rose Royale", family: "Floral · Musky", notes: "وردة الطائف · الياسمين · المسك الأبيض · الخوخ", price: 520, oldPrice: 650, volume: "75 ML", badge: { label: "BEST SELLER", variant: "hot" }, bottle: "rose", label: "ROSE ROYALE" },
+  { id: "p3", name: "Oud Impériale", family: "Oud · Amber", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 890, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD IMPERIALE" },
+  { id: "p4", name: "Azur Nuit", family: "Aquatic · Fresh", notes: "الليمون · بيرغامو · الهواء البحري · السيدر", price: 304, oldPrice: 380, volume: "50 ML", badge: { label: "SALE 20%", variant: "sale" }, bottle: "azur", label: "AZUR NUIT" },
+  { id: "p5", name: "Vert Sacré", family: "Green · Woody", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 420, volume: "75 ML", bottle: "vert", label: "VERT SACRÉ" },
+  { id: "p6", name: "Velvet Rose", family: "Floral · Luxe", notes: "الوردة الجورجية · الفراولة · المسك الوردي · الباتشولي", price: 720, volume: "100 ML", badge: { label: "NEW", variant: "new" }, bottle: "velvet", label: "VELVET ROSE" },
+];
+
+const CATEGORIES = [
+  { key: "oriental", name: "Oriental", count: "٢٤ عطراً", icon: "🌙", bgClass: "cat-oriental" },
+  { key: "floral", name: "Floral", count: "١٨ عطراً", icon: "🌸", bgClass: "cat-floral" },
+  { key: "woody", name: "Oud & Wood", count: "٣١ عطراً", icon: "🌿", bgClass: "cat-woody" },
+];
+
+function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
+  // Single bottle shape, color varies by gradient
+  const grads: Record<Product["bottle"], [string, string, string]> = {
+    noir: ["#1A1510", "#3A3020", "#150F08"],
+    rose: ["#1A0E14", "#2A1820", "#100810"],
+    oud: ["#180E04", "#2A1A08", "#100A02"],
+    azur: ["#080E18", "#101C2E", "#050A12"],
+    vert: ["#0A1208", "#141E10", "#080E06"],
+    velvet: ["#180808", "#281010", "#100404"],
+  };
+  const [c1, c2, c3] = grads[variant];
+  const gid = `g-${variant}`;
+  const ggid = `gg-${variant}`;
+  return (
+    <svg className="pbottle" viewBox="0 0 110 200" fill="none">
+      <defs>
+        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stopColor={c1} />
+          <stop offset="50%" stopColor={c2} />
+          <stop offset="100%" stopColor={c3} />
+        </linearGradient>
+        <linearGradient id={ggid} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#C9A84C" />
+          <stop offset="100%" stopColor="#7A5A18" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="55" cy="190" rx="32" ry="6" fill="rgba(201,168,76,.15)" />
+      <rect x="16" y="50" width="78" height="134" rx="6" fill={`url(#${gid})`} stroke="rgba(201,168,76,.35)" strokeWidth=".8" />
+      <rect x="19" y="55" width="6" height="122" rx="3" fill="rgba(201,168,76,.15)" />
+      <rect x="38" y="22" width="34" height="30" rx="4" fill={`url(#${gid})`} stroke="rgba(201,168,76,.25)" strokeWidth=".8" />
+      <rect x="30" y="6" width="50" height="18" rx="3" fill={`url(#${ggid})`} />
+      <rect x="34" y="7" width="9" height="14" rx="2" fill="rgba(255,255,255,.18)" />
+      <rect x="22" y="88" width="66" height="64" rx="2" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.3)" strokeWidth=".6" />
+      <text x="55" y="106" textAnchor="middle" fontFamily="Cinzel,serif" fontSize="7" fill="rgba(201,168,76,.95)" letterSpacing="1">V</text>
+      <line x1="35" y1="110" x2="75" y2="110" stroke="rgba(201,168,76,.25)" strokeWidth=".5" />
+      <text x="55" y="122" textAnchor="middle" fontFamily="Cinzel,serif" fontSize="6.5" fill="rgba(201,168,76,.9)" letterSpacing="3">VELORE</text>
+      <text x="55" y="135" textAnchor="middle" fontFamily="sans-serif" fontSize="4" fill="rgba(201,168,76,.55)" letterSpacing="2.5">{label}</text>
+      <line x1="35" y1="141" x2="75" y2="141" stroke="rgba(201,168,76,.2)" strokeWidth=".5" />
+      <text x="55" y="150" textAnchor="middle" fontFamily="sans-serif" fontSize="3.5" fill="rgba(201,168,76,.4)" letterSpacing="1.5">EAU DE PARFUM</text>
+    </svg>
+  );
+}
+
+type CartLine = { product: Product; qty: number };
+
 function Index() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [cart, setCart] = useState<CartLine[]>([]);
+  const [wishlist, setWishlist] = useState<Set<string>>(new Set());
+  const [toast, setToast] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const [filterCat, setFilterCat] = useState<string | null>(null);
+
+  // Persist
   useEffect(() => {
-    const nav = document.getElementById("mainNav");
-    const onScroll = () => {
-      if (!nav) return;
-      if (window.scrollY > 40) nav.classList.add("scrolled");
-      else nav.classList.remove("scrolled");
-    };
+    try {
+      const c = localStorage.getItem("velore_cart");
+      if (c) setCart(JSON.parse(c));
+      const w = localStorage.getItem("velore_wish");
+      if (w) setWishlist(new Set(JSON.parse(w)));
+    } catch {/* noop */}
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem("velore_cart", JSON.stringify(cart)); } catch {/* noop */}
+  }, [cart]);
+  useEffect(() => {
+    try { localStorage.setItem("velore_wish", JSON.stringify([...wishlist])); } catch {/* noop */}
+  }, [wishlist]);
+
+  // Scroll
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-
-    const hamburger = document.getElementById("hamburger");
-    const menu = document.getElementById("mobileMenu");
-    const toggle = () => menu?.classList.toggle("open");
-    hamburger?.addEventListener("click", toggle);
-    const links = menu?.querySelectorAll("a") ?? [];
-    const close = () => menu?.classList.remove("open");
-    links.forEach((a) => a.addEventListener("click", close));
-
-    const wishBtns = document.querySelectorAll<HTMLElement>(".pwish");
-    const wishHandlers: Array<[HTMLElement, (e: Event) => void]> = [];
-    wishBtns.forEach((btn) => {
-      const h = (e: Event) => {
-        e.stopPropagation();
-        const active = btn.textContent === "♥";
-        btn.textContent = active ? "♡" : "♥";
-        btn.style.color = active ? "" : "var(--gold-deep)";
-        btn.style.borderColor = active ? "" : "var(--gold)";
-      };
-      btn.addEventListener("click", h);
-      wishHandlers.push([btn, h]);
-    });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      hamburger?.removeEventListener("click", toggle);
-      links.forEach((a) => a.removeEventListener("click", close));
-      wishHandlers.forEach(([b, h]) => b.removeEventListener("click", h));
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Lock body scroll when cart open
+  useEffect(() => {
+    document.body.style.overflow = cartOpen || mobileOpen || searchOpen ? "hidden" : "";
+  }, [cartOpen, mobileOpen, searchOpen]);
+
+  const cartCount = cart.reduce((a, l) => a + l.qty, 0);
+  const cartTotal = cart.reduce((a, l) => a + l.qty * l.product.price, 0);
+
+  function showToast(msg: string) {
+    setToast(msg);
+    window.setTimeout(() => setToast(null), 2200);
+  }
+  function addToCart(p: Product) {
+    setCart((c) => {
+      const found = c.find((l) => l.product.id === p.id);
+      if (found) return c.map((l) => (l.product.id === p.id ? { ...l, qty: l.qty + 1 } : l));
+      return [...c, { product: p, qty: 1 }];
+    });
+    showToast(`تمت إضافة ${p.name} إلى الحقيبة`);
+  }
+  function removeLine(id: string) { setCart((c) => c.filter((l) => l.product.id !== id)); }
+  function setQty(id: string, qty: number) {
+    if (qty <= 0) return removeLine(id);
+    setCart((c) => c.map((l) => (l.product.id === id ? { ...l, qty } : l)));
+  }
+  function toggleWish(id: string) {
+    setWishlist((w) => {
+      const n = new Set(w);
+      if (n.has(id)) { n.delete(id); showToast("أُزيل من المفضلة"); }
+      else { n.add(id); showToast("أُضيف إلى المفضلة"); }
+      return n;
+    });
+  }
+  function scrollTo(id: string) {
+    setMobileOpen(false);
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  function checkout() {
+    if (cart.length === 0) return;
+    showToast("جارٍ تحويلك إلى الدفع…");
+    window.setTimeout(() => {
+      setCart([]);
+      setCartOpen(false);
+      showToast("شكراً لطلبك! تم إتمام الدفع.");
+    }, 1200);
+  }
+  function subscribe(e: React.FormEvent) {
+    e.preventDefault();
+    if (!email.includes("@")) { showToast("الرجاء إدخال بريد صحيح"); return; }
+    showToast("تم اشتراكك! تحقق من بريدك.");
+    setEmail("");
+  }
+
+  const visibleProducts = useMemo(() => {
+    let list = PRODUCTS;
+    if (filterCat) {
+      list = list.filter((p) => {
+        const f = p.family.toLowerCase();
+        if (filterCat === "oriental") return f.includes("oriental");
+        if (filterCat === "floral") return f.includes("floral");
+        if (filterCat === "woody") return f.includes("oud") || f.includes("wood");
+        return true;
+      });
+    }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      list = list.filter((p) => p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q));
+    }
+    return list;
+  }, [filterCat, searchQuery]);
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: VELORE_CSS }} />
-      <div dangerouslySetInnerHTML={{ __html: VELORE_HTML }} />
+
+      {/* NAV */}
+      <nav className={scrolled ? "scrolled" : ""}>
+        <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="nav-logo">
+          <span className="nav-logo-text">VELORE</span>
+        </a>
+        <ul className="nav-links">
+          <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>Collections</a></li>
+          <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
+          <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Notre Maison</a></li>
+          <li><a href="#about" onClick={(e) => { e.preventDefault(); scrollTo("about"); }}>Newsletter</a></li>
+        </ul>
+        <div className="nav-right">
+          <button className="nav-icon-btn" aria-label="Search" onClick={() => setSearchOpen(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+          </button>
+          <button className="nav-cart-btn" onClick={() => setCartOpen(true)}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
+            <span className="cart-label">الحقيبة ({cartCount})</span>
+          </button>
+          <button className="nav-hamburger" aria-label="Menu" onClick={() => setMobileOpen((o) => !o)}>
+            <span /><span /><span />
+          </button>
+        </div>
+      </nav>
+
+      {mobileOpen && (
+        <div className="mobile-menu open">
+          <a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>Collections</a>
+          <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a>
+          <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Notre Maison</a>
+          <a href="#about" onClick={(e) => { e.preventDefault(); scrollTo("about"); }}>Newsletter</a>
+        </div>
+      )}
+
+      {/* HERO */}
+      <section className="hero">
+        <video className="hero-video" autoPlay muted loop playsInline preload="auto">
+          <source src="https://www.dropbox.com/scl/fi/otbgvp5emmg3ulf020xxx/Perfume-Blender-3D-Animation-b3d-blender-houdini-cgi-productads-perfume-blender3D.mp4?rlkey=g92ylnm82zb4i3z6gq8gtvzci&st=82jej8qb&dl=1" type="video/mp4" />
+        </video>
+        <div className="hero-overlay" />
+        <div className="hero-vignette" />
+        <div className="hero-content">
+          <div className="hero-ornament">
+            <div className="orn-line" />
+            <div className="orn-diamond" />
+            <div className="orn-line right" />
+          </div>
+          <div className="hero-eyebrow">Maison de Parfum · Depuis 2010</div>
+          <h1 className="hero-title">VELORE</h1>
+          <div className="hero-title-sub">✦ &nbsp; Eau de Parfum &nbsp; ✦</div>
+          <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
+          <div className="hero-actions">
+            <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }} className="btn-gold">اكتشف المجموعة</a>
+            <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }} className="btn-outline-light">قصتنا</a>
+          </div>
+        </div>
+        <div className="hero-stats">
+          <div className="hero-stat"><div className="stat-n">73+</div><div className="stat-l">عطراً حصرياً</div></div>
+          <div className="hero-stat"><div className="stat-n">12</div><div className="stat-l">دولة حول العالم</div></div>
+          <div className="hero-stat"><div className="stat-n">98%</div><div className="stat-l">رضا العملاء</div></div>
+          <div className="hero-stat"><div className="stat-n">15</div><div className="stat-l">سنة خبرة</div></div>
+        </div>
+      </section>
+
+      {/* MARQUEE */}
+      <div className="marquee-wrap">
+        <div className="marquee-track">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <span key={i} style={{ display: "inline-flex", gap: 56 }}>
+              {["Premium Quality", "Finest Ingredients", "Long Lasting Fragrance", "Timeless Elegance", "شحن مجاني فوق ٣٠٠ ريال", "عطور أصلية مضمونة ١٠٠٪"].map((t, j) => (
+                <span key={j} className="mitem"><span className="mdot" />{t}</span>
+              ))}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* CATEGORIES */}
+      <section id="collections">
+        <div className="section-header">
+          <div className="section-eyebrow">Collections Exclusives</div>
+          <h2 className="section-title">اختر <em>عالمك</em></h2>
+        </div>
+        <div className="categories">
+          <div className="cat-grid">
+            {CATEGORIES.map((c) => (
+              <button
+                key={c.key}
+                className={`cat-card ${filterCat === c.key ? "active" : ""}`}
+                onClick={() => { setFilterCat(filterCat === c.key ? null : c.key); scrollTo("products"); }}
+                aria-pressed={filterCat === c.key}
+              >
+                <div className={`cat-bg ${c.bgClass}`} />
+                <div className="cat-glow" />
+                <div className="cat-icon">{c.icon}</div>
+                <div className="cat-info">
+                  <div className="cat-line" />
+                  <div className="cat-name">{c.name}</div>
+                  <div className="cat-count">{c.count}</div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="divider">
+        <div className="div-line" />
+        <div className="div-ornament">
+          <div className="div-diamond" />
+          <span style={{ fontFamily: "'Cinzel',serif", fontSize: ".6rem", letterSpacing: ".3em", color: "var(--gold-dim)" }}>VELORE</span>
+          <div className="div-diamond" />
+        </div>
+        <div className="div-line" />
+      </div>
+
+      {/* PRODUCTS */}
+      <section id="products">
+        <div className="section-header products-header">
+          <div className="section-eyebrow">Best Sellers</div>
+          <h2 className="section-title">عطور <em>تُعرِّفك</em></h2>
+          {filterCat && (
+            <button className="filter-clear" onClick={() => setFilterCat(null)}>إزالة الفلتر ×</button>
+          )}
+        </div>
+        <div className="products">
+          <div className="products-grid">
+            {visibleProducts.length === 0 && (
+              <div className="empty-state">لا توجد عطور تطابق بحثك.</div>
+            )}
+            {visibleProducts.map((p) => (
+              <div className="pcard" key={p.id}>
+                {p.badge && <span className={`pbadge badge-${p.badge.variant}`}>{p.badge.label}</span>}
+                <div className="pimg-wrap">
+                  <div className="pimg-glow" />
+                  <div className="pimg-inner"><Bottle variant={p.bottle} label={p.label} /></div>
+                </div>
+                <div className="pinfo">
+                  <div className="pfamily">{p.family}</div>
+                  <div className="pname">{p.name}</div>
+                  <div className="pnotes">{p.notes}</div>
+                  <div className="pfooter">
+                    <div>
+                      {p.oldPrice && <span className="pprice-old">{p.oldPrice}</span>}
+                      <span className="pprice">{p.price} ر.س</span>
+                    </div>
+                    <div className="pright">
+                      <span className="pvol">{p.volume}</span>
+                      <button
+                        className={`pwish ${wishlist.has(p.id) ? "active" : ""}`}
+                        onClick={() => toggleWish(p.id)}
+                        aria-label="المفضلة"
+                      >{wishlist.has(p.id) ? "♥" : "♡"}</button>
+                    </div>
+                  </div>
+                </div>
+                <button className="pcard-buy" onClick={() => addToCart(p)}>Add to Cart — أضف للحقيبة</button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <div className="features" id="features">
+        {[
+          { i: "👑", t: "Premium Quality", d: "عطور من أعلى درجات الجودة العالمية" },
+          { i: "🌿", t: "Finest Ingredients", d: "مكونات طبيعية نقية من أندر بقاع العالم" },
+          { i: "✨", t: "Long Lasting", d: "ثبات استثنائي يدوم طوال اليوم وما بعده" },
+          { i: "💎", t: "Timeless Elegance", d: "تغليف فاخر يليق بمستوى عطورنا" },
+        ].map((f, i) => (
+          <div className="feat-item" key={i}>
+            <div className="feat-icon">{f.i}</div>
+            <div className="feat-title">{f.t}</div>
+            <div className="feat-desc">{f.d}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* NEWSLETTER */}
+      <div className="newsletter" id="about">
+        <h2>Rejoignez <span>Velore</span></h2>
+        <p>اشترك وكن أول من يعلم بالمجموعات الحصرية الجديدة. خصم ١٥٪ على أول طلب.</p>
+        <form className="nl-form" onSubmit={subscribe}>
+          <input className="nl-input" type="email" placeholder="بريدك الإلكتروني..." value={email} onChange={(e) => setEmail(e.target.value)} />
+          <button className="nl-btn" type="submit">Join Now</button>
+        </form>
+      </div>
+
+      {/* FOOTER */}
+      <footer>
+        <div>
+          <div className="footer-logo-wrap">
+            <span className="footer-logo-name">VELORE</span>
+          </div>
+          <span className="footer-logo-sub">MAISON DE PARFUM</span>
+          <p className="footer-tagline">صناعة العطور كفنّ — كل قارورة قصة، كل رائحة ذكرى.</p>
+          <div className="footer-socials">
+            {["IG", "FB", "TW", "YT"].map((s) => (
+              <a href="#" key={s} className="social-btn" onClick={(e) => e.preventDefault()}>{s}</a>
+            ))}
+          </div>
+        </div>
+        <div className="footer-col">
+          <h4>Maison</h4>
+          <ul>
+            <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>قصتنا</a></li>
+            <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>المجموعات</a></li>
+            <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>العطور</a></li>
+          </ul>
+        </div>
+        <div className="footer-col">
+          <h4>Service</h4>
+          <ul>
+            <li><a href="#" onClick={(e) => e.preventDefault()}>الشحن</a></li>
+            <li><a href="#" onClick={(e) => e.preventDefault()}>الإرجاع</a></li>
+            <li><a href="#" onClick={(e) => e.preventDefault()}>الأسئلة</a></li>
+          </ul>
+        </div>
+        <div className="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:hello@velore.com">hello@velore.com</a></li>
+            <li><a href="tel:+966500000000">+966 50 000 0000</a></li>
+            <li>الرياض · المملكة العربية السعودية</li>
+          </ul>
+        </div>
+      </footer>
+      <div className="footer-bottom">
+        <p>© 2026 VELORE · TOUS DROITS RÉSERVÉS</p>
+        <div className="pay-chips">
+          {["VISA", "MASTER", "MADA", "APPLE PAY"].map((c) => <span key={c} className="pay-chip">{c}</span>)}
+        </div>
+      </div>
+
+      {/* CART DRAWER */}
+      <div className={`drawer-backdrop ${cartOpen ? "open" : ""}`} onClick={() => setCartOpen(false)} />
+      <aside className={`cart-drawer ${cartOpen ? "open" : ""}`} aria-hidden={!cartOpen}>
+        <div className="cart-head">
+          <h3>الحقيبة <span>({cartCount})</span></h3>
+          <button className="cart-close" onClick={() => setCartOpen(false)} aria-label="إغلاق">×</button>
+        </div>
+        <div className="cart-body">
+          {cart.length === 0 ? (
+            <div className="cart-empty">
+              <div style={{ fontSize: "3rem", marginBottom: 12 }}>🛍️</div>
+              <p>حقيبتك فارغة</p>
+              <button className="btn-gold" onClick={() => { setCartOpen(false); scrollTo("products"); }}>تصفح العطور</button>
+            </div>
+          ) : (
+            cart.map((l) => (
+              <div className="cart-line" key={l.product.id}>
+                <div className="cart-line-img"><Bottle variant={l.product.bottle} label={l.product.label} /></div>
+                <div className="cart-line-info">
+                  <div className="cart-line-name">{l.product.name}</div>
+                  <div className="cart-line-fam">{l.product.family} · {l.product.volume}</div>
+                  <div className="cart-line-price">{l.product.price * l.qty} ر.س</div>
+                  <div className="qty">
+                    <button onClick={() => setQty(l.product.id, l.qty - 1)} aria-label="-">−</button>
+                    <span>{l.qty}</span>
+                    <button onClick={() => setQty(l.product.id, l.qty + 1)} aria-label="+">+</button>
+                    <button className="qty-remove" onClick={() => removeLine(l.product.id)}>حذف</button>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+        {cart.length > 0 && (
+          <div className="cart-foot">
+            <div className="cart-total">
+              <span>المجموع</span>
+              <strong>{cartTotal} ر.س</strong>
+            </div>
+            <button className="btn-gold" style={{ width: "100%" }} onClick={checkout}>إتمام الدفع</button>
+          </div>
+        )}
+      </aside>
+
+      {/* SEARCH MODAL */}
+      <div className={`drawer-backdrop ${searchOpen ? "open" : ""}`} onClick={() => setSearchOpen(false)} />
+      {searchOpen && (
+        <div className="search-modal" onClick={(e) => e.stopPropagation()}>
+          <input
+            autoFocus
+            className="search-input"
+            placeholder="ابحث عن عطر، عائلة، نوتة..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <div className="search-results">
+            {PRODUCTS.filter((p) => {
+              if (!searchQuery.trim()) return true;
+              const q = searchQuery.toLowerCase();
+              return p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q);
+            }).map((p) => (
+              <button key={p.id} className="search-item" onClick={() => { setSearchOpen(false); scrollTo("products"); }}>
+                <span>{p.name}</span>
+                <span className="search-item-fam">{p.family} · {p.price} ر.س</span>
+              </button>
+            ))}
+          </div>
+          <button className="search-close" onClick={() => setSearchOpen(false)}>إغلاق</button>
+        </div>
+      )}
+
+      {/* TOAST */}
+      {toast && <div className="toast">{toast}</div>}
     </>
   );
 }
