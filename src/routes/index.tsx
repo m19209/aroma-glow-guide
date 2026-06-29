@@ -1,6 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { VELORE_CSS } from "@/lib/velore-styles";
+import imgNoir from "@/assets/perfume-noir.jpg";
+import imgRose from "@/assets/perfume-rose.jpg";
+import imgOud from "@/assets/perfume-oud.jpg";
+import imgAzur from "@/assets/perfume-azur.jpg";
+import imgVert from "@/assets/perfume-vert.jpg";
+import imgVelvet from "@/assets/perfume-velvet.jpg";
+
+const BOTTLE_IMAGES: Record<"noir" | "rose" | "oud" | "azur" | "vert" | "velvet", string> = {
+  noir: imgNoir,
+  rose: imgRose,
+  oud: imgOud,
+  azur: imgAzur,
+  vert: imgVert,
+  velvet: imgVelvet,
+};
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -43,45 +58,16 @@ const CATEGORIES = [
 ];
 
 function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
-  // Single bottle shape, color varies by gradient
-  const grads: Record<Product["bottle"], [string, string, string]> = {
-    noir: ["#1A1510", "#3A3020", "#150F08"],
-    rose: ["#1A0E14", "#2A1820", "#100810"],
-    oud: ["#180E04", "#2A1A08", "#100A02"],
-    azur: ["#080E18", "#101C2E", "#050A12"],
-    vert: ["#0A1208", "#141E10", "#080E06"],
-    velvet: ["#180808", "#281010", "#100404"],
-  };
-  const [c1, c2, c3] = grads[variant];
-  const gid = `g-${variant}`;
-  const ggid = `gg-${variant}`;
   return (
-    <svg className="pbottle" viewBox="0 0 110 200" fill="none">
-      <defs>
-        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={c1} />
-          <stop offset="50%" stopColor={c2} />
-          <stop offset="100%" stopColor={c3} />
-        </linearGradient>
-        <linearGradient id={ggid} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#C9A84C" />
-          <stop offset="100%" stopColor="#7A5A18" />
-        </linearGradient>
-      </defs>
-      <ellipse cx="55" cy="190" rx="32" ry="6" fill="rgba(201,168,76,.15)" />
-      <rect x="16" y="50" width="78" height="134" rx="6" fill={`url(#${gid})`} stroke="rgba(201,168,76,.35)" strokeWidth=".8" />
-      <rect x="19" y="55" width="6" height="122" rx="3" fill="rgba(201,168,76,.15)" />
-      <rect x="38" y="22" width="34" height="30" rx="4" fill={`url(#${gid})`} stroke="rgba(201,168,76,.25)" strokeWidth=".8" />
-      <rect x="30" y="6" width="50" height="18" rx="3" fill={`url(#${ggid})`} />
-      <rect x="34" y="7" width="9" height="14" rx="2" fill="rgba(255,255,255,.18)" />
-      <rect x="22" y="88" width="66" height="64" rx="2" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.3)" strokeWidth=".6" />
-      <text x="55" y="106" textAnchor="middle" fontFamily="Cinzel,serif" fontSize="7" fill="rgba(201,168,76,.95)" letterSpacing="1">V</text>
-      <line x1="35" y1="110" x2="75" y2="110" stroke="rgba(201,168,76,.25)" strokeWidth=".5" />
-      <text x="55" y="122" textAnchor="middle" fontFamily="Cinzel,serif" fontSize="6.5" fill="rgba(201,168,76,.9)" letterSpacing="3">VELORE</text>
-      <text x="55" y="135" textAnchor="middle" fontFamily="sans-serif" fontSize="4" fill="rgba(201,168,76,.55)" letterSpacing="2.5">{label}</text>
-      <line x1="35" y1="141" x2="75" y2="141" stroke="rgba(201,168,76,.2)" strokeWidth=".5" />
-      <text x="55" y="150" textAnchor="middle" fontFamily="sans-serif" fontSize="3.5" fill="rgba(201,168,76,.4)" letterSpacing="1.5">EAU DE PARFUM</text>
-    </svg>
+    <img
+      className="pbottle"
+      src={BOTTLE_IMAGES[variant]}
+      alt={label}
+      loading="lazy"
+      width={1024}
+      height={1024}
+      style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+    />
   );
 }
 
@@ -96,7 +82,7 @@ function Index() {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
+  
   const [filterCat, setFilterCat] = useState<string | null>(null);
 
   // Persist
@@ -170,12 +156,6 @@ function Index() {
       showToast("شكراً لطلبك! تم إتمام الدفع.");
     }, 1200);
   }
-  function subscribe(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.includes("@")) { showToast("الرجاء إدخال بريد صحيح"); return; }
-    showToast("تم اشتراكك! تحقق من بريدك.");
-    setEmail("");
-  }
 
   const visibleProducts = useMemo(() => {
     let list = PRODUCTS;
@@ -207,8 +187,6 @@ function Index() {
         <ul className="nav-links">
           <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>Collections</a></li>
           <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
-          <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Notre Maison</a></li>
-          <li><a href="#about" onClick={(e) => { e.preventDefault(); scrollTo("about"); }}>Newsletter</a></li>
         </ul>
         <div className="nav-right">
           <button className="nav-icon-btn" aria-label="Search" onClick={() => setSearchOpen(true)}>
@@ -226,10 +204,8 @@ function Index() {
 
       {mobileOpen && (
         <div className="mobile-menu open">
-          <a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>Collections</a>
-          <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a>
-          <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Notre Maison</a>
-          <a href="#about" onClick={(e) => { e.preventDefault(); scrollTo("about"); }}>Newsletter</a>
+          <a href="#collections" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("collections"); }}>Collections</a>
+          <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
         </div>
       )}
 
@@ -252,29 +228,11 @@ function Index() {
           <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
           <div className="hero-actions">
             <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }} className="btn-gold">اكتشف المجموعة</a>
-            <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }} className="btn-outline-light">قصتنا</a>
+            <a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }} className="btn-outline-light">المجموعات</a>
           </div>
-        </div>
-        <div className="hero-stats">
-          <div className="hero-stat"><div className="stat-n">73+</div><div className="stat-l">عطراً حصرياً</div></div>
-          <div className="hero-stat"><div className="stat-n">12</div><div className="stat-l">دولة حول العالم</div></div>
-          <div className="hero-stat"><div className="stat-n">98%</div><div className="stat-l">رضا العملاء</div></div>
-          <div className="hero-stat"><div className="stat-n">15</div><div className="stat-l">سنة خبرة</div></div>
         </div>
       </section>
 
-      {/* MARQUEE */}
-      <div className="marquee-wrap">
-        <div className="marquee-track">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <span key={i} style={{ display: "inline-flex", gap: 56 }}>
-              {["Premium Quality", "Finest Ingredients", "Long Lasting Fragrance", "Timeless Elegance", "شحن مجاني فوق ٣٠٠ ريال", "عطور أصلية مضمونة ١٠٠٪"].map((t, j) => (
-                <span key={j} className="mitem"><span className="mdot" />{t}</span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
 
       {/* CATEGORIES */}
       <section id="collections">
@@ -362,31 +320,6 @@ function Index() {
         </div>
       </section>
 
-      {/* FEATURES */}
-      <div className="features" id="features">
-        {[
-          { i: "👑", t: "Premium Quality", d: "عطور من أعلى درجات الجودة العالمية" },
-          { i: "🌿", t: "Finest Ingredients", d: "مكونات طبيعية نقية من أندر بقاع العالم" },
-          { i: "✨", t: "Long Lasting", d: "ثبات استثنائي يدوم طوال اليوم وما بعده" },
-          { i: "💎", t: "Timeless Elegance", d: "تغليف فاخر يليق بمستوى عطورنا" },
-        ].map((f, i) => (
-          <div className="feat-item" key={i}>
-            <div className="feat-icon">{f.i}</div>
-            <div className="feat-title">{f.t}</div>
-            <div className="feat-desc">{f.d}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* NEWSLETTER */}
-      <div className="newsletter" id="about">
-        <h2>Rejoignez <span>Velore</span></h2>
-        <p>اشترك وكن أول من يعلم بالمجموعات الحصرية الجديدة. خصم ١٥٪ على أول طلب.</p>
-        <form className="nl-form" onSubmit={subscribe}>
-          <input className="nl-input" type="email" placeholder="بريدك الإلكتروني..." value={email} onChange={(e) => setEmail(e.target.value)} />
-          <button className="nl-btn" type="submit">Join Now</button>
-        </form>
-      </div>
 
       {/* FOOTER */}
       <footer>
@@ -405,7 +338,7 @@ function Index() {
         <div className="footer-col">
           <h4>Maison</h4>
           <ul>
-            <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>قصتنا</a></li>
+            <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>المجموعات</a></li>
             <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>المجموعات</a></li>
             <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>العطور</a></li>
           </ul>
