@@ -215,23 +215,28 @@ function Index() {
           <source src="https://www.dropbox.com/scl/fi/otbgvp5emmg3ulf020xxx/Perfume-Blender-3D-Animation-b3d-blender-houdini-cgi-productads-perfume-blender3D.mp4?rlkey=g92ylnm82zb4i3z6gq8gtvzci&st=82jej8qb&dl=1" type="video/mp4" />
         </video>
         <div className="hero-overlay" />
+        <div className="hero-leak" />
         <div className="hero-vignette" />
         <div className="hero-content">
           <div className="hero-ornament">
             <div className="orn-line" />
-            <div className="orn-diamond" />
+            <span className="hero-eyebrow" style={{ margin: 0 }}>Maison de Parfum · Depuis 2010</span>
             <div className="orn-line right" />
           </div>
-          <div className="hero-eyebrow">Maison de Parfum · Depuis 2010</div>
           <h1 className="hero-title">VELORE</h1>
-          <div className="hero-title-sub">✦ &nbsp; Eau de Parfum &nbsp; ✦</div>
+          <div className="hero-title-sub">Eau de Parfum</div>
           <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
           <div className="hero-actions">
             <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }} className="btn-gold">اكتشف المجموعة</a>
             <a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }} className="btn-outline-light">المجموعات</a>
           </div>
         </div>
+        <div className="hero-scroll">
+          <span className="hero-scroll-label">Explore</span>
+          <span className="hero-scroll-line" />
+        </div>
       </section>
+
 
 
       {/* CATEGORIES */}
