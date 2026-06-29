@@ -1,6 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { VELORE_CSS } from "@/lib/velore-styles";
+import imgNoir from "@/assets/perfume-noir.jpg";
+import imgRose from "@/assets/perfume-rose.jpg";
+import imgOud from "@/assets/perfume-oud.jpg";
+import imgAzur from "@/assets/perfume-azur.jpg";
+import imgVert from "@/assets/perfume-vert.jpg";
+import imgVelvet from "@/assets/perfume-velvet.jpg";
+
+const BOTTLE_IMAGES: Record<"noir" | "rose" | "oud" | "azur" | "vert" | "velvet", string> = {
+  noir: imgNoir,
+  rose: imgRose,
+  oud: imgOud,
+  azur: imgAzur,
+  vert: imgVert,
+  velvet: imgVelvet,
+};
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -43,45 +58,15 @@ const CATEGORIES = [
 ];
 
 function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
-  // Single bottle shape, color varies by gradient
-  const grads: Record<Product["bottle"], [string, string, string]> = {
-    noir: ["#1A1510", "#3A3020", "#150F08"],
-    rose: ["#1A0E14", "#2A1820", "#100810"],
-    oud: ["#180E04", "#2A1A08", "#100A02"],
-    azur: ["#080E18", "#101C2E", "#050A12"],
-    vert: ["#0A1208", "#141E10", "#080E06"],
-    velvet: ["#180808", "#281010", "#100404"],
-  };
-  const [c1, c2, c3] = grads[variant];
-  const gid = `g-${variant}`;
-  const ggid = `gg-${variant}`;
   return (
-    <svg className="pbottle" viewBox="0 0 110 200" fill="none">
-      <defs>
-        <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor={c1} />
-          <stop offset="50%" stopColor={c2} />
-          <stop offset="100%" stopColor={c3} />
-        </linearGradient>
-        <linearGradient id={ggid} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#C9A84C" />
-          <stop offset="100%" stopColor="#7A5A18" />
-        </linearGradient>
-      </defs>
-      <ellipse cx="55" cy="190" rx="32" ry="6" fill="rgba(201,168,76,.15)" />
-      <rect x="16" y="50" width="78" height="134" rx="6" fill={`url(#${gid})`} stroke="rgba(201,168,76,.35)" strokeWidth=".8" />
-      <rect x="19" y="55" width="6" height="122" rx="3" fill="rgba(201,168,76,.15)" />
-      <rect x="38" y="22" width="34" height="30" rx="4" fill={`url(#${gid})`} stroke="rgba(201,168,76,.25)" strokeWidth=".8" />
-      <rect x="30" y="6" width="50" height="18" rx="3" fill={`url(#${ggid})`} />
-      <rect x="34" y="7" width="9" height="14" rx="2" fill="rgba(255,255,255,.18)" />
-      <rect x="22" y="88" width="66" height="64" rx="2" fill="rgba(201,168,76,.07)" stroke="rgba(201,168,76,.3)" strokeWidth=".6" />
-      <text x="55" y="106" textAnchor="middle" fontFamily="Cinzel,serif" fontSize="7" fill="rgba(201,168,76,.95)" letterSpacing="1">V</text>
-      <line x1="35" y1="110" x2="75" y2="110" stroke="rgba(201,168,76,.25)" strokeWidth=".5" />
-      <text x="55" y="122" textAnchor="middle" fontFamily="Cinzel,serif" fontSize="6.5" fill="rgba(201,168,76,.9)" letterSpacing="3">VELORE</text>
-      <text x="55" y="135" textAnchor="middle" fontFamily="sans-serif" fontSize="4" fill="rgba(201,168,76,.55)" letterSpacing="2.5">{label}</text>
-      <line x1="35" y1="141" x2="75" y2="141" stroke="rgba(201,168,76,.2)" strokeWidth=".5" />
-      <text x="55" y="150" textAnchor="middle" fontFamily="sans-serif" fontSize="3.5" fill="rgba(201,168,76,.4)" letterSpacing="1.5">EAU DE PARFUM</text>
-    </svg>
+    <img
+      className="pbottle"
+      src={BOTTLE_IMAGES[variant]}
+      alt={label}
+      loading="lazy"
+      width={1024}
+      height={1024}
+    />
   );
 }
 
