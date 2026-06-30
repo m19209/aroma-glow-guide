@@ -334,7 +334,24 @@ function Index() {
                     </div>
                   </div>
                 </div>
-                <button className="pcard-buy" onClick={() => addToCart(p)}>Add to Cart — أضف للحقيبة</button>
+                {(() => {
+                  const line = cart.find((l) => l.product.id === p.id);
+                  if (!line) {
+                    return (
+                      <button className="pcard-buy" onClick={() => addToCart(p)}>
+                        <span className="pcard-buy-icon">+</span>
+                        <span>Add to Cart — أضف للحقيبة</span>
+                      </button>
+                    );
+                  }
+                  return (
+                    <div className="pcard-qty">
+                      <button onClick={() => setQty(p.id, line.qty - 1)} aria-label="−">−</button>
+                      <span>في الحقيبة: <strong>{line.qty}</strong></span>
+                      <button onClick={() => setQty(p.id, line.qty + 1)} aria-label="+">+</button>
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>
