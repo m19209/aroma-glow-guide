@@ -7,14 +7,24 @@ import imgOud from "@/assets/perfume-oud.jpg";
 import imgAzur from "@/assets/perfume-azur.jpg";
 import imgVert from "@/assets/perfume-vert.jpg";
 import imgVelvet from "@/assets/perfume-velvet.jpg";
+import imgAmbre from "@/assets/perfume-ambre.jpg";
+import imgBlanc from "@/assets/perfume-blanc.jpg";
+import imgSaphir from "@/assets/perfume-saphir.jpg";
+import imgEmeraude from "@/assets/perfume-emeraude.jpg";
 
-const BOTTLE_IMAGES: Record<"noir" | "rose" | "oud" | "azur" | "vert" | "velvet", string> = {
+type BottleKey = "noir" | "rose" | "oud" | "azur" | "vert" | "velvet" | "ambre" | "blanc" | "saphir" | "emeraude";
+
+const BOTTLE_IMAGES: Record<BottleKey, string> = {
   noir: imgNoir,
   rose: imgRose,
   oud: imgOud,
   azur: imgAzur,
   vert: imgVert,
   velvet: imgVelvet,
+  ambre: imgAmbre,
+  blanc: imgBlanc,
+  saphir: imgSaphir,
+  emeraude: imgEmeraude,
 };
 
 export const Route = createFileRoute("/")({
