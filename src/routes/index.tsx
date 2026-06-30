@@ -97,8 +97,11 @@ function Index() {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
-  
+
   const [filterCat, setFilterCat] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc" | "name">("featured");
+  const [promoInput, setPromoInput] = useState("");
+  const [promoApplied, setPromoApplied] = useState<{ code: string; pct: number } | null>(null);
 
   // Persist
   useEffect(() => {
@@ -188,8 +191,31 @@ function Index() {
       const q = searchQuery.trim().toLowerCase();
       list = list.filter((p) => p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q));
     }
-    return list;
-  }, [filterCat, searchQuery]);
+    const sorted = [...list];
+    if (sortBy === "price-asc") sorted.sort((a, b) => a.price - b.price);
+    else if (sortBy === "price-desc") sorted.sort((a, b) => b.price - a.price);
+    else if (sortBy === "name") sorted.sort((a, b) => a.name.localeCompare(b.name));
+    return sorted;
+  }, [filterCat, searchQuery, sortBy]);
+
+  const SHIPPING_FREE_AT = 500;
+  const PROMOS: Record<string, number> = { VELORE10: 10, LUXE20: 20, NOIR15: 15 };
+  const promoDiscount = promoApplied ? Math.round(cartTotal * (promoApplied.pct / 100)) : 0;
+  const shippingFee = cartTotal === 0 ? 0 : cartTotal - promoDiscount >= SHIPPING_FREE_AT ? 0 : 30;
+  const grandTotal = Math.max(0, cartTotal - promoDiscount + shippingFee);
+  const shippingProgress = Math.min(100, Math.round((cartTotal / SHIPPING_FREE_AT) * 100));
+
+  function applyPromo() {
+    const code = promoInput.trim().toUpperCase();
+    if (!code) return;
+    if (PROMOS[code]) {
+      setPromoApplied({ code, pct: PROMOS[code] });
+      showToast(`تم تطبيق كود الخصم ${code} (${PROMOS[code]}%)`);
+      setPromoInput("");
+    } else {
+      showToast("كود غير صالح");
+    }
+  }
 
   return (
     <>
@@ -201,8 +227,8 @@ function Index() {
           <span className="nav-logo-text">VELORE</span>
         </a>
         <ul className="nav-links">
-          <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>Collections</a></li>
           <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
+          <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Maison</a></li>
         </ul>
         <div className="nav-right">
           <button className="nav-icon-btn" aria-label="Search" onClick={() => setSearchOpen(true)}>
@@ -221,8 +247,8 @@ function Index() {
 
       {mobileOpen && (
         <div className="mobile-menu open">
-          <a href="#collections" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("collections"); }}>Collections</a>
           <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
+          <a href="#features" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("features"); }}>Maison</a>
         </div>
       )}
 
@@ -245,7 +271,7 @@ function Index() {
           <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
           <div className="hero-actions">
             <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }} className="btn-gold">اكتشف المجموعة</a>
-            <a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }} className="btn-outline-light">المجموعات</a>
+            <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }} className="btn-outline-light">لماذا VELORE</a>
           </div>
         </div>
         <div className="hero-scroll">
@@ -255,35 +281,24 @@ function Index() {
       </section>
 
 
-
-      {/* CATEGORIES */}
-      <section id="collections">
-        <div className="section-header">
-          <div className="section-eyebrow">Collections Exclusives</div>
-          <h2 className="section-title">اختر <em>عالمك</em></h2>
-        </div>
-        <div className="categories">
-          <div className="cat-grid">
-            {CATEGORIES.map((c) => (
-              <button
-                key={c.key}
-                className={`cat-card ${filterCat === c.key ? "active" : ""}`}
-                onClick={() => { setFilterCat(filterCat === c.key ? null : c.key); scrollTo("products"); }}
-                aria-pressed={filterCat === c.key}
-              >
-                <div className={`cat-bg ${c.bgClass}`} />
-                <div className="cat-glow" />
-                <div className="cat-icon">{c.icon}</div>
-                <div className="cat-info">
-                  <div className="cat-line" />
-                  <div className="cat-name">{c.name}</div>
-                  <div className="cat-count">{c.count}</div>
-                </div>
-              </button>
-            ))}
+      {/* TRUST / FEATURES STRIP */}
+      <section id="features" className="trust-strip">
+        {[
+          { icon: "🚚", title: "شحن مجاني", desc: "للطلبات فوق 500 ر.س" },
+          { icon: "🎁", title: "تغليف هدايا", desc: "بصندوق VELORE الفاخر" },
+          { icon: "↺", title: "إرجاع 14 يوم", desc: "ضمان الرضا الكامل" },
+          { icon: "✦", title: "أصلي 100%", desc: "مُصنّع في غراس · فرنسا" },
+        ].map((f) => (
+          <div key={f.title} className="trust-item">
+            <div className="trust-icon">{f.icon}</div>
+            <div>
+              <div className="trust-title">{f.title}</div>
+              <div className="trust-desc">{f.desc}</div>
+            </div>
           </div>
-        </div>
+        ))}
       </section>
+
 
       <div className="divider">
         <div className="div-line" />
@@ -300,9 +315,30 @@ function Index() {
         <div className="section-header products-header">
           <div className="section-eyebrow">Best Sellers</div>
           <h2 className="section-title">عطور <em>تُعرِّفك</em></h2>
-          {filterCat && (
-            <button className="filter-clear" onClick={() => setFilterCat(null)}>إزالة الفلتر ×</button>
-          )}
+        </div>
+        <div className="filter-bar">
+          <div className="filter-chips">
+            <button className={`chip ${!filterCat ? "active" : ""}`} onClick={() => setFilterCat(null)}>الكل</button>
+            {CATEGORIES.map((c) => (
+              <button
+                key={c.key}
+                className={`chip ${filterCat === c.key ? "active" : ""}`}
+                onClick={() => setFilterCat(filterCat === c.key ? null : c.key)}
+              >
+                <span className="chip-icon">{c.icon}</span>{c.name}
+              </button>
+            ))}
+          </div>
+          <div className="sort-wrap">
+            <label className="sort-label">ترتيب</label>
+            <select className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
+              <option value="featured">المُختار</option>
+              <option value="price-asc">السعر: من الأقل</option>
+              <option value="price-desc">السعر: من الأعلى</option>
+              <option value="name">الاسم (أ–ي)</option>
+            </select>
+            <span className="result-count">{visibleProducts.length} عطر</span>
+          </div>
         </div>
         <div className="products">
           <div className="products-grid">
@@ -441,9 +477,43 @@ function Index() {
         </div>
         {cart.length > 0 && (
           <div className="cart-foot">
-            <div className="cart-total">
-              <span>المجموع</span>
-              <strong>{cartTotal} ر.س</strong>
+            <div className="ship-progress">
+              {shippingFee === 0 ? (
+                <div className="ship-msg ship-ok">🎉 تأهلت للشحن المجاني!</div>
+              ) : (
+                <div className="ship-msg">أضف <strong>{SHIPPING_FREE_AT - cartTotal} ر.س</strong> للحصول على شحن مجاني</div>
+              )}
+              <div className="ship-bar"><div className="ship-fill" style={{ width: `${shippingProgress}%` }} /></div>
+            </div>
+
+            <div className="promo-row">
+              {promoApplied ? (
+                <div className="promo-applied">
+                  <span>✓ كود <strong>{promoApplied.code}</strong> — خصم {promoApplied.pct}%</span>
+                  <button onClick={() => setPromoApplied(null)} aria-label="إزالة">×</button>
+                </div>
+              ) : (
+                <>
+                  <input
+                    className="promo-input"
+                    placeholder="كود الخصم (جرب VELORE10)"
+                    value={promoInput}
+                    onChange={(e) => setPromoInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") applyPromo(); }}
+                  />
+                  <button className="promo-btn" onClick={applyPromo}>تطبيق</button>
+                </>
+              )}
+            </div>
+
+            <div className="cart-summary">
+              <div className="cart-row"><span>المجموع الفرعي</span><span>{cartTotal} ر.س</span></div>
+              {promoDiscount > 0 && <div className="cart-row discount"><span>الخصم</span><span>−{promoDiscount} ر.س</span></div>}
+              <div className="cart-row"><span>الشحن</span><span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ر.س`}</span></div>
+              <div className="cart-total">
+                <span>الإجمالي</span>
+                <strong>{grandTotal} ر.س</strong>
+              </div>
             </div>
             <button className="btn-gold" style={{ width: "100%" }} onClick={checkout}>إتمام الدفع</button>
           </div>
