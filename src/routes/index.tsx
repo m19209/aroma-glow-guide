@@ -210,7 +210,8 @@ function Index() {
           </button>
           <button className="nav-cart-btn" onClick={() => setCartOpen(true)}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
-            <span className="cart-label">الحقيبة ({cartCount})</span>
+            <span className="cart-label">الحقيبة</span>
+            {cartCount > 0 && <span key={cartCount} className="cart-count-badge">{cartCount}</span>}
           </button>
           <button className="nav-hamburger" aria-label="Menu" onClick={() => setMobileOpen((o) => !o)}>
             <span /><span /><span />
