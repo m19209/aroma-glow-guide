@@ -191,8 +191,31 @@ function Index() {
       const q = searchQuery.trim().toLowerCase();
       list = list.filter((p) => p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q));
     }
-    return list;
-  }, [filterCat, searchQuery]);
+    const sorted = [...list];
+    if (sortBy === "price-asc") sorted.sort((a, b) => a.price - b.price);
+    else if (sortBy === "price-desc") sorted.sort((a, b) => b.price - a.price);
+    else if (sortBy === "name") sorted.sort((a, b) => a.name.localeCompare(b.name));
+    return sorted;
+  }, [filterCat, searchQuery, sortBy]);
+
+  const SHIPPING_FREE_AT = 500;
+  const PROMOS: Record<string, number> = { VELORE10: 10, LUXE20: 20, NOIR15: 15 };
+  const promoDiscount = promoApplied ? Math.round(cartTotal * (promoApplied.pct / 100)) : 0;
+  const shippingFee = cartTotal === 0 ? 0 : cartTotal - promoDiscount >= SHIPPING_FREE_AT ? 0 : 30;
+  const grandTotal = Math.max(0, cartTotal - promoDiscount + shippingFee);
+  const shippingProgress = Math.min(100, Math.round((cartTotal / SHIPPING_FREE_AT) * 100));
+
+  function applyPromo() {
+    const code = promoInput.trim().toUpperCase();
+    if (!code) return;
+    if (PROMOS[code]) {
+      setPromoApplied({ code, pct: PROMOS[code] });
+      showToast(`تم تطبيق كود الخصم ${code} (${PROMOS[code]}%)`);
+      setPromoInput("");
+    } else {
+      showToast("كود غير صالح");
+    }
+  }
 
   return (
     <>
