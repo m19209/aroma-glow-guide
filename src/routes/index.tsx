@@ -97,8 +97,11 @@ function Index() {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
-  
+
   const [filterCat, setFilterCat] = useState<string | null>(null);
+  const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc" | "name">("featured");
+  const [promoInput, setPromoInput] = useState("");
+  const [promoApplied, setPromoApplied] = useState<{ code: string; pct: number } | null>(null);
 
   // Persist
   useEffect(() => {
