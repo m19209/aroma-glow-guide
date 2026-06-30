@@ -227,8 +227,8 @@ function Index() {
           <span className="nav-logo-text">VELORE</span>
         </a>
         <ul className="nav-links">
-          <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>Collections</a></li>
           <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
+          <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Maison</a></li>
         </ul>
         <div className="nav-right">
           <button className="nav-icon-btn" aria-label="Search" onClick={() => setSearchOpen(true)}>
