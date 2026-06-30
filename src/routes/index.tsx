@@ -180,6 +180,7 @@ function Index() {
         if (filterCat === "oriental") return f.includes("oriental");
         if (filterCat === "floral") return f.includes("floral");
         if (filterCat === "woody") return f.includes("oud") || f.includes("wood");
+        if (filterCat === "aquatic") return f.includes("aquatic");
         return true;
       });
     }
