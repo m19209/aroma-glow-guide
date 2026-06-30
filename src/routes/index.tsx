@@ -247,8 +247,8 @@ function Index() {
 
       {mobileOpen && (
         <div className="mobile-menu open">
-          <a href="#collections" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("collections"); }}>Collections</a>
           <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
+          <a href="#features" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("features"); }}>Maison</a>
         </div>
       )}
 
