@@ -281,35 +281,24 @@ function Index() {
       </section>
 
 
-
-      {/* CATEGORIES */}
-      <section id="collections">
-        <div className="section-header">
-          <div className="section-eyebrow">Collections Exclusives</div>
-          <h2 className="section-title">اختر <em>عالمك</em></h2>
-        </div>
-        <div className="categories">
-          <div className="cat-grid">
-            {CATEGORIES.map((c) => (
-              <button
-                key={c.key}
-                className={`cat-card ${filterCat === c.key ? "active" : ""}`}
-                onClick={() => { setFilterCat(filterCat === c.key ? null : c.key); scrollTo("products"); }}
-                aria-pressed={filterCat === c.key}
-              >
-                <div className={`cat-bg ${c.bgClass}`} />
-                <div className="cat-glow" />
-                <div className="cat-icon">{c.icon}</div>
-                <div className="cat-info">
-                  <div className="cat-line" />
-                  <div className="cat-name">{c.name}</div>
-                  <div className="cat-count">{c.count}</div>
-                </div>
-              </button>
-            ))}
+      {/* TRUST / FEATURES STRIP */}
+      <section id="features" className="trust-strip">
+        {[
+          { icon: "🚚", title: "شحن مجاني", desc: "للطلبات فوق 500 ر.س" },
+          { icon: "🎁", title: "تغليف هدايا", desc: "بصندوق VELORE الفاخر" },
+          { icon: "↺", title: "إرجاع 14 يوم", desc: "ضمان الرضا الكامل" },
+          { icon: "✦", title: "أصلي 100%", desc: "مُصنّع في غراس · فرنسا" },
+        ].map((f) => (
+          <div key={f.title} className="trust-item">
+            <div className="trust-icon">{f.icon}</div>
+            <div>
+              <div className="trust-title">{f.title}</div>
+              <div className="trust-desc">{f.desc}</div>
+            </div>
           </div>
-        </div>
+        ))}
       </section>
+
 
       <div className="divider">
         <div className="div-line" />
