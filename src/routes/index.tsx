@@ -477,9 +477,43 @@ function Index() {
         </div>
         {cart.length > 0 && (
           <div className="cart-foot">
-            <div className="cart-total">
-              <span>المجموع</span>
-              <strong>{cartTotal} ر.س</strong>
+            <div className="ship-progress">
+              {shippingFee === 0 ? (
+                <div className="ship-msg ship-ok">🎉 تأهلت للشحن المجاني!</div>
+              ) : (
+                <div className="ship-msg">أضف <strong>{SHIPPING_FREE_AT - cartTotal} ر.س</strong> للحصول على شحن مجاني</div>
+              )}
+              <div className="ship-bar"><div className="ship-fill" style={{ width: `${shippingProgress}%` }} /></div>
+            </div>
+
+            <div className="promo-row">
+              {promoApplied ? (
+                <div className="promo-applied">
+                  <span>✓ كود <strong>{promoApplied.code}</strong> — خصم {promoApplied.pct}%</span>
+                  <button onClick={() => setPromoApplied(null)} aria-label="إزالة">×</button>
+                </div>
+              ) : (
+                <>
+                  <input
+                    className="promo-input"
+                    placeholder="كود الخصم (جرب VELORE10)"
+                    value={promoInput}
+                    onChange={(e) => setPromoInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") applyPromo(); }}
+                  />
+                  <button className="promo-btn" onClick={applyPromo}>تطبيق</button>
+                </>
+              )}
+            </div>
+
+            <div className="cart-summary">
+              <div className="cart-row"><span>المجموع الفرعي</span><span>{cartTotal} ر.س</span></div>
+              {promoDiscount > 0 && <div className="cart-row discount"><span>الخصم</span><span>−{promoDiscount} ر.س</span></div>}
+              <div className="cart-row"><span>الشحن</span><span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ر.س`}</span></div>
+              <div className="cart-total">
+                <span>الإجمالي</span>
+                <strong>{grandTotal} ر.س</strong>
+              </div>
             </div>
             <button className="btn-gold" style={{ width: "100%" }} onClick={checkout}>إتمام الدفع</button>
           </div>
