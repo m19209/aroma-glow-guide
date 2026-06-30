@@ -66,9 +66,10 @@ const PRODUCTS: Product[] = [
 ];
 
 const CATEGORIES = [
-  { key: "oriental", name: "Oriental", count: "٢٤ عطراً", icon: "🌙", bgClass: "cat-oriental" },
-  { key: "floral", name: "Floral", count: "١٨ عطراً", icon: "🌸", bgClass: "cat-floral" },
-  { key: "woody", name: "Oud & Wood", count: "٣١ عطراً", icon: "🌿", bgClass: "cat-woody" },
+  { key: "oriental", name: "Oriental", count: "٣ عطور", icon: "🌙", bgClass: "cat-oriental" },
+  { key: "floral", name: "Floral", count: "٣ عطور", icon: "🌸", bgClass: "cat-floral" },
+  { key: "woody", name: "Oud & Wood", count: "٤ عطور", icon: "🌿", bgClass: "cat-woody" },
+  { key: "aquatic", name: "Aquatic", count: "٢ عطور", icon: "💧", bgClass: "cat-floral" },
 ];
 
 function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
