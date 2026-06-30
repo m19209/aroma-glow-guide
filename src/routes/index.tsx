@@ -315,9 +315,30 @@ function Index() {
         <div className="section-header products-header">
           <div className="section-eyebrow">Best Sellers</div>
           <h2 className="section-title">عطور <em>تُعرِّفك</em></h2>
-          {filterCat && (
-            <button className="filter-clear" onClick={() => setFilterCat(null)}>إزالة الفلتر ×</button>
-          )}
+        </div>
+        <div className="filter-bar">
+          <div className="filter-chips">
+            <button className={`chip ${!filterCat ? "active" : ""}`} onClick={() => setFilterCat(null)}>الكل</button>
+            {CATEGORIES.map((c) => (
+              <button
+                key={c.key}
+                className={`chip ${filterCat === c.key ? "active" : ""}`}
+                onClick={() => setFilterCat(filterCat === c.key ? null : c.key)}
+              >
+                <span className="chip-icon">{c.icon}</span>{c.name}
+              </button>
+            ))}
+          </div>
+          <div className="sort-wrap">
+            <label className="sort-label">ترتيب</label>
+            <select className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
+              <option value="featured">المُختار</option>
+              <option value="price-asc">السعر: من الأقل</option>
+              <option value="price-desc">السعر: من الأعلى</option>
+              <option value="name">الاسم (أ–ي)</option>
+            </select>
+            <span className="result-count">{visibleProducts.length} عطر</span>
+          </div>
         </div>
         <div className="products">
           <div className="products-grid">
