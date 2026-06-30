@@ -7,14 +7,24 @@ import imgOud from "@/assets/perfume-oud.jpg";
 import imgAzur from "@/assets/perfume-azur.jpg";
 import imgVert from "@/assets/perfume-vert.jpg";
 import imgVelvet from "@/assets/perfume-velvet.jpg";
+import imgAmbre from "@/assets/perfume-ambre.jpg";
+import imgBlanc from "@/assets/perfume-blanc.jpg";
+import imgSaphir from "@/assets/perfume-saphir.jpg";
+import imgEmeraude from "@/assets/perfume-emeraude.jpg";
 
-const BOTTLE_IMAGES: Record<"noir" | "rose" | "oud" | "azur" | "vert" | "velvet", string> = {
+type BottleKey = "noir" | "rose" | "oud" | "azur" | "vert" | "velvet" | "ambre" | "blanc" | "saphir" | "emeraude";
+
+const BOTTLE_IMAGES: Record<BottleKey, string> = {
   noir: imgNoir,
   rose: imgRose,
   oud: imgOud,
   azur: imgAzur,
   vert: imgVert,
   velvet: imgVelvet,
+  ambre: imgAmbre,
+  blanc: imgBlanc,
+  saphir: imgSaphir,
+  emeraude: imgEmeraude,
 };
 
 export const Route = createFileRoute("/")({
@@ -38,23 +48,28 @@ type Product = {
   oldPrice?: number;
   volume: string;
   badge?: { label: string; variant: "new" | "sale" | "hot" | "limited" };
-  bottle: "noir" | "rose" | "oud" | "azur" | "vert" | "velvet";
+  bottle: BottleKey;
   label: string;
 };
 
 const PRODUCTS: Product[] = [
   { id: "p1", name: "Noir Absolu", family: "Oriental · Wood", notes: "العنبر · المسك الأسود · خشب العود · الفانيليا", price: 495, volume: "50 ML", badge: { label: "NEW", variant: "new" }, bottle: "noir", label: "NOIR ABSOLU" },
   { id: "p2", name: "Rose Royale", family: "Floral · Musky", notes: "وردة الطائف · الياسمين · المسك الأبيض · الخوخ", price: 520, oldPrice: 650, volume: "75 ML", badge: { label: "BEST SELLER", variant: "hot" }, bottle: "rose", label: "ROSE ROYALE" },
-  { id: "p3", name: "Oud Impériale", family: "Oud · Amber", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 890, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD IMPERIALE" },
+  { id: "p3", name: "Oud Impériale", family: "Oriental · Oud", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 890, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD IMPERIALE" },
   { id: "p4", name: "Azur Nuit", family: "Aquatic · Fresh", notes: "الليمون · بيرغامو · الهواء البحري · السيدر", price: 304, oldPrice: 380, volume: "50 ML", badge: { label: "SALE 20%", variant: "sale" }, bottle: "azur", label: "AZUR NUIT" },
-  { id: "p5", name: "Vert Sacré", family: "Green · Woody", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 420, volume: "75 ML", bottle: "vert", label: "VERT SACRÉ" },
+  { id: "p5", name: "Vert Sacré", family: "Woody · Green", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 420, volume: "75 ML", bottle: "vert", label: "VERT SACRÉ" },
   { id: "p6", name: "Velvet Rose", family: "Floral · Luxe", notes: "الوردة الجورجية · الفراولة · المسك الوردي · الباتشولي", price: 720, volume: "100 ML", badge: { label: "NEW", variant: "new" }, bottle: "velvet", label: "VELVET ROSE" },
+  { id: "p7", name: "Ambre d'Or", family: "Oriental · Amber", notes: "الكهرمان · البخور · التبغ الحلو · الفانيليا بوربون", price: 610, volume: "75 ML", badge: { label: "HOT", variant: "hot" }, bottle: "ambre", label: "AMBRE D'OR" },
+  { id: "p8", name: "Blanc Pur", family: "Floral · White", notes: "الفل · زهر البرتقال · المسك الأبيض · خشب الكشمير", price: 380, volume: "50 ML", bottle: "blanc", label: "BLANC PUR" },
+  { id: "p9", name: "Saphir Bleu", family: "Aquatic · Woody", notes: "الخزامى البحرية · الأمبرغريس · خشب الأرز · المسك", price: 560, oldPrice: 700, volume: "100 ML", badge: { label: "SALE", variant: "sale" }, bottle: "saphir", label: "SAPHIR BLEU" },
+  { id: "p10", name: "Émeraude", family: "Woody · Green", notes: "أوراق التين · الفيتيفر · الباتشولي · خشب الغوياك", price: 640, volume: "75 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "emeraude", label: "EMERAUDE" },
 ];
 
 const CATEGORIES = [
-  { key: "oriental", name: "Oriental", count: "٢٤ عطراً", icon: "🌙", bgClass: "cat-oriental" },
-  { key: "floral", name: "Floral", count: "١٨ عطراً", icon: "🌸", bgClass: "cat-floral" },
-  { key: "woody", name: "Oud & Wood", count: "٣١ عطراً", icon: "🌿", bgClass: "cat-woody" },
+  { key: "oriental", name: "Oriental", count: "٣ عطور", icon: "🌙", bgClass: "cat-oriental" },
+  { key: "floral", name: "Floral", count: "٣ عطور", icon: "🌸", bgClass: "cat-floral" },
+  { key: "woody", name: "Oud & Wood", count: "٤ عطور", icon: "🌿", bgClass: "cat-woody" },
+  { key: "aquatic", name: "Aquatic", count: "٢ عطور", icon: "💧", bgClass: "cat-floral" },
 ];
 
 function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
@@ -165,6 +180,7 @@ function Index() {
         if (filterCat === "oriental") return f.includes("oriental");
         if (filterCat === "floral") return f.includes("floral");
         if (filterCat === "woody") return f.includes("oud") || f.includes("wood");
+        if (filterCat === "aquatic") return f.includes("aquatic");
         return true;
       });
     }
@@ -194,7 +210,8 @@ function Index() {
           </button>
           <button className="nav-cart-btn" onClick={() => setCartOpen(true)}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
-            <span className="cart-label">الحقيبة ({cartCount})</span>
+            <span className="cart-label">الحقيبة</span>
+            {cartCount > 0 && <span key={cartCount} className="cart-count-badge">{cartCount}</span>}
           </button>
           <button className="nav-hamburger" aria-label="Menu" onClick={() => setMobileOpen((o) => !o)}>
             <span /><span /><span />
@@ -318,7 +335,24 @@ function Index() {
                     </div>
                   </div>
                 </div>
-                <button className="pcard-buy" onClick={() => addToCart(p)}>Add to Cart — أضف للحقيبة</button>
+                {(() => {
+                  const line = cart.find((l) => l.product.id === p.id);
+                  if (!line) {
+                    return (
+                      <button className="pcard-buy" onClick={() => addToCart(p)}>
+                        <span className="pcard-buy-icon">+</span>
+                        <span>Add to Cart — أضف للحقيبة</span>
+                      </button>
+                    );
+                  }
+                  return (
+                    <div className="pcard-qty">
+                      <button onClick={() => setQty(p.id, line.qty - 1)} aria-label="−">−</button>
+                      <span>في الحقيبة: <strong>{line.qty}</strong></span>
+                      <button onClick={() => setQty(p.id, line.qty + 1)} aria-label="+">+</button>
+                    </div>
+                  );
+                })()}
               </div>
             ))}
           </div>
