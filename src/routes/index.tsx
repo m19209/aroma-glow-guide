@@ -271,7 +271,7 @@ function Index() {
           <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
           <div className="hero-actions">
             <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }} className="btn-gold">اكتشف المجموعة</a>
-            <a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }} className="btn-outline-light">المجموعات</a>
+            <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }} className="btn-outline-light">لماذا VELORE</a>
           </div>
         </div>
         <div className="hero-scroll">
