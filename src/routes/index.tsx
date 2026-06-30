@@ -48,17 +48,21 @@ type Product = {
   oldPrice?: number;
   volume: string;
   badge?: { label: string; variant: "new" | "sale" | "hot" | "limited" };
-  bottle: "noir" | "rose" | "oud" | "azur" | "vert" | "velvet";
+  bottle: BottleKey;
   label: string;
 };
 
 const PRODUCTS: Product[] = [
   { id: "p1", name: "Noir Absolu", family: "Oriental · Wood", notes: "العنبر · المسك الأسود · خشب العود · الفانيليا", price: 495, volume: "50 ML", badge: { label: "NEW", variant: "new" }, bottle: "noir", label: "NOIR ABSOLU" },
   { id: "p2", name: "Rose Royale", family: "Floral · Musky", notes: "وردة الطائف · الياسمين · المسك الأبيض · الخوخ", price: 520, oldPrice: 650, volume: "75 ML", badge: { label: "BEST SELLER", variant: "hot" }, bottle: "rose", label: "ROSE ROYALE" },
-  { id: "p3", name: "Oud Impériale", family: "Oud · Amber", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 890, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD IMPERIALE" },
+  { id: "p3", name: "Oud Impériale", family: "Oriental · Oud", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 890, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD IMPERIALE" },
   { id: "p4", name: "Azur Nuit", family: "Aquatic · Fresh", notes: "الليمون · بيرغامو · الهواء البحري · السيدر", price: 304, oldPrice: 380, volume: "50 ML", badge: { label: "SALE 20%", variant: "sale" }, bottle: "azur", label: "AZUR NUIT" },
-  { id: "p5", name: "Vert Sacré", family: "Green · Woody", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 420, volume: "75 ML", bottle: "vert", label: "VERT SACRÉ" },
+  { id: "p5", name: "Vert Sacré", family: "Woody · Green", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 420, volume: "75 ML", bottle: "vert", label: "VERT SACRÉ" },
   { id: "p6", name: "Velvet Rose", family: "Floral · Luxe", notes: "الوردة الجورجية · الفراولة · المسك الوردي · الباتشولي", price: 720, volume: "100 ML", badge: { label: "NEW", variant: "new" }, bottle: "velvet", label: "VELVET ROSE" },
+  { id: "p7", name: "Ambre d'Or", family: "Oriental · Amber", notes: "الكهرمان · البخور · التبغ الحلو · الفانيليا بوربون", price: 610, volume: "75 ML", badge: { label: "HOT", variant: "hot" }, bottle: "ambre", label: "AMBRE D'OR" },
+  { id: "p8", name: "Blanc Pur", family: "Floral · White", notes: "الفل · زهر البرتقال · المسك الأبيض · خشب الكشمير", price: 380, volume: "50 ML", bottle: "blanc", label: "BLANC PUR" },
+  { id: "p9", name: "Saphir Bleu", family: "Aquatic · Woody", notes: "الخزامى البحرية · الأمبرغريس · خشب الأرز · المسك", price: 560, oldPrice: 700, volume: "100 ML", badge: { label: "SALE", variant: "sale" }, bottle: "saphir", label: "SAPHIR BLEU" },
+  { id: "p10", name: "Émeraude", family: "Woody · Green", notes: "أوراق التين · الفيتيفر · الباتشولي · خشب الغوياك", price: 640, volume: "75 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "emeraude", label: "EMERAUDE" },
 ];
 
 const CATEGORIES = [
