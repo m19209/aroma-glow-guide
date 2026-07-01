@@ -34,20 +34,27 @@ jobs:
 
       - name: Build project
         env:
-          NITRO_PRESET: github_pages
+          VITE_BASE_PATH: "/aroma-glow-guide/"
         run: npm run build
 
-      - name: Locate build artifacts
+      - name: Locate and prepare build artifacts
         run: |
           if [ -d ".output/public" ]; then
             echo "OUTPUT_DIR=.output/public" >> $GITHUB_ENV
+            DIR=".output/public"
           elif [ -d "dist" ]; then
             echo "OUTPUT_DIR=dist" >> $GITHUB_ENV
+            DIR="dist"
           elif [ -d "build" ]; then
             echo "OUTPUT_DIR=build" >> $GITHUB_ENV
+            DIR="build"
           else
             echo "Could not find build folder!"
             exit 1
+          fi
+          touch "$DIR/.nojekyll"
+          if [ -f "$DIR/index.html" ]; then
+            cp "$DIR/index.html" "$DIR/404.html"
           fi
 
       - name: Setup Pages
