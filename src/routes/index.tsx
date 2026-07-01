@@ -66,10 +66,10 @@ const PRODUCTS: Product[] = [
 ];
 
 const CATEGORIES = [
-  { key: "oriental", name: "Oriental", count: "٣ عطور", icon: "🌙", bgClass: "cat-oriental" },
-  { key: "floral", name: "Floral", count: "٣ عطور", icon: "🌸", bgClass: "cat-floral" },
-  { key: "woody", name: "Oud & Wood", count: "٤ عطور", icon: "🌿", bgClass: "cat-woody" },
-  { key: "aquatic", name: "Aquatic", count: "٢ عطور", icon: "💧", bgClass: "cat-floral" },
+  { key: "oriental", name: "Oriental", count: "٣ عطور", icon: "✦", bgClass: "cat-oriental" },
+  { key: "floral", name: "Floral", count: "٣ عطور", icon: "✿", bgClass: "cat-floral" },
+  { key: "woody", name: "Oud & Wood", count: "٤ عطور", icon: "◈", bgClass: "cat-woody" },
+  { key: "aquatic", name: "Aquatic", count: "٢ عطور", icon: "✧", bgClass: "cat-aquatic" },
 ];
 
 function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
@@ -131,6 +131,19 @@ function Index() {
   useEffect(() => {
     document.body.style.overflow = cartOpen || mobileOpen || searchOpen ? "hidden" : "";
   }, [cartOpen, mobileOpen, searchOpen]);
+
+  // Keyboard accessibility: Escape key closes drawers and modals
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setCartOpen(false);
+        setSearchOpen(false);
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   const cartCount = cart.reduce((a, l) => a + l.qty, 0);
   const cartTotal = cart.reduce((a, l) => a + l.qty * l.product.price, 0);
@@ -260,9 +273,10 @@ function Index() {
         </div>
       )}
 
+      <main id="main-content">
       {/* HERO */}
       <section className="hero">
-        <video className="hero-video" autoPlay muted loop playsInline preload="auto">
+        <video className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505" }}>
           <source src="https://www.dropbox.com/scl/fi/otbgvp5emmg3ulf020xxx/Perfume-Blender-3D-Animation-b3d-blender-houdini-cgi-productads-perfume-blender3D.mp4?rlkey=g92ylnm82zb4i3z6gq8gtvzci&st=82jej8qb&dl=1" type="video/mp4" />
         </video>
         <div className="hero-overlay" />
@@ -434,10 +448,11 @@ function Index() {
           {["VISA", "MASTER", "MADA", "APPLE PAY"].map((c) => <span key={c} className="pay-chip">{c}</span>)}
         </div>
       </div>
+      </main>
 
       {/* CART DRAWER */}
       <div className={`drawer-backdrop ${cartOpen ? "open" : ""}`} onClick={() => setCartOpen(false)} />
-      <aside className={`cart-drawer ${cartOpen ? "open" : ""}`} aria-hidden={!cartOpen}>
+      <aside className={`cart-drawer ${cartOpen ? "open" : ""}`} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سلة التسوق">
         <div className="cart-head">
           <h3>الحقيبة <span>({cartCount})</span></h3>
           <button className="cart-close" onClick={() => setCartOpen(false)} aria-label="إغلاق">×</button>
@@ -516,7 +531,7 @@ function Index() {
       {/* SEARCH MODAL */}
       <div className={`drawer-backdrop ${searchOpen ? "open" : ""}`} onClick={() => setSearchOpen(false)} />
       {searchOpen && (
-        <div className="search-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="search-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="نافذة البحث">
           <input
             autoFocus
             className="search-input"
