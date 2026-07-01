@@ -281,23 +281,8 @@ function Index() {
       </section>
 
 
-      {/* TRUST / FEATURES STRIP */}
-      <section id="features" className="trust-strip">
-        {[
-          { icon: "🚚", title: "شحن مجاني", desc: "للطلبات فوق 500 ر.س" },
-          { icon: "🎁", title: "تغليف هدايا", desc: "بصندوق VELORE الفاخر" },
-          { icon: "↺", title: "إرجاع 14 يوم", desc: "ضمان الرضا الكامل" },
-          { icon: "✦", title: "أصلي 100%", desc: "مُصنّع في غراس · فرنسا" },
-        ].map((f) => (
-          <div key={f.title} className="trust-item">
-            <div className="trust-icon">{f.icon}</div>
-            <div>
-              <div className="trust-title">{f.title}</div>
-              <div className="trust-desc">{f.desc}</div>
-            </div>
-          </div>
-        ))}
-      </section>
+
+
 
 
       <div className="divider">
