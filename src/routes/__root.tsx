@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Maison de Parfum — عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@VeloreParfums" },
+      { name: "twitter:site", content: "@VELOREParfums" },
       { name: "twitter:title", content: "VELORE — Eau de Parfum" },
       { name: "twitter:description", content: "Maison de Parfum — عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/3292e5ed-6db8-48eb-b963-62ec9b70a9ec/id-preview-5616a25b--770eedcd-543e-461e-909b-b1086e89f1cf.lovable.app-1782734182741.png" },
