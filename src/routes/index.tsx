@@ -140,6 +140,7 @@ function Index() {
         setCartOpen(false);
         setSearchOpen(false);
         setMobileOpen(false);
+        setDetailProduct(null);
       }
     };
     window.addEventListener("keydown", onKeyDown);
