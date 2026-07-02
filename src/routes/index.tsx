@@ -564,6 +564,41 @@ function Index() {
         </div>
       )}
 
+      {/* PRODUCT DETAIL MODAL */}
+      {detailProduct && (
+        <div className="pdetail-backdrop open" onClick={() => setDetailProduct(null)}>
+          <div className="pdetail-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <button className="pdetail-close" onClick={() => setDetailProduct(null)} aria-label="إغلاق">×</button>
+            <div className="pdetail-img">
+              {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
+              <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
+            </div>
+            <div className="pdetail-body">
+              <div className="pfamily">{detailProduct.family}</div>
+              <h3 className="pdetail-name">{detailProduct.name}</h3>
+              <div className="pdetail-vol">{detailProduct.volume}</div>
+              <p className="pdetail-notes">{detailProduct.notes}</p>
+              <div className="pdetail-price">
+                {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice}</span>}
+                <span className="pprice">{detailProduct.price} ر.س</span>
+              </div>
+              <div className="pdetail-actions">
+                <button
+                  className="btn-gold"
+                  style={{ flex: 1 }}
+                  onClick={() => { addToCart(detailProduct); setDetailProduct(null); }}
+                >شراء الآن — Add to Cart</button>
+                <button
+                  className={`pwish ${wishlist.has(detailProduct.id) ? "active" : ""}`}
+                  onClick={() => toggleWish(detailProduct.id)}
+                  aria-label="المفضلة"
+                >{wishlist.has(detailProduct.id) ? "♥" : "♡"}</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* TOAST */}
       {toast && <div className="toast">{toast}</div>}
     </>
