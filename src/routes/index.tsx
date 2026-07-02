@@ -97,6 +97,7 @@ function Index() {
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
+  const [detailProduct, setDetailProduct] = useState<Product | null>(null);
 
   const [filterCat, setFilterCat] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc" | "name">("featured");
@@ -129,8 +130,8 @@ function Index() {
 
   // Lock body scroll when cart open
   useEffect(() => {
-    document.body.style.overflow = cartOpen || mobileOpen || searchOpen ? "hidden" : "";
-  }, [cartOpen, mobileOpen, searchOpen]);
+    document.body.style.overflow = cartOpen || mobileOpen || searchOpen || detailProduct ? "hidden" : "";
+  }, [cartOpen, mobileOpen, searchOpen, detailProduct]);
 
   // Keyboard accessibility: Escape key closes drawers and modals
   useEffect(() => {
@@ -139,6 +140,7 @@ function Index() {
         setCartOpen(false);
         setSearchOpen(false);
         setMobileOpen(false);
+        setDetailProduct(null);
       }
     };
     window.addEventListener("keydown", onKeyDown);
@@ -237,7 +239,7 @@ function Index() {
       {/* NAV */}
       <nav className={scrolled ? "scrolled" : ""}>
         <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="nav-logo">
-          <span className="nav-logo-text">VELORE</span>
+          <span className="nav-logo-text">White</span>
         </a>
         <ul className="nav-links">
           <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
@@ -353,7 +355,14 @@ function Index() {
               <div className="empty-state">لا توجد عطور تطابق بحثك.</div>
             )}
             {visibleProducts.map((p) => (
-              <div className="pcard" key={p.id}>
+              <div
+                className="pcard"
+                key={p.id}
+                onClick={() => setDetailProduct(p)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setDetailProduct(p); } }}
+              >
                 {p.badge && <span className={`pbadge badge-${p.badge.variant}`}>{p.badge.label}</span>}
                 <div className="pimg-wrap">
                   <div className="pimg-glow" />
@@ -372,7 +381,7 @@ function Index() {
                       <span className="pvol">{p.volume}</span>
                       <button
                         className={`pwish ${wishlist.has(p.id) ? "active" : ""}`}
-                        onClick={() => toggleWish(p.id)}
+                        onClick={(e) => { e.stopPropagation(); toggleWish(p.id); }}
                         aria-label="المفضلة"
                       >{wishlist.has(p.id) ? "♥" : "♡"}</button>
                     </div>
@@ -382,17 +391,17 @@ function Index() {
                   const line = cart.find((l) => l.product.id === p.id);
                   if (!line) {
                     return (
-                      <button className="pcard-buy" onClick={() => addToCart(p)}>
+                      <button className="pcard-buy" onClick={(e) => { e.stopPropagation(); addToCart(p); }}>
                         <span className="pcard-buy-icon">+</span>
                         <span>Add to Cart — أضف للحقيبة</span>
                       </button>
                     );
                   }
                   return (
-                    <div className="pcard-qty">
-                      <button onClick={() => setQty(p.id, line.qty - 1)} aria-label="−">−</button>
+                    <div className="pcard-qty" onClick={(e) => e.stopPropagation()}>
+                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty - 1); }} aria-label="−">−</button>
                       <span>في الحقيبة: <strong>{line.qty}</strong></span>
-                      <button onClick={() => setQty(p.id, line.qty + 1)} aria-label="+">+</button>
+                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty + 1); }} aria-label="+">+</button>
                     </div>
                   );
                 })()}
@@ -552,6 +561,41 @@ function Index() {
             ))}
           </div>
           <button className="search-close" onClick={() => setSearchOpen(false)}>إغلاق</button>
+        </div>
+      )}
+
+      {/* PRODUCT DETAIL MODAL */}
+      {detailProduct && (
+        <div className="pdetail-backdrop open" onClick={() => setDetailProduct(null)}>
+          <div className="pdetail-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <button className="pdetail-close" onClick={() => setDetailProduct(null)} aria-label="إغلاق">×</button>
+            <div className="pdetail-img">
+              {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
+              <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
+            </div>
+            <div className="pdetail-body">
+              <div className="pfamily">{detailProduct.family}</div>
+              <h3 className="pdetail-name">{detailProduct.name}</h3>
+              <div className="pdetail-vol">{detailProduct.volume}</div>
+              <p className="pdetail-notes">{detailProduct.notes}</p>
+              <div className="pdetail-price">
+                {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice}</span>}
+                <span className="pprice">{detailProduct.price} ر.س</span>
+              </div>
+              <div className="pdetail-actions">
+                <button
+                  className="btn-gold"
+                  style={{ flex: 1 }}
+                  onClick={() => { addToCart(detailProduct); setDetailProduct(null); }}
+                >شراء الآن — Add to Cart</button>
+                <button
+                  className={`pwish ${wishlist.has(detailProduct.id) ? "active" : ""}`}
+                  onClick={() => toggleWish(detailProduct.id)}
+                  aria-label="المفضلة"
+                >{wishlist.has(detailProduct.id) ? "♥" : "♡"}</button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
