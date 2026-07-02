@@ -237,7 +237,7 @@ function Index() {
       {/* NAV */}
       <nav className={scrolled ? "scrolled" : ""}>
         <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="nav-logo">
-          <span className="nav-logo-text">VELORE</span>
+          <span className="nav-logo-text">White</span>
         </a>
         <ul className="nav-links">
           <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
