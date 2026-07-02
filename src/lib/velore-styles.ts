@@ -65,4 +65,73 @@ nav.scrolled .nav-search { border-color: var(--border2); background: rgba(0,0,0,
 .nav-search input { flex: 1; min-width: 0; background: transparent; border: none; outline: none; color: inherit; font-family: Cairo, sans-serif; font-size: .82rem; }
 .nav-search input::placeholder { color: currentColor; opacity: .6; }
 @media (max-width: 720px) { .nav-search { width: 140px; } .nav-search:focus-within { width: 160px; } }
+
+/* === Smooth global polish === */
+* { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.pcard, .btn-gold, .nav-cart-btn, .pcard-buy, .chip, .cat-card, .pwish { transform: translateZ(0); }
+.pcard { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+/* === Product detail modal === */
+.pdetail-backdrop {
+  position: fixed; inset: 0; z-index: 500;
+  background: rgba(10,8,6,.72); backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 0; pointer-events: none;
+  transition: opacity .28s ease;
+}
+.pdetail-backdrop.open { opacity: 1; pointer-events: auto; }
+.pdetail-modal {
+  position: relative;
+  width: 100%; max-width: 880px; max-height: 92vh; overflow: hidden;
+  background: var(--white); border: 1px solid var(--border2); border-radius: 6px;
+  box-shadow: 0 40px 120px rgba(0,0,0,.5), 0 0 0 1px rgba(201,168,76,.15);
+  display: grid; grid-template-columns: 1.05fr 1fr;
+  animation: pdetail-in .38s cubic-bezier(.2,.9,.25,1.05);
+}
+@keyframes pdetail-in {
+  from { opacity: 0; transform: translateY(24px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.pdetail-close {
+  position: absolute; top: 14px; left: 14px; z-index: 3;
+  width: 38px; height: 38px; border-radius: 50%;
+  background: rgba(255,255,255,.92); border: 1px solid var(--border2);
+  color: var(--charcoal); font-size: 1.4rem; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .2s, transform .15s, color .2s;
+}
+.pdetail-close:hover { background: var(--gold); color: var(--white); transform: rotate(90deg); }
+.pdetail-img {
+  position: relative;
+  background: linear-gradient(160deg, var(--pearl), var(--pearl2));
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px; min-height: 340px;
+}
+.pdetail-img .pbottle { width: 100% !important; height: 100% !important; max-height: 460px; object-fit: contain; }
+.pdetail-img .pbadge { position: absolute; top: 18px; right: 18px; }
+.pdetail-body {
+  padding: 44px 40px; display: flex; flex-direction: column; gap: 14px;
+  overflow-y: auto;
+}
+.pdetail-body .pfamily { font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold-deep); }
+.pdetail-name { font-family: 'Cinzel', serif; font-size: 2rem; letter-spacing: .06em; color: var(--charcoal); font-weight: 600; line-height: 1.15; }
+.pdetail-vol { font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: .3em; color: var(--muted); }
+.pdetail-notes { font-size: .92rem; line-height: 1.9; color: var(--text); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 16px 0; }
+.pdetail-price { display: flex; align-items: baseline; gap: 12px; }
+.pdetail-price .pprice { font-family: 'Cinzel', serif; font-size: 1.6rem; color: var(--gold-deep); font-weight: 700; }
+.pdetail-price .pprice-old { font-size: 1rem; color: var(--muted2); text-decoration: line-through; }
+.pdetail-actions { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.pdetail-actions .pwish { width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--border2); background: var(--white); font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); }
+.pdetail-actions .pwish.active { color: #d33a5b; border-color: #d33a5b; }
+@media (max-width: 780px) {
+  .pdetail-modal { grid-template-columns: 1fr; max-height: 94vh; overflow-y: auto; }
+  .pdetail-img { min-height: 260px; padding: 30px; }
+  .pdetail-body { padding: 28px 24px; }
+  .pdetail-name { font-size: 1.5rem; }
+}
 `;
