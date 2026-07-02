@@ -637,6 +637,7 @@ function Index() {
               <h3 className="pdetail-name">{detailProduct.name}</h3>
               <div className="pdetail-vol">{detailProduct.volume}</div>
               <p className="pdetail-notes">{detailProduct.notes}</p>
+              <p className="pdetail-story">{detailProduct.story}</p>
               <div className="pdetail-price">
                 {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice}</span>}
                 <span className="pprice">{detailProduct.price} ر.س</span>
