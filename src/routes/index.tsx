@@ -130,8 +130,8 @@ function Index() {
 
   // Lock body scroll when cart open
   useEffect(() => {
-    document.body.style.overflow = cartOpen || mobileOpen || searchOpen ? "hidden" : "";
-  }, [cartOpen, mobileOpen, searchOpen]);
+    document.body.style.overflow = cartOpen || mobileOpen || searchOpen || detailProduct ? "hidden" : "";
+  }, [cartOpen, mobileOpen, searchOpen, detailProduct]);
 
   // Keyboard accessibility: Escape key closes drawers and modals
   useEffect(() => {
