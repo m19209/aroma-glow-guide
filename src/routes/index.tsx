@@ -50,19 +50,59 @@ type Product = {
   badge?: { label: string; variant: "new" | "sale" | "hot" | "limited" };
   bottle: BottleKey;
   label: string;
+  concentration: string;
+  longevity: string;
+  sillage: string;
+  occasion: string;
+  gender: string;
+  origin: string;
+  topNotes: string;
+  heartNotes: string;
+  baseNotes: string;
+  story: string;
 };
 
 const PRODUCTS: Product[] = [
-  { id: "p1", name: "Noir Absolu", family: "Oriental · Wood", notes: "العنبر · المسك الأسود · خشب العود · الفانيليا", price: 495, volume: "50 ML", badge: { label: "NEW", variant: "new" }, bottle: "noir", label: "NOIR ABSOLU" },
-  { id: "p2", name: "Rose Royale", family: "Floral · Musky", notes: "وردة الطائف · الياسمين · المسك الأبيض · الخوخ", price: 520, oldPrice: 650, volume: "75 ML", badge: { label: "BEST SELLER", variant: "hot" }, bottle: "rose", label: "ROSE ROYALE" },
-  { id: "p3", name: "Oud Impériale", family: "Oriental · Oud", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 890, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD IMPERIALE" },
-  { id: "p4", name: "Azur Nuit", family: "Aquatic · Fresh", notes: "الليمون · بيرغامو · الهواء البحري · السيدر", price: 304, oldPrice: 380, volume: "50 ML", badge: { label: "SALE 20%", variant: "sale" }, bottle: "azur", label: "AZUR NUIT" },
-  { id: "p5", name: "Vert Sacré", family: "Woody · Green", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 420, volume: "75 ML", bottle: "vert", label: "VERT SACRÉ" },
-  { id: "p6", name: "Velvet Rose", family: "Floral · Luxe", notes: "الوردة الجورجية · الفراولة · المسك الوردي · الباتشولي", price: 720, volume: "100 ML", badge: { label: "NEW", variant: "new" }, bottle: "velvet", label: "VELVET ROSE" },
-  { id: "p7", name: "Ambre d'Or", family: "Oriental · Amber", notes: "الكهرمان · البخور · التبغ الحلو · الفانيليا بوربون", price: 610, volume: "75 ML", badge: { label: "HOT", variant: "hot" }, bottle: "ambre", label: "AMBRE D'OR" },
-  { id: "p8", name: "Blanc Pur", family: "Floral · White", notes: "الفل · زهر البرتقال · المسك الأبيض · خشب الكشمير", price: 380, volume: "50 ML", bottle: "blanc", label: "BLANC PUR" },
-  { id: "p9", name: "Saphir Bleu", family: "Aquatic · Woody", notes: "الخزامى البحرية · الأمبرغريس · خشب الأرز · المسك", price: 560, oldPrice: 700, volume: "100 ML", badge: { label: "SALE", variant: "sale" }, bottle: "saphir", label: "SAPHIR BLEU" },
-  { id: "p10", name: "Émeraude", family: "Woody · Green", notes: "أوراق التين · الفيتيفر · الباتشولي · خشب الغوياك", price: 640, volume: "75 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "emeraude", label: "EMERAUDE" },
+  { id: "p1", name: "Noir Absolu", family: "Oriental · Wood", notes: "العنبر · المسك الأسود · خشب العود · الفانيليا", price: 495, volume: "50 ML", badge: { label: "NEW", variant: "new" }, bottle: "noir", label: "NOIR ABSOLU",
+    concentration: "Extrait de Parfum 30%", longevity: "‏10–12 ساعة", sillage: "قوي", occasion: "المساء · المناسبات", gender: "للجنسين", origin: "Grasse, France",
+    topNotes: "الفلفل الأسود · البرغموت الإيطالي", heartNotes: "خشب العود · جلد الأسويد · التوابل الشرقية", baseNotes: "العنبر الأسود · الفانيليا بوربون · المسك الأبيض",
+    story: "توقيع ليلي غامض وفاخر — للحظات التي تُروى همساً." },
+  { id: "p2", name: "Rose Royale", family: "Floral · Musky", notes: "وردة الطائف · الياسمين · المسك الأبيض · الخوخ", price: 520, oldPrice: 650, volume: "75 ML", badge: { label: "BEST SELLER", variant: "hot" }, bottle: "rose", label: "ROSE ROYALE",
+    concentration: "Eau de Parfum 20%", longevity: "‏8–10 ساعات", sillage: "متوسط–قوي", occasion: "طوال اليوم · المناسبات", gender: "نسائي", origin: "Taïf, Arabie Saoudite",
+    topNotes: "الخوخ الأبيض · البرغموت · الفلفل الوردي", heartNotes: "وردة الطائف · الياسمين السامباك · الفاوانيا", baseNotes: "المسك الأبيض · الباتشولي المخملي · العنبر",
+    story: "باقة ملكية من أثمن ورود الطائف — أنوثة كلاسيكية بلمسة عصرية." },
+  { id: "p3", name: "Oud Impériale", family: "Oriental · Oud", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 890, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD IMPERIALE",
+    concentration: "Extrait de Parfum 35%", longevity: "‏12+ ساعة", sillage: "قوي جداً", occasion: "المناسبات الفاخرة", gender: "للجنسين", origin: "Assam, Inde",
+    topNotes: "الزعفران · العنبر الأحمر · القرنفل", heartNotes: "العود الهندي المُعتَّق · وردة البلغار · خشب الصندل", baseNotes: "المسك الملكي · الكهرمان · جلد العود",
+    story: "طبعة محدودة من أندر أنواع العود الهندي — روعة تُورَث." },
+  { id: "p4", name: "Azur Nuit", family: "Aquatic · Fresh", notes: "الليمون · بيرغامو · الهواء البحري · السيدر", price: 304, oldPrice: 380, volume: "50 ML", badge: { label: "SALE 20%", variant: "sale" }, bottle: "azur", label: "AZUR NUIT",
+    concentration: "Eau de Toilette 12%", longevity: "‏6–8 ساعات", sillage: "خفيف–متوسط", occasion: "الصيف · النهار", gender: "رجالي", origin: "Côte d'Azur, France",
+    topNotes: "ليمون صقلي · برغموت كالابريا · النعناع", heartNotes: "الملوحة البحرية · الميرمية · اللافندر", baseNotes: "خشب السيدر · المسك المائي · الأمبرغريس",
+    story: "نسمة متوسطية منعشة — كنزهة عند الفجر على شواطئ نيس." },
+  { id: "p5", name: "Vert Sacré", family: "Woody · Green", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 420, volume: "75 ML", bottle: "vert", label: "VERT SACRÉ",
+    concentration: "Eau de Parfum 18%", longevity: "‏7–9 ساعات", sillage: "متوسط", occasion: "المكتب · النهار", gender: "للجنسين", origin: "Toscana, Italia",
+    topNotes: "النعناع البري · الجالبانوم · أوراق الحمضيات", heartNotes: "أوراق البنفسج · إبرة الراعي · شاي الياسمين", baseNotes: "خشب الصندل · الفيتيفر · المسك الأبيض",
+    story: "خضرة رطبة ومقدسة — نقاء أخّاذ يمنح ثقة هادئة." },
+  { id: "p6", name: "Velvet Rose", family: "Floral · Luxe", notes: "الوردة الجورجية · الفراولة · المسك الوردي · الباتشولي", price: 720, volume: "100 ML", badge: { label: "NEW", variant: "new" }, bottle: "velvet", label: "VELVET ROSE",
+    concentration: "Extrait de Parfum 28%", longevity: "‏10+ ساعات", sillage: "قوي", occasion: "السهرة · العشاء", gender: "نسائي", origin: "Bulgaria & Grasse",
+    topNotes: "الفراولة البرية · التوت الأسود · الشمبانيا الوردية", heartNotes: "الوردة الجورجية · العود الوردي · البخور الحلو", baseNotes: "الباتشولي الفاخر · المسك الوردي · الكاكاو الداكن",
+    story: "مخملٌ مُذوَّب في زجاجة — أنوثة نضرة وحسّية." },
+  { id: "p7", name: "Ambre d'Or", family: "Oriental · Amber", notes: "الكهرمان · البخور · التبغ الحلو · الفانيليا بوربون", price: 610, volume: "75 ML", badge: { label: "HOT", variant: "hot" }, bottle: "ambre", label: "AMBRE D'OR",
+    concentration: "Extrait de Parfum 30%", longevity: "‏10–12 ساعة", sillage: "قوي", occasion: "الشتاء · المساء", gender: "للجنسين", origin: "Oman & Madagascar",
+    topNotes: "البرتقال المُسكَّر · القرفة · الكاردامون", heartNotes: "التبغ الحلو · البخور العُماني · العسل", baseNotes: "الكهرمان الذهبي · الفانيليا بوربون · اللبان الأبيض",
+    story: "دفء الشمس الغاربة — عناق كهرماني يبقى في الذاكرة." },
+  { id: "p8", name: "Blanc Pur", family: "Floral · White", notes: "الفل · زهر البرتقال · المسك الأبيض · خشب الكشمير", price: 380, volume: "50 ML", bottle: "blanc", label: "BLANC PUR",
+    concentration: "Eau de Parfum 16%", longevity: "‏7–9 ساعات", sillage: "متوسط", occasion: "الأعراس · النهار", gender: "نسائي", origin: "Grasse, France",
+    topNotes: "زهر البرتقال · البرغموت · الليتشي", heartNotes: "الفل الهندي · التوبيروز · زنبق الوادي", baseNotes: "المسك الأبيض · خشب الكشمير · العنبر الشفاف",
+    story: "بياضٌ ناصع كنسيم الفجر — أنوثة نقيّة وسماوية." },
+  { id: "p9", name: "Saphir Bleu", family: "Aquatic · Woody", notes: "الخزامى البحرية · الأمبرغريس · خشب الأرز · المسك", price: 560, oldPrice: 700, volume: "100 ML", badge: { label: "SALE", variant: "sale" }, bottle: "saphir", label: "SAPHIR BLEU",
+    concentration: "Eau de Parfum 22%", longevity: "‏8–10 ساعات", sillage: "متوسط–قوي", occasion: "السفر · طوال اليوم", gender: "رجالي", origin: "Norvège & Provence",
+    topNotes: "الملح الأزرق · الحمضيات المتجمّدة · الخيار", heartNotes: "الخزامى البحرية · الميرمية · إكليل الجبل", baseNotes: "الأمبرغريس · خشب الأرز · المسك الأبيض",
+    story: "برودة الياقوت الأزرق — أناقة ذكورية باردة وواثقة." },
+  { id: "p10", name: "Émeraude", family: "Woody · Green", notes: "أوراق التين · الفيتيفر · الباتشولي · خشب الغوياك", price: 640, volume: "75 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "emeraude", label: "EMERAUDE",
+    concentration: "Extrait de Parfum 26%", longevity: "‏10 ساعات", sillage: "قوي", occasion: "الخريف · المساء", gender: "للجنسين", origin: "Haïti & Indonesia",
+    topNotes: "أوراق التين الخضراء · البرغموت · الحبهان", heartNotes: "الفيتيفر الهاييتي · الباتشولي المُعتَّق · الأيريس", baseNotes: "خشب الغوياك · العنبر الأخضر · جلد المسك",
+    story: "لمعان الزمرد الأخضر — عمقٌ راقٍ لعشّاق الأخشاب النبيلة." },
 ];
 
 const CATEGORIES = [
