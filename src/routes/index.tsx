@@ -355,7 +355,14 @@ function Index() {
               <div className="empty-state">لا توجد عطور تطابق بحثك.</div>
             )}
             {visibleProducts.map((p) => (
-              <div className="pcard" key={p.id}>
+              <div
+                className="pcard"
+                key={p.id}
+                onClick={() => setDetailProduct(p)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setDetailProduct(p); } }}
+              >
                 {p.badge && <span className={`pbadge badge-${p.badge.variant}`}>{p.badge.label}</span>}
                 <div className="pimg-wrap">
                   <div className="pimg-glow" />
@@ -374,7 +381,7 @@ function Index() {
                       <span className="pvol">{p.volume}</span>
                       <button
                         className={`pwish ${wishlist.has(p.id) ? "active" : ""}`}
-                        onClick={() => toggleWish(p.id)}
+                        onClick={(e) => { e.stopPropagation(); toggleWish(p.id); }}
                         aria-label="المفضلة"
                       >{wishlist.has(p.id) ? "♥" : "♡"}</button>
                     </div>
@@ -384,17 +391,17 @@ function Index() {
                   const line = cart.find((l) => l.product.id === p.id);
                   if (!line) {
                     return (
-                      <button className="pcard-buy" onClick={() => addToCart(p)}>
+                      <button className="pcard-buy" onClick={(e) => { e.stopPropagation(); addToCart(p); }}>
                         <span className="pcard-buy-icon">+</span>
                         <span>Add to Cart — أضف للحقيبة</span>
                       </button>
                     );
                   }
                   return (
-                    <div className="pcard-qty">
-                      <button onClick={() => setQty(p.id, line.qty - 1)} aria-label="−">−</button>
+                    <div className="pcard-qty" onClick={(e) => e.stopPropagation()}>
+                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty - 1); }} aria-label="−">−</button>
                       <span>في الحقيبة: <strong>{line.qty}</strong></span>
-                      <button onClick={() => setQty(p.id, line.qty + 1)} aria-label="+">+</button>
+                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty + 1); }} aria-label="+">+</button>
                     </div>
                   );
                 })()}
