@@ -63,47 +63,48 @@ type Product = {
 };
 
 const PRODUCTS: Product[] = [
-  { id: "p1", name: "Noir Absolu", family: "Oriental · Wood", notes: "العنبر · المسك الأسود · خشب العود · الفانيليا", price: 495, volume: "50 ML", badge: { label: "NEW", variant: "new" }, bottle: "noir", label: "NOIR ABSOLU",
-    concentration: "Extrait de Parfum 30%", longevity: "‏10–12 ساعة", sillage: "قوي", occasion: "المساء · المناسبات", gender: "للجنسين", origin: "Grasse, France",
-    topNotes: "الفلفل الأسود · البرغموت الإيطالي", heartNotes: "خشب العود · جلد الأسويد · التوابل الشرقية", baseNotes: "العنبر الأسود · الفانيليا بوربون · المسك الأبيض",
-    story: "توقيع ليلي غامض وفاخر — للحظات التي تُروى همساً." },
-  { id: "p2", name: "Rose Royale", family: "Floral · Musky", notes: "وردة الطائف · الياسمين · المسك الأبيض · الخوخ", price: 520, oldPrice: 650, volume: "75 ML", badge: { label: "BEST SELLER", variant: "hot" }, bottle: "rose", label: "ROSE ROYALE",
-    concentration: "Eau de Parfum 20%", longevity: "‏8–10 ساعات", sillage: "متوسط–قوي", occasion: "طوال اليوم · المناسبات", gender: "نسائي", origin: "Taïf, Arabie Saoudite",
+  { id: "p1", name: "Layl — ليل", family: "Oriental · Wood", notes: "العنبر · المسك الأسود · خشب العود · الفانيليا", price: 3960, volume: "50 ML", badge: { label: "NEW", variant: "new" }, bottle: "noir", label: "LAYL",
+    concentration: "Extrait de Parfum 30%", longevity: "‏10–12 ساعة", sillage: "قوي", occasion: "المساء · المناسبات", gender: "للجنسين", origin: "الطائف · المدينة المنورة",
+    topNotes: "الفلفل الأسود · البرغموت", heartNotes: "خشب العود · العنبر · التوابل الشرقية", baseNotes: "العنبر الأسود · الفانيليا · المسك الأبيض",
+    story: "توقيع ليلي هادئ من إلهام ليالي رمضان — سكينة ووقار." },
+  { id: "p2", name: "Wardat Al-Taif — وردة الطائف", family: "Floral · Musky", notes: "وردة الطائف · الياسمين · المسك الأبيض · الخوخ", price: 4160, oldPrice: 5200, volume: "75 ML", badge: { label: "BEST SELLER", variant: "hot" }, bottle: "rose", label: "WARDAT AL-TAIF",
+    concentration: "Eau de Parfum 20%", longevity: "‏8–10 ساعات", sillage: "متوسط–قوي", occasion: "طوال اليوم · المناسبات", gender: "نسائي", origin: "الطائف · المملكة العربية السعودية",
     topNotes: "الخوخ الأبيض · البرغموت · الفلفل الوردي", heartNotes: "وردة الطائف · الياسمين السامباك · الفاوانيا", baseNotes: "المسك الأبيض · الباتشولي المخملي · العنبر",
-    story: "باقة ملكية من أثمن ورود الطائف — أنوثة كلاسيكية بلمسة عصرية." },
-  { id: "p3", name: "Oud Impériale", family: "Oriental · Oud", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 890, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD IMPERIALE",
-    concentration: "Extrait de Parfum 35%", longevity: "‏12+ ساعة", sillage: "قوي جداً", occasion: "المناسبات الفاخرة", gender: "للجنسين", origin: "Assam, Inde",
-    topNotes: "الزعفران · العنبر الأحمر · القرنفل", heartNotes: "العود الهندي المُعتَّق · وردة البلغار · خشب الصندل", baseNotes: "المسك الملكي · الكهرمان · جلد العود",
-    story: "طبعة محدودة من أندر أنواع العود الهندي — روعة تُورَث." },
-  { id: "p4", name: "Azur Nuit", family: "Aquatic · Fresh", notes: "الليمون · بيرغامو · الهواء البحري · السيدر", price: 304, oldPrice: 380, volume: "50 ML", badge: { label: "SALE 20%", variant: "sale" }, bottle: "azur", label: "AZUR NUIT",
-    concentration: "Eau de Toilette 12%", longevity: "‏6–8 ساعات", sillage: "خفيف–متوسط", occasion: "الصيف · النهار", gender: "رجالي", origin: "Côte d'Azur, France",
-    topNotes: "ليمون صقلي · برغموت كالابريا · النعناع", heartNotes: "الملوحة البحرية · الميرمية · اللافندر", baseNotes: "خشب السيدر · المسك المائي · الأمبرغريس",
-    story: "نسمة متوسطية منعشة — كنزهة عند الفجر على شواطئ نيس." },
-  { id: "p5", name: "Vert Sacré", family: "Woody · Green", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 420, volume: "75 ML", bottle: "vert", label: "VERT SACRÉ",
-    concentration: "Eau de Parfum 18%", longevity: "‏7–9 ساعات", sillage: "متوسط", occasion: "المكتب · النهار", gender: "للجنسين", origin: "Toscana, Italia",
-    topNotes: "النعناع البري · الجالبانوم · أوراق الحمضيات", heartNotes: "أوراق البنفسج · إبرة الراعي · شاي الياسمين", baseNotes: "خشب الصندل · الفيتيفر · المسك الأبيض",
-    story: "خضرة رطبة ومقدسة — نقاء أخّاذ يمنح ثقة هادئة." },
-  { id: "p6", name: "Velvet Rose", family: "Floral · Luxe", notes: "الوردة الجورجية · الفراولة · المسك الوردي · الباتشولي", price: 720, volume: "100 ML", badge: { label: "NEW", variant: "new" }, bottle: "velvet", label: "VELVET ROSE",
-    concentration: "Extrait de Parfum 28%", longevity: "‏10+ ساعات", sillage: "قوي", occasion: "السهرة · العشاء", gender: "نسائي", origin: "Bulgaria & Grasse",
-    topNotes: "الفراولة البرية · التوت الأسود · الشمبانيا الوردية", heartNotes: "الوردة الجورجية · العود الوردي · البخور الحلو", baseNotes: "الباتشولي الفاخر · المسك الوردي · الكاكاو الداكن",
+    story: "باقة من أثمن ورود الطائف — أنوثة كلاسيكية بلمسة عصرية." },
+  { id: "p3", name: "Oud Al-Sultan — عود السلطان", family: "Oriental · Oud", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 7120, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD AL-SULTAN",
+    concentration: "Extrait de Parfum 35%", longevity: "‏12+ ساعة", sillage: "قوي جداً", occasion: "المناسبات الفاخرة", gender: "للجنسين", origin: "أسّام · الهند",
+    topNotes: "الزعفران · العنبر الأحمر · القرنفل", heartNotes: "العود الهندي المُعتَّق · وردة الطائف · خشب الصندل", baseNotes: "المسك الملكي · الكهرمان · جلد العود",
+    story: "طبعة محدودة من أندر أنواع العود — روعة تُورَث." },
+  { id: "p4", name: "Fajr — فجر", family: "Aquatic · Fresh", notes: "الليمون · بيرغامو · الهواء البحري · السيدر", price: 2432, oldPrice: 3040, volume: "50 ML", badge: { label: "SALE 20%", variant: "sale" }, bottle: "azur", label: "FAJR",
+    concentration: "Eau de Toilette 12%", longevity: "‏6–8 ساعات", sillage: "خفيف–متوسط", occasion: "الصيف · النهار", gender: "رجالي", origin: "ساحل البحر الأحمر",
+    topNotes: "ليمون صقلي · البرغموت · النعناع", heartNotes: "الملوحة البحرية · الميرمية · اللافندر", baseNotes: "خشب السيدر · المسك المائي · الأمبرغريس",
+    story: "نسمة بحرية منعشة — كنسيم الفجر عند شواطئ البحر الأحمر." },
+  { id: "p5", name: "Rawḍah — روضة", family: "Woody · Green", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 3360, volume: "75 ML", bottle: "vert", label: "RAWDAH",
+    concentration: "Eau de Parfum 18%", longevity: "‏7–9 ساعات", sillage: "متوسط", occasion: "المكتب · النهار", gender: "للجنسين", origin: "الحجاز",
+    topNotes: "النعناع البري · أوراق الحمضيات · إبرة الراعي", heartNotes: "أوراق البنفسج · شاي الياسمين · الريحان", baseNotes: "خشب الصندل · الفيتيفر · المسك الأبيض",
+    story: "خضرة نديّة كروضة أنيقة — نقاء أخّاذ وثقة هادئة." },
+  { id: "p6", name: "Wardat Al-Firdaws — وردة الفردوس", family: "Floral · Luxe", notes: "الوردة الجورية · الفراولة · المسك الوردي · الباتشولي", price: 5760, volume: "100 ML", badge: { label: "NEW", variant: "new" }, bottle: "velvet", label: "WARDAT AL-FIRDAWS",
+    concentration: "Extrait de Parfum 28%", longevity: "‏10+ ساعات", sillage: "قوي", occasion: "السهرة · العشاء", gender: "نسائي", origin: "بلاد الشام",
+    topNotes: "الفراولة البرية · التوت الأسود · الرمان", heartNotes: "الوردة الجورية · العود الوردي · البخور الحلو", baseNotes: "الباتشولي الفاخر · المسك الوردي · الكاكاو الداكن",
     story: "مخملٌ مُذوَّب في زجاجة — أنوثة نضرة وحسّية." },
-  { id: "p7", name: "Ambre d'Or", family: "Oriental · Amber", notes: "الكهرمان · البخور · التبغ الحلو · الفانيليا بوربون", price: 610, volume: "75 ML", badge: { label: "HOT", variant: "hot" }, bottle: "ambre", label: "AMBRE D'OR",
-    concentration: "Extrait de Parfum 30%", longevity: "‏10–12 ساعة", sillage: "قوي", occasion: "الشتاء · المساء", gender: "للجنسين", origin: "Oman & Madagascar",
-    topNotes: "البرتقال المُسكَّر · القرفة · الكاردامون", heartNotes: "التبغ الحلو · البخور العُماني · العسل", baseNotes: "الكهرمان الذهبي · الفانيليا بوربون · اللبان الأبيض",
+  { id: "p7", name: "Kahraman — كهرمان", family: "Oriental · Amber", notes: "الكهرمان · البخور · التبغ الحلو · الفانيليا", price: 4880, volume: "75 ML", badge: { label: "HOT", variant: "hot" }, bottle: "ambre", label: "KAHRAMAN",
+    concentration: "Extrait de Parfum 30%", longevity: "‏10–12 ساعة", sillage: "قوي", occasion: "الشتاء · المساء", gender: "للجنسين", origin: "ظُفار · عُمان",
+    topNotes: "البرتقال المُسكَّر · القرفة · الهيل", heartNotes: "التبغ الحلو · اللبان العُماني · العسل", baseNotes: "الكهرمان الذهبي · الفانيليا · اللبان الأبيض",
     story: "دفء الشمس الغاربة — عناق كهرماني يبقى في الذاكرة." },
-  { id: "p8", name: "Blanc Pur", family: "Floral · White", notes: "الفل · زهر البرتقال · المسك الأبيض · خشب الكشمير", price: 380, volume: "50 ML", bottle: "blanc", label: "BLANC PUR",
-    concentration: "Eau de Parfum 16%", longevity: "‏7–9 ساعات", sillage: "متوسط", occasion: "الأعراس · النهار", gender: "نسائي", origin: "Grasse, France",
-    topNotes: "زهر البرتقال · البرغموت · الليتشي", heartNotes: "الفل الهندي · التوبيروز · زنبق الوادي", baseNotes: "المسك الأبيض · خشب الكشمير · العنبر الشفاف",
-    story: "بياضٌ ناصع كنسيم الفجر — أنوثة نقيّة وسماوية." },
-  { id: "p9", name: "Saphir Bleu", family: "Aquatic · Woody", notes: "الخزامى البحرية · الأمبرغريس · خشب الأرز · المسك", price: 560, oldPrice: 700, volume: "100 ML", badge: { label: "SALE", variant: "sale" }, bottle: "saphir", label: "SAPHIR BLEU",
-    concentration: "Eau de Parfum 22%", longevity: "‏8–10 ساعات", sillage: "متوسط–قوي", occasion: "السفر · طوال اليوم", gender: "رجالي", origin: "Norvège & Provence",
+  { id: "p8", name: "Yasmeen — ياسمين", family: "Floral · White", notes: "الفل · زهر البرتقال · المسك الأبيض · خشب الكشمير", price: 3040, volume: "50 ML", bottle: "blanc", label: "YASMEEN",
+    concentration: "Eau de Parfum 16%", longevity: "‏7–9 ساعات", sillage: "متوسط", occasion: "الأعراس · النهار", gender: "نسائي", origin: "دمشق · بلاد الشام",
+    topNotes: "زهر البرتقال · البرغموت · الليتشي", heartNotes: "الفل الهندي · الياسمين الشامي · زنبق الوادي", baseNotes: "المسك الأبيض · خشب الكشمير · العنبر الشفاف",
+    story: "بياضٌ ناصع كنسيم الفجر — أنوثة نقيّة وهادئة." },
+  { id: "p9", name: "Yaqout — ياقوت", family: "Aquatic · Woody", notes: "الخزامى البحرية · الأمبرغريس · خشب الأرز · المسك", price: 4480, oldPrice: 5600, volume: "100 ML", badge: { label: "SALE", variant: "sale" }, bottle: "saphir", label: "YAQOUT",
+    concentration: "Eau de Parfum 22%", longevity: "‏8–10 ساعات", sillage: "متوسط–قوي", occasion: "السفر · طوال اليوم", gender: "رجالي", origin: "خليج العقبة",
     topNotes: "الملح الأزرق · الحمضيات المتجمّدة · الخيار", heartNotes: "الخزامى البحرية · الميرمية · إكليل الجبل", baseNotes: "الأمبرغريس · خشب الأرز · المسك الأبيض",
     story: "برودة الياقوت الأزرق — أناقة ذكورية باردة وواثقة." },
-  { id: "p10", name: "Émeraude", family: "Woody · Green", notes: "أوراق التين · الفيتيفر · الباتشولي · خشب الغوياك", price: 640, volume: "75 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "emeraude", label: "EMERAUDE",
-    concentration: "Extrait de Parfum 26%", longevity: "‏10 ساعات", sillage: "قوي", occasion: "الخريف · المساء", gender: "للجنسين", origin: "Haïti & Indonesia",
-    topNotes: "أوراق التين الخضراء · البرغموت · الحبهان", heartNotes: "الفيتيفر الهاييتي · الباتشولي المُعتَّق · الأيريس", baseNotes: "خشب الغوياك · العنبر الأخضر · جلد المسك",
+  { id: "p10", name: "Zumurrud — زمرد", family: "Woody · Green", notes: "أوراق التين · الفيتيفر · الباتشولي · خشب الغوياك", price: 5120, volume: "75 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "emeraude", label: "ZUMURRUD",
+    concentration: "Extrait de Parfum 26%", longevity: "‏10 ساعات", sillage: "قوي", occasion: "الخريف · المساء", gender: "للجنسين", origin: "اليمن السعيد",
+    topNotes: "أوراق التين الخضراء · البرغموت · الحبهان", heartNotes: "الفيتيفر · الباتشولي المُعتَّق · الأيريس", baseNotes: "خشب الغوياك · العنبر الأخضر · جلد المسك",
     story: "لمعان الزمرد الأخضر — عمقٌ راقٍ لعشّاق الأخشاب النبيلة." },
 ];
+
 
 const CATEGORIES = [
   { key: "oriental", name: "Oriental", count: "٣ عطور", icon: "✦", bgClass: "cat-oriental" },
@@ -253,12 +254,13 @@ function Index() {
     return sorted;
   }, [filterCat, searchQuery, sortBy]);
 
-  const SHIPPING_FREE_AT = 500;
+  const SHIPPING_FREE_AT = 4000;
   const PROMOS: Record<string, number> = { VELORE10: 10, LUXE20: 20, NOIR15: 15 };
   const promoDiscount = promoApplied ? Math.round(cartTotal * (promoApplied.pct / 100)) : 0;
-  const shippingFee = cartTotal === 0 ? 0 : cartTotal - promoDiscount >= SHIPPING_FREE_AT ? 0 : 30;
+  const shippingFee = cartTotal === 0 ? 0 : cartTotal - promoDiscount >= SHIPPING_FREE_AT ? 0 : 250;
   const grandTotal = Math.max(0, cartTotal - promoDiscount + shippingFee);
   const shippingProgress = Math.min(100, Math.round((cartTotal / SHIPPING_FREE_AT) * 100));
+
 
   function applyPromo() {
     const code = promoInput.trim().toUpperCase();
@@ -415,7 +417,7 @@ function Index() {
                   <div className="pfooter">
                     <div>
                       {p.oldPrice && <span className="pprice-old">{p.oldPrice}</span>}
-                      <span className="pprice">{p.price} ر.س</span>
+                      <span className="pprice">{p.price} ج.م</span>
                     </div>
                     <div className="pright">
                       <span className="pvol">{p.volume}</span>
@@ -520,7 +522,7 @@ function Index() {
                 <div className="cart-line-info">
                   <div className="cart-line-name">{l.product.name}</div>
                   <div className="cart-line-fam">{l.product.family} · {l.product.volume}</div>
-                  <div className="cart-line-price">{l.product.price * l.qty} ر.س</div>
+                  <div className="cart-line-price">{l.product.price * l.qty} ج.م</div>
                   <div className="qty">
                     <button onClick={() => setQty(l.product.id, l.qty - 1)} aria-label="-">−</button>
                     <span>{l.qty}</span>
@@ -538,7 +540,7 @@ function Index() {
               {shippingFee === 0 ? (
                 <div className="ship-msg ship-ok">🎉 تأهلت للشحن المجاني!</div>
               ) : (
-                <div className="ship-msg">أضف <strong>{SHIPPING_FREE_AT - cartTotal} ر.س</strong> للحصول على شحن مجاني</div>
+                <div className="ship-msg">أضف <strong>{SHIPPING_FREE_AT - cartTotal} ج.م</strong> للحصول على شحن مجاني</div>
               )}
               <div className="ship-bar"><div className="ship-fill" style={{ width: `${shippingProgress}%` }} /></div>
             </div>
@@ -564,12 +566,12 @@ function Index() {
             </div>
 
             <div className="cart-summary">
-              <div className="cart-row"><span>المجموع الفرعي</span><span>{cartTotal} ر.س</span></div>
-              {promoDiscount > 0 && <div className="cart-row discount"><span>الخصم</span><span>−{promoDiscount} ر.س</span></div>}
-              <div className="cart-row"><span>الشحن</span><span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ر.س`}</span></div>
+              <div className="cart-row"><span>المجموع الفرعي</span><span>{cartTotal} ج.م</span></div>
+              {promoDiscount > 0 && <div className="cart-row discount"><span>الخصم</span><span>−{promoDiscount} ج.م</span></div>}
+              <div className="cart-row"><span>الشحن</span><span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ج.م`}</span></div>
               <div className="cart-total">
                 <span>الإجمالي</span>
-                <strong>{grandTotal} ر.س</strong>
+                <strong>{grandTotal} ج.م</strong>
               </div>
             </div>
             <button className="btn-gold" style={{ width: "100%" }} onClick={checkout}>إتمام الدفع</button>
@@ -596,7 +598,7 @@ function Index() {
             }).map((p) => (
               <button key={p.id} className="search-item" onClick={() => { setSearchOpen(false); scrollTo("products"); }}>
                 <span>{p.name}</span>
-                <span className="search-item-fam">{p.family} · {p.price} ر.س</span>
+                <span className="search-item-fam">{p.family} · {p.price} ج.م</span>
               </button>
             ))}
           </div>
@@ -609,43 +611,40 @@ function Index() {
         <div className="pdetail-backdrop open" onClick={() => setDetailProduct(null)}>
           <div className="pdetail-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <button className="pdetail-close" onClick={() => setDetailProduct(null)} aria-label="إغلاق">×</button>
-            <div className="pdetail-left">
-              <div className="pdetail-img">
-                {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
-                <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
-              </div>
-              <div className="pdetail-info">
-                <div className="pdetail-info-title">معلومات العطر</div>
-                <ul className="pdetail-specs">
-                  <li><span>التركيز</span><strong>{detailProduct.concentration}</strong></li>
-                  <li><span>الثبات</span><strong>{detailProduct.longevity}</strong></li>
-                  <li><span>الانتشار</span><strong>{detailProduct.sillage}</strong></li>
-                  <li><span>المناسبة</span><strong>{detailProduct.occasion}</strong></li>
-                  <li><span>النوع</span><strong>{detailProduct.gender}</strong></li>
-                  <li><span>المنشأ</span><strong>{detailProduct.origin}</strong></li>
-                  <li><span>الحجم</span><strong>{detailProduct.volume}</strong></li>
-                </ul>
-                <div className="pdetail-pyramid">
-                  <div className="pyramid-row"><span className="pyramid-lvl">القمة</span><p>{detailProduct.topNotes}</p></div>
-                  <div className="pyramid-row"><span className="pyramid-lvl">القلب</span><p>{detailProduct.heartNotes}</p></div>
-                  <div className="pyramid-row"><span className="pyramid-lvl">القاعدة</span><p>{detailProduct.baseNotes}</p></div>
-                </div>
-              </div>
-            </div>
-            <div className="pdetail-body">
+
+            {/* LEFT — all info */}
+            <div className="pdetail-info-col">
               <div className="pfamily">{detailProduct.family}</div>
               <h3 className="pdetail-name">{detailProduct.name}</h3>
               <div className="pdetail-vol">{detailProduct.volume}</div>
               <p className="pdetail-notes">{detailProduct.notes}</p>
               <p className="pdetail-story">{detailProduct.story}</p>
-              <div className="pdetail-price">
-                {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice}</span>}
-                <span className="pprice">{detailProduct.price} ر.س</span>
+
+              <div className="pdetail-info-title">معلومات العطر</div>
+              <ul className="pdetail-specs">
+                <li><span>التركيز</span><strong>{detailProduct.concentration}</strong></li>
+                <li><span>الثبات</span><strong>{detailProduct.longevity}</strong></li>
+                <li><span>الانتشار</span><strong>{detailProduct.sillage}</strong></li>
+                <li><span>المناسبة</span><strong>{detailProduct.occasion}</strong></li>
+                <li><span>النوع</span><strong>{detailProduct.gender}</strong></li>
+                <li><span>المنشأ</span><strong>{detailProduct.origin}</strong></li>
+                <li><span>الحجم</span><strong>{detailProduct.volume}</strong></li>
+              </ul>
+
+              <div className="pdetail-pyramid">
+                <div className="pyramid-row"><span className="pyramid-lvl">القمة</span><p>{detailProduct.topNotes}</p></div>
+                <div className="pyramid-row"><span className="pyramid-lvl">القلب</span><p>{detailProduct.heartNotes}</p></div>
+                <div className="pyramid-row"><span className="pyramid-lvl">القاعدة</span><p>{detailProduct.baseNotes}</p></div>
               </div>
+
+              <div className="pdetail-price">
+                {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice} ج.م</span>}
+                <span className="pprice">{detailProduct.price} ج.م</span>
+              </div>
+
               <div className="pdetail-actions">
                 <button
-                  className="btn-gold"
-                  style={{ flex: 1 }}
+                  className="btn-gold pdetail-buy"
                   onClick={() => { addToCart(detailProduct); setDetailProduct(null); }}
                 >شراء الآن — Add to Cart</button>
                 <button
@@ -655,9 +654,18 @@ function Index() {
                 >{wishlist.has(detailProduct.id) ? "♥" : "♡"}</button>
               </div>
             </div>
+
+            {/* RIGHT — image only */}
+            <div className="pdetail-media">
+              {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
+              <div className="pdetail-media-img">
+                <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
+              </div>
+            </div>
           </div>
         </div>
       )}
+
 
       {/* TOAST */}
       {toast && <div className="toast">{toast}</div>}
