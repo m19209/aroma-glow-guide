@@ -319,7 +319,7 @@ function Index() {
       {/* HERO */}
       <section className="hero">
         <video className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505" }} poster="https://images.unsplash.com/photo-1594035919809-0d67af651cad?q=80&w=2000&auto=format&fit=crop">
-          <source src="/hero-video.mp4" type="video/mp4" />
+          <source src={`${import.meta.env.BASE_URL}hero-video.mp4`} type="video/mp4" />
         </video>
         <div className="hero-overlay" />
         <div className="hero-leak" />
