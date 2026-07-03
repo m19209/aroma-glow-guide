@@ -616,12 +616,19 @@ function Index() {
           <div className="pdetail-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <button className="pdetail-close" onClick={() => setDetailProduct(null)} aria-label="إغلاق">×</button>
 
-            {/* LEFT — all info */}
+            {/* RIGHT (rendered first in RTL) — image only */}
+            <div className="pdetail-media">
+              {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
+              <div className="pdetail-media-img">
+                <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
+              </div>
+            </div>
+
+            {/* LEFT (rendered second in RTL) — all info */}
             <div className="pdetail-info-col">
               <div className="pfamily">{detailProduct.family}</div>
               <h3 className="pdetail-name">{detailProduct.name}</h3>
               <div className="pdetail-vol">{detailProduct.volume}</div>
-              <p className="pdetail-notes">{detailProduct.notes}</p>
               <p className="pdetail-story">{detailProduct.story}</p>
 
               <div className="pdetail-info-title">معلومات العطر</div>
@@ -656,14 +663,6 @@ function Index() {
                   onClick={() => toggleWish(detailProduct.id)}
                   aria-label="المفضلة"
                 >{wishlist.has(detailProduct.id) ? "♥" : "♡"}</button>
-              </div>
-            </div>
-
-            {/* RIGHT — image only */}
-            <div className="pdetail-media">
-              {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
-              <div className="pdetail-media-img">
-                <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
               </div>
             </div>
           </div>

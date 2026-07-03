@@ -1107,7 +1107,8 @@ nav.scrolled .nav-links a { color: var(--charcoal) !important; }
   object-fit: contain !important;
 }
 .pdetail-media .pbadge {
-  position: absolute; top: 22px; left: 22px;
+  position: absolute; top: 24px; right: 24px; left: auto;
+  font-size: .85rem; padding: 10px 20px;
   z-index: 4;
 }
 
