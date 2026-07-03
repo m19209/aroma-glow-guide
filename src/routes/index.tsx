@@ -611,43 +611,40 @@ function Index() {
         <div className="pdetail-backdrop open" onClick={() => setDetailProduct(null)}>
           <div className="pdetail-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
             <button className="pdetail-close" onClick={() => setDetailProduct(null)} aria-label="إغلاق">×</button>
-            <div className="pdetail-left">
-              <div className="pdetail-img">
-                {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
-                <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
-              </div>
-              <div className="pdetail-info">
-                <div className="pdetail-info-title">معلومات العطر</div>
-                <ul className="pdetail-specs">
-                  <li><span>التركيز</span><strong>{detailProduct.concentration}</strong></li>
-                  <li><span>الثبات</span><strong>{detailProduct.longevity}</strong></li>
-                  <li><span>الانتشار</span><strong>{detailProduct.sillage}</strong></li>
-                  <li><span>المناسبة</span><strong>{detailProduct.occasion}</strong></li>
-                  <li><span>النوع</span><strong>{detailProduct.gender}</strong></li>
-                  <li><span>المنشأ</span><strong>{detailProduct.origin}</strong></li>
-                  <li><span>الحجم</span><strong>{detailProduct.volume}</strong></li>
-                </ul>
-                <div className="pdetail-pyramid">
-                  <div className="pyramid-row"><span className="pyramid-lvl">القمة</span><p>{detailProduct.topNotes}</p></div>
-                  <div className="pyramid-row"><span className="pyramid-lvl">القلب</span><p>{detailProduct.heartNotes}</p></div>
-                  <div className="pyramid-row"><span className="pyramid-lvl">القاعدة</span><p>{detailProduct.baseNotes}</p></div>
-                </div>
-              </div>
-            </div>
-            <div className="pdetail-body">
+
+            {/* LEFT — all info */}
+            <div className="pdetail-info-col">
               <div className="pfamily">{detailProduct.family}</div>
               <h3 className="pdetail-name">{detailProduct.name}</h3>
               <div className="pdetail-vol">{detailProduct.volume}</div>
               <p className="pdetail-notes">{detailProduct.notes}</p>
               <p className="pdetail-story">{detailProduct.story}</p>
+
+              <div className="pdetail-info-title">معلومات العطر</div>
+              <ul className="pdetail-specs">
+                <li><span>التركيز</span><strong>{detailProduct.concentration}</strong></li>
+                <li><span>الثبات</span><strong>{detailProduct.longevity}</strong></li>
+                <li><span>الانتشار</span><strong>{detailProduct.sillage}</strong></li>
+                <li><span>المناسبة</span><strong>{detailProduct.occasion}</strong></li>
+                <li><span>النوع</span><strong>{detailProduct.gender}</strong></li>
+                <li><span>المنشأ</span><strong>{detailProduct.origin}</strong></li>
+                <li><span>الحجم</span><strong>{detailProduct.volume}</strong></li>
+              </ul>
+
+              <div className="pdetail-pyramid">
+                <div className="pyramid-row"><span className="pyramid-lvl">القمة</span><p>{detailProduct.topNotes}</p></div>
+                <div className="pyramid-row"><span className="pyramid-lvl">القلب</span><p>{detailProduct.heartNotes}</p></div>
+                <div className="pyramid-row"><span className="pyramid-lvl">القاعدة</span><p>{detailProduct.baseNotes}</p></div>
+              </div>
+
               <div className="pdetail-price">
-                {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice}</span>}
+                {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice} ج.م</span>}
                 <span className="pprice">{detailProduct.price} ج.م</span>
               </div>
+
               <div className="pdetail-actions">
                 <button
-                  className="btn-gold"
-                  style={{ flex: 1 }}
+                  className="btn-gold pdetail-buy"
                   onClick={() => { addToCart(detailProduct); setDetailProduct(null); }}
                 >شراء الآن — Add to Cart</button>
                 <button
@@ -657,9 +654,18 @@ function Index() {
                 >{wishlist.has(detailProduct.id) ? "♥" : "♡"}</button>
               </div>
             </div>
+
+            {/* RIGHT — image only */}
+            <div className="pdetail-media">
+              {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
+              <div className="pdetail-media-img">
+                <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
+              </div>
+            </div>
           </div>
         </div>
       )}
+
 
       {/* TOAST */}
       {toast && <div className="toast">{toast}</div>}
