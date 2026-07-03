@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { VELORE_CSS } from "@/lib/velore-styles";
 import imgNoir from "@/assets/perfume-noir.jpg";
 import imgRose from "@/assets/perfume-rose.jpg";
@@ -144,6 +144,15 @@ function Index() {
   const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc" | "name">("featured");
   const [promoInput, setPromoInput] = useState("");
   const [promoApplied, setPromoApplied] = useState<{ code: string; pct: number } | null>(null);
+
+  // Video ref — force play after SSR hydration (React doesn't trigger autoplay on hydrated elements)
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    v.play().catch(() => {/* autoplay blocked — poster shows as fallback */});
+  }, []);
 
   // Persist
   useEffect(() => {
@@ -318,7 +327,7 @@ function Index() {
       <main id="main-content">
       {/* HERO */}
       <section className="hero">
-        <video className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505" }} poster="https://images.unsplash.com/photo-1594035919809-0d67af651cad?q=80&w=2000&auto=format&fit=crop">
+        <video ref={videoRef} className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505" }} poster="https://images.unsplash.com/photo-1594035919809-0d67af651cad?q=80&w=2000&auto=format&fit=crop">
           <source src={`${import.meta.env.BASE_URL}hero-video.mp4`} type="video/mp4" />
         </video>
         <div className="hero-overlay" />
