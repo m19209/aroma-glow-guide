@@ -107,10 +107,10 @@ const PRODUCTS: Product[] = [
 
 
 const CATEGORIES = [
-  { key: "oriental", name: "Oriental", count: "٣ عطور", icon: "✦", bgClass: "cat-oriental" },
-  { key: "floral", name: "Floral", count: "٣ عطور", icon: "✿", bgClass: "cat-floral" },
-  { key: "woody", name: "Oud & Wood", count: "٤ عطور", icon: "◈", bgClass: "cat-woody" },
-  { key: "aquatic", name: "Aquatic", count: "٢ عطور", icon: "✧", bgClass: "cat-aquatic" },
+  { key: "oriental", name: "Oriental", icon: "✦" },
+  { key: "floral", name: "Floral", icon: "✿" },
+  { key: "woody", name: "Oud & Wood", icon: "◈" },
+  { key: "aquatic", name: "Aquatic", icon: "✧" },
 ];
 
 function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
@@ -285,10 +285,9 @@ function Index() {
         </a>
         <ul className="nav-links">
           <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
-          <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }}>Maison</a></li>
         </ul>
         <div className="nav-right">
-          <div className="nav-search">
+          <div className="nav-search" onClick={() => setSearchOpen(true)} style={{ cursor: 'pointer' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
             <input
               type="text"
@@ -313,15 +312,14 @@ function Index() {
       {mobileOpen && (
         <div className="mobile-menu open">
           <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
-          <a href="#features" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("features"); }}>Maison</a>
         </div>
       )}
 
       <main id="main-content">
       {/* HERO */}
       <section className="hero">
-        <video className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505" }}>
-          <source src="https://www.dropbox.com/scl/fi/otbgvp5emmg3ulf020xxx/Perfume-Blender-3D-Animation-b3d-blender-houdini-cgi-productads-perfume-blender3D.mp4?rlkey=g92ylnm82zb4i3z6gq8gtvzci&st=82jej8qb&dl=1" type="video/mp4" />
+        <video className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505" }} poster="https://images.unsplash.com/photo-1594035919809-0d67af651cad?q=80&w=2000&auto=format&fit=crop">
+          <source src="/hero-video.mp4" type="video/mp4" />
         </video>
         <div className="hero-overlay" />
         <div className="hero-leak" />
@@ -337,7 +335,6 @@ function Index() {
           <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
           <div className="hero-actions">
             <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }} className="btn-gold">اكتشف المجموعة</a>
-            <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo("features"); }} className="btn-outline-light">لماذا VELORE</a>
           </div>
         </div>
         <div className="hero-scroll">
@@ -471,8 +468,6 @@ function Index() {
         <div className="footer-col">
           <h4>Maison</h4>
           <ul>
-            <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>المجموعات</a></li>
-            <li><a href="#collections" onClick={(e) => { e.preventDefault(); scrollTo("collections"); }}>المجموعات</a></li>
             <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>العطور</a></li>
           </ul>
         </div>
@@ -596,7 +591,7 @@ function Index() {
               const q = searchQuery.toLowerCase();
               return p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q);
             }).map((p) => (
-              <button key={p.id} className="search-item" onClick={() => { setSearchOpen(false); scrollTo("products"); }}>
+              <button key={p.id} className="search-item" onClick={() => { setSearchOpen(false); setDetailProduct(p); }}>
                 <span>{p.name}</span>
                 <span className="search-item-fam">{p.family} · {p.price} ج.م</span>
               </button>
