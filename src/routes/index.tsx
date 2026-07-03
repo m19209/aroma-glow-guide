@@ -254,12 +254,13 @@ function Index() {
     return sorted;
   }, [filterCat, searchQuery, sortBy]);
 
-  const SHIPPING_FREE_AT = 500;
+  const SHIPPING_FREE_AT = 4000;
   const PROMOS: Record<string, number> = { VELORE10: 10, LUXE20: 20, NOIR15: 15 };
   const promoDiscount = promoApplied ? Math.round(cartTotal * (promoApplied.pct / 100)) : 0;
-  const shippingFee = cartTotal === 0 ? 0 : cartTotal - promoDiscount >= SHIPPING_FREE_AT ? 0 : 30;
+  const shippingFee = cartTotal === 0 ? 0 : cartTotal - promoDiscount >= SHIPPING_FREE_AT ? 0 : 250;
   const grandTotal = Math.max(0, cartTotal - promoDiscount + shippingFee);
   const shippingProgress = Math.min(100, Math.round((cartTotal / SHIPPING_FREE_AT) * 100));
+
 
   function applyPromo() {
     const code = promoInput.trim().toUpperCase();
