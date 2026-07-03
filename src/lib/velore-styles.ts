@@ -60,9 +60,9 @@ nav.scrolled .nav-logo img { height: 44px; width: 44px; }
 }
 .nav-links a {
   color: rgba(255,255,255,.82); text-decoration: none;
-  font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+  font-size: .8rem; letter-spacing: .22em; text-transform: uppercase;
   transition: color .25s; font-family: 'Cinzel', serif; font-weight: 400;
-  padding: 8px 22px; border-radius: 2px;
+  padding: 10px 24px; border-radius: 2px;
   position: relative;
 }
 .nav-links a::after {
