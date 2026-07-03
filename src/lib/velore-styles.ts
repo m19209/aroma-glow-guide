@@ -56,7 +56,7 @@ nav.scrolled .nav-logo img { height: 44px; width: 44px; }
 
 .nav-links {
   display: flex; gap: 0; list-style: none;
-  flex: 1; justify-content: center;
+  position: absolute; left: 50%; transform: translateX(-50%);
 }
 .nav-links a {
   color: rgba(255,255,255,.82); text-decoration: none;
@@ -463,7 +463,7 @@ footer { background: var(--off-white); border-top: 1px solid var(--border); padd
 /* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
    RESPONSIVE
 \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   nav { padding: 0 20px; }
   .nav-links { display: none; }
   .nav-hamburger { display: flex; }
@@ -1134,7 +1134,7 @@ nav.scrolled .nav-links a { color: var(--charcoal) !important; }
 
 .filter-bar { max-width: none !important; }
 
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .nav-search { width: 38px !important; height: 38px !important; border-radius: 50% !important; padding: 0 !important; justify-content: center !important; background: transparent !important; border: 1px solid rgba(255,255,255,.3) !important; gap: 0 !important; flex: 0 0 38px !important; }
   nav.scrolled .nav-search { border-color: var(--border2) !important; background: transparent !important; }
   .nav-search:focus-within { width: 38px !important; background: transparent !important; }
