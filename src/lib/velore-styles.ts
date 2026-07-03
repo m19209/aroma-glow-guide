@@ -56,7 +56,7 @@ nav.scrolled .nav-logo img { height: 44px; width: 44px; }
 
 .nav-links {
   display: flex; gap: 0; list-style: none;
-  position: absolute; left: 50%; transform: translateX(-50%);
+  flex: 1; justify-content: center;
 }
 .nav-links a {
   color: rgba(255,255,255,.82); text-decoration: none;
