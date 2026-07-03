@@ -416,7 +416,7 @@ function Index() {
                   <div className="pfooter">
                     <div>
                       {p.oldPrice && <span className="pprice-old">{p.oldPrice}</span>}
-                      <span className="pprice">{p.price} ر.س</span>
+                      <span className="pprice">{p.price} ج.م</span>
                     </div>
                     <div className="pright">
                       <span className="pvol">{p.volume}</span>
@@ -521,7 +521,7 @@ function Index() {
                 <div className="cart-line-info">
                   <div className="cart-line-name">{l.product.name}</div>
                   <div className="cart-line-fam">{l.product.family} · {l.product.volume}</div>
-                  <div className="cart-line-price">{l.product.price * l.qty} ر.س</div>
+                  <div className="cart-line-price">{l.product.price * l.qty} ج.م</div>
                   <div className="qty">
                     <button onClick={() => setQty(l.product.id, l.qty - 1)} aria-label="-">−</button>
                     <span>{l.qty}</span>
@@ -539,7 +539,7 @@ function Index() {
               {shippingFee === 0 ? (
                 <div className="ship-msg ship-ok">🎉 تأهلت للشحن المجاني!</div>
               ) : (
-                <div className="ship-msg">أضف <strong>{SHIPPING_FREE_AT - cartTotal} ر.س</strong> للحصول على شحن مجاني</div>
+                <div className="ship-msg">أضف <strong>{SHIPPING_FREE_AT - cartTotal} ج.م</strong> للحصول على شحن مجاني</div>
               )}
               <div className="ship-bar"><div className="ship-fill" style={{ width: `${shippingProgress}%` }} /></div>
             </div>
@@ -565,12 +565,12 @@ function Index() {
             </div>
 
             <div className="cart-summary">
-              <div className="cart-row"><span>المجموع الفرعي</span><span>{cartTotal} ر.س</span></div>
-              {promoDiscount > 0 && <div className="cart-row discount"><span>الخصم</span><span>−{promoDiscount} ر.س</span></div>}
-              <div className="cart-row"><span>الشحن</span><span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ر.س`}</span></div>
+              <div className="cart-row"><span>المجموع الفرعي</span><span>{cartTotal} ج.م</span></div>
+              {promoDiscount > 0 && <div className="cart-row discount"><span>الخصم</span><span>−{promoDiscount} ج.م</span></div>}
+              <div className="cart-row"><span>الشحن</span><span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ج.م`}</span></div>
               <div className="cart-total">
                 <span>الإجمالي</span>
-                <strong>{grandTotal} ر.س</strong>
+                <strong>{grandTotal} ج.م</strong>
               </div>
             </div>
             <button className="btn-gold" style={{ width: "100%" }} onClick={checkout}>إتمام الدفع</button>
@@ -597,7 +597,7 @@ function Index() {
             }).map((p) => (
               <button key={p.id} className="search-item" onClick={() => { setSearchOpen(false); scrollTo("products"); }}>
                 <span>{p.name}</span>
-                <span className="search-item-fam">{p.family} · {p.price} ر.س</span>
+                <span className="search-item-fam">{p.family} · {p.price} ج.م</span>
               </button>
             ))}
           </div>
@@ -641,7 +641,7 @@ function Index() {
               <p className="pdetail-story">{detailProduct.story}</p>
               <div className="pdetail-price">
                 {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice}</span>}
-                <span className="pprice">{detailProduct.price} ر.س</span>
+                <span className="pprice">{detailProduct.price} ج.م</span>
               </div>
               <div className="pdetail-actions">
                 <button
