@@ -27,7 +27,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
       - name: Install dependencies
         run: npm install --legacy-peer-deps
@@ -40,7 +45,7 @@ jobs:
 
       - name: Prerender HTML for GitHub Pages
         run: |
-          PORT=3000 node dist/server/server.js &
+          PORT=3000 bun dist/server/server.js &
           SERVER_PID=$!
           sleep 4
           mkdir -p dist/client
