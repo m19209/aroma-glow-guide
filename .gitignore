@@ -57,4 +57,4 @@ dist-ssr
 *.sln
 *.sw?
 google-credentials.json  
- 
+.vercel
