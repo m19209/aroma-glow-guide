@@ -40,19 +40,19 @@ jobs:
 
       - name: Prerender HTML for GitHub Pages
         run: |
-          PORT=3000 node .output/server/index.mjs &
+          PORT=3000 node dist/server/server.js &
           SERVER_PID=$!
           sleep 4
-          mkdir -p .output/public
+          mkdir -p dist/client
           echo "Testing server response..."
           curl -i http://localhost:3000/aroma-glow-guide/ || true
-          curl -s http://localhost:3000/aroma-glow-guide/ > .output/public/index.html
-          if [ ! -s .output/public/index.html ]; then
-            curl -s http://localhost:3000/ > .output/public/index.html
+          curl -s http://localhost:3000/aroma-glow-guide/ > dist/client/index.html
+          if [ ! -s dist/client/index.html ]; then
+            curl -s http://localhost:3000/ > dist/client/index.html
           fi
-          cp .output/public/index.html .output/public/404.html
-          touch .output/public/.nojekyll
-          echo "OUTPUT_DIR=.output/public" >> $GITHUB_ENV
+          cp dist/client/index.html dist/client/404.html
+          touch dist/client/.nojekyll
+          echo "OUTPUT_DIR=dist/client" >> $GITHUB_ENV
           kill $SERVER_PID || true
 
       - name: Setup Pages
@@ -61,7 +61,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .output/public
+          path: dist/client
 
       - name: Deploy to GitHub Pages
         id: deployment
