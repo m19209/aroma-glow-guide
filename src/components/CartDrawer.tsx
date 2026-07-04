@@ -68,8 +68,8 @@ export function CartDrawer({
       >
         <div className="cart-head">
           <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-            <span style={{ fontSize: '1.2rem' }}>سلة المشتريات</span>
-            <span style={{ color: 'var(--gold-deep)', fontWeight: 400, fontSize: '0.85rem', letterSpacing: '0.15em', marginTop: '3px' }}>— CART</span>
+            <span style={{ fontSize: '1.3rem', fontFamily: '"Cairo", sans-serif', fontWeight: 600, letterSpacing: '0' }}>سلة المشتريات</span>
+            <span style={{ color: 'var(--gold-deep)', fontWeight: 700, fontSize: '1.05rem', letterSpacing: '0.15em', marginTop: '3px', fontFamily: '"Cinzel", serif' }}>— CART</span>
           </h3>
           <button className="cart-close" onClick={onClose} aria-label="إغلاق السلة">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
