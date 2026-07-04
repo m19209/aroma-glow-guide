@@ -1,33 +1,24 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { VELORE_CSS } from "@/lib/velore-styles";
-import imgNoir from "@/assets/perfume-noir.jpg";
-import imgRose from "@/assets/perfume-rose.jpg";
-import imgOud from "@/assets/perfume-oud.jpg";
-import imgAzur from "@/assets/perfume-azur.jpg";
-import imgVert from "@/assets/perfume-vert.jpg";
-import imgVelvet from "@/assets/perfume-velvet.jpg";
-import imgAmbre from "@/assets/perfume-ambre.jpg";
-import imgBlanc from "@/assets/perfume-blanc.jpg";
-import imgSaphir from "@/assets/perfume-saphir.jpg";
-import imgEmeraude from "@/assets/perfume-emeraude.jpg";
 
-type BottleKey = "noir" | "rose" | "oud" | "azur" | "vert" | "velvet" | "ambre" | "blanc" | "saphir" | "emeraude";
-
-const BOTTLE_IMAGES: Record<BottleKey, string> = {
-  noir: imgNoir,
-  rose: imgRose,
-  oud: imgOud,
-  azur: imgAzur,
-  vert: imgVert,
-  velvet: imgVelvet,
-  ambre: imgAmbre,
-  blanc: imgBlanc,
-  saphir: imgSaphir,
-  emeraude: imgEmeraude,
-};
-
+import { PRODUCTS, Product } from "@/lib/product-data";
+import { Bottle } from "@/components/Bottle";
+import { Hero } from "@/components/Hero";
+import { CartDrawer } from "@/components/CartDrawer";
+import { LoginModal } from "@/components/LoginModal";
+import { ProductDetailModal } from "@/components/ProductDetailModal";
+import { SearchModal } from "@/components/SearchModal";
+import { BackToTop } from "@/components/BackToTop";
+import { getAllStocks } from "@/lib/products";
+import { loginUser, signupUser } from "@/lib/auth";
+import { getUserProfile, createOrder } from "@/lib/user";
+import { validatePromo } from "@/lib/promo";
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      loginRequired: search.loginRequired === 'true' || search.loginRequired === true || undefined,
+    };
+  },
   head: () => ({
     meta: [
       { title: "VELORE — Eau de Parfum" },
@@ -39,71 +30,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-type Product = {
-  id: string;
-  name: string;
-  family: string;
-  notes: string;
-  price: number;
-  oldPrice?: number;
-  volume: string;
-  badge?: { label: string; variant: "new" | "sale" | "hot" | "limited" };
-  bottle: BottleKey;
-  label: string;
-  concentration: string;
-  longevity: string;
-  sillage: string;
-  occasion: string;
-  gender: string;
-  origin: string;
-  topNotes: string;
-  heartNotes: string;
-  baseNotes: string;
-  story: string;
-};
-
-const PRODUCTS: Product[] = [
-  { id: "p1", name: "Layl — ليل", family: "Oriental · Wood", notes: "العنبر · المسك الأسود · خشب العود · الفانيليا", price: 3960, volume: "50 ML", badge: { label: "NEW", variant: "new" }, bottle: "noir", label: "LAYL",
-    concentration: "Extrait de Parfum 30%", longevity: "‏10–12 ساعة", sillage: "قوي", occasion: "المساء · المناسبات", gender: "للجنسين", origin: "الطائف · المدينة المنورة",
-    topNotes: "الفلفل الأسود · البرغموت", heartNotes: "خشب العود · العنبر · التوابل الشرقية", baseNotes: "العنبر الأسود · الفانيليا · المسك الأبيض",
-    story: "توقيع ليلي هادئ من إلهام ليالي رمضان — سكينة ووقار." },
-  { id: "p2", name: "Wardat Al-Taif — وردة الطائف", family: "Floral · Musky", notes: "وردة الطائف · الياسمين · المسك الأبيض · الخوخ", price: 4160, oldPrice: 5200, volume: "75 ML", badge: { label: "BEST SELLER", variant: "hot" }, bottle: "rose", label: "WARDAT AL-TAIF",
-    concentration: "Eau de Parfum 20%", longevity: "‏8–10 ساعات", sillage: "متوسط–قوي", occasion: "طوال اليوم · المناسبات", gender: "نسائي", origin: "الطائف · المملكة العربية السعودية",
-    topNotes: "الخوخ الأبيض · البرغموت · الفلفل الوردي", heartNotes: "وردة الطائف · الياسمين السامباك · الفاوانيا", baseNotes: "المسك الأبيض · الباتشولي المخملي · العنبر",
-    story: "باقة من أثمن ورود الطائف — أنوثة كلاسيكية بلمسة عصرية." },
-  { id: "p3", name: "Oud Al-Sultan — عود السلطان", family: "Oriental · Oud", notes: "العود الهندي · الصندل · الكهرمان · المسك الملكي", price: 7120, volume: "100 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "oud", label: "OUD AL-SULTAN",
-    concentration: "Extrait de Parfum 35%", longevity: "‏12+ ساعة", sillage: "قوي جداً", occasion: "المناسبات الفاخرة", gender: "للجنسين", origin: "أسّام · الهند",
-    topNotes: "الزعفران · العنبر الأحمر · القرنفل", heartNotes: "العود الهندي المُعتَّق · وردة الطائف · خشب الصندل", baseNotes: "المسك الملكي · الكهرمان · جلد العود",
-    story: "طبعة محدودة من أندر أنواع العود — روعة تُورَث." },
-  { id: "p4", name: "Fajr — فجر", family: "Aquatic · Fresh", notes: "الليمون · بيرغامو · الهواء البحري · السيدر", price: 2432, oldPrice: 3040, volume: "50 ML", badge: { label: "SALE 20%", variant: "sale" }, bottle: "azur", label: "FAJR",
-    concentration: "Eau de Toilette 12%", longevity: "‏6–8 ساعات", sillage: "خفيف–متوسط", occasion: "الصيف · النهار", gender: "رجالي", origin: "ساحل البحر الأحمر",
-    topNotes: "ليمون صقلي · البرغموت · النعناع", heartNotes: "الملوحة البحرية · الميرمية · اللافندر", baseNotes: "خشب السيدر · المسك المائي · الأمبرغريس",
-    story: "نسمة بحرية منعشة — كنسيم الفجر عند شواطئ البحر الأحمر." },
-  { id: "p5", name: "Rawḍah — روضة", family: "Woody · Green", notes: "أوراق البنفسج · النعناع · خشب الصندل · المسك", price: 3360, volume: "75 ML", bottle: "vert", label: "RAWDAH",
-    concentration: "Eau de Parfum 18%", longevity: "‏7–9 ساعات", sillage: "متوسط", occasion: "المكتب · النهار", gender: "للجنسين", origin: "الحجاز",
-    topNotes: "النعناع البري · أوراق الحمضيات · إبرة الراعي", heartNotes: "أوراق البنفسج · شاي الياسمين · الريحان", baseNotes: "خشب الصندل · الفيتيفر · المسك الأبيض",
-    story: "خضرة نديّة كروضة أنيقة — نقاء أخّاذ وثقة هادئة." },
-  { id: "p6", name: "Wardat Al-Firdaws — وردة الفردوس", family: "Floral · Luxe", notes: "الوردة الجورية · الفراولة · المسك الوردي · الباتشولي", price: 5760, volume: "100 ML", badge: { label: "NEW", variant: "new" }, bottle: "velvet", label: "WARDAT AL-FIRDAWS",
-    concentration: "Extrait de Parfum 28%", longevity: "‏10+ ساعات", sillage: "قوي", occasion: "السهرة · العشاء", gender: "نسائي", origin: "بلاد الشام",
-    topNotes: "الفراولة البرية · التوت الأسود · الرمان", heartNotes: "الوردة الجورية · العود الوردي · البخور الحلو", baseNotes: "الباتشولي الفاخر · المسك الوردي · الكاكاو الداكن",
-    story: "مخملٌ مُذوَّب في زجاجة — أنوثة نضرة وحسّية." },
-  { id: "p7", name: "Kahraman — كهرمان", family: "Oriental · Amber", notes: "الكهرمان · البخور · التبغ الحلو · الفانيليا", price: 4880, volume: "75 ML", badge: { label: "HOT", variant: "hot" }, bottle: "ambre", label: "KAHRAMAN",
-    concentration: "Extrait de Parfum 30%", longevity: "‏10–12 ساعة", sillage: "قوي", occasion: "الشتاء · المساء", gender: "للجنسين", origin: "ظُفار · عُمان",
-    topNotes: "البرتقال المُسكَّر · القرفة · الهيل", heartNotes: "التبغ الحلو · اللبان العُماني · العسل", baseNotes: "الكهرمان الذهبي · الفانيليا · اللبان الأبيض",
-    story: "دفء الشمس الغاربة — عناق كهرماني يبقى في الذاكرة." },
-  { id: "p8", name: "Yasmeen — ياسمين", family: "Floral · White", notes: "الفل · زهر البرتقال · المسك الأبيض · خشب الكشمير", price: 3040, volume: "50 ML", bottle: "blanc", label: "YASMEEN",
-    concentration: "Eau de Parfum 16%", longevity: "‏7–9 ساعات", sillage: "متوسط", occasion: "الأعراس · النهار", gender: "نسائي", origin: "دمشق · بلاد الشام",
-    topNotes: "زهر البرتقال · البرغموت · الليتشي", heartNotes: "الفل الهندي · الياسمين الشامي · زنبق الوادي", baseNotes: "المسك الأبيض · خشب الكشمير · العنبر الشفاف",
-    story: "بياضٌ ناصع كنسيم الفجر — أنوثة نقيّة وهادئة." },
-  { id: "p9", name: "Yaqout — ياقوت", family: "Aquatic · Woody", notes: "الخزامى البحرية · الأمبرغريس · خشب الأرز · المسك", price: 4480, oldPrice: 5600, volume: "100 ML", badge: { label: "SALE", variant: "sale" }, bottle: "saphir", label: "YAQOUT",
-    concentration: "Eau de Parfum 22%", longevity: "‏8–10 ساعات", sillage: "متوسط–قوي", occasion: "السفر · طوال اليوم", gender: "رجالي", origin: "خليج العقبة",
-    topNotes: "الملح الأزرق · الحمضيات المتجمّدة · الخيار", heartNotes: "الخزامى البحرية · الميرمية · إكليل الجبل", baseNotes: "الأمبرغريس · خشب الأرز · المسك الأبيض",
-    story: "برودة الياقوت الأزرق — أناقة ذكورية باردة وواثقة." },
-  { id: "p10", name: "Zumurrud — زمرد", family: "Woody · Green", notes: "أوراق التين · الفيتيفر · الباتشولي · خشب الغوياك", price: 5120, volume: "75 ML", badge: { label: "LIMITED", variant: "limited" }, bottle: "emeraude", label: "ZUMURRUD",
-    concentration: "Extrait de Parfum 26%", longevity: "‏10 ساعات", sillage: "قوي", occasion: "الخريف · المساء", gender: "للجنسين", origin: "اليمن السعيد",
-    topNotes: "أوراق التين الخضراء · البرغموت · الحبهان", heartNotes: "الفيتيفر · الباتشولي المُعتَّق · الأيريس", baseNotes: "خشب الغوياك · العنبر الأخضر · جلد المسك",
-    story: "لمعان الزمرد الأخضر — عمقٌ راقٍ لعشّاق الأخشاب النبيلة." },
-];
 
 
 const CATEGORIES = [
@@ -113,46 +39,44 @@ const CATEGORIES = [
   { key: "aquatic", name: "Aquatic", icon: "✧" },
 ];
 
-function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
-  return (
-    <img
-      className="pbottle"
-      src={BOTTLE_IMAGES[variant]}
-      alt={label}
-      loading="lazy"
-      width={1024}
-      height={1024}
-      style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
-    />
-  );
-}
-
 type CartLine = { product: Product; qty: number };
 
 function Index() {
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
+  const [authName, setAuthName] = useState("");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [stocksLoading, setStocksLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [cart, setCart] = useState<CartLine[]>([]);
   const [wishlist, setWishlist] = useState<Set<string>>(new Set());
   const [toast, setToast] = useState<string | null>(null);
   const [detailProduct, setDetailProduct] = useState<Product | null>(null);
+  const [stocks, setStocks] = useState<Record<string, number>>({});
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  // Data fetching
+  useEffect(() => {
+    getAllStocks().then((res) => {
+      if (res.data) setStocks(res.data);
+      setStocksLoading(false);
+    });
+  }, []);
 
   const [filterCat, setFilterCat] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<"featured" | "price-asc" | "price-desc" | "name">("featured");
   const [promoInput, setPromoInput] = useState("");
   const [promoApplied, setPromoApplied] = useState<{ code: string; pct: number } | null>(null);
 
-  // Video ref — force play after SSR hydration (React doesn't trigger autoplay on hydrated elements)
-  const videoRef = useRef<HTMLVideoElement>(null);
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = true;
-    v.play().catch(() => {/* autoplay blocked — poster shows as fallback */});
-  }, []);
+
 
   // Persist
   useEffect(() => {
@@ -163,6 +87,25 @@ function Index() {
       if (w) setWishlist(new Set(JSON.parse(w)));
     } catch {/* noop */}
   }, []);
+
+  // Check user session from cookie on mount securely
+  useEffect(() => {
+    getUserProfile().then((res) => {
+      if (res.success && res.user) {
+        setCurrentUser(res.user.id);
+      }
+    });
+  }, []);
+
+  // Handle loginRequired search param redirect
+  const searchParams = Route.useSearch();
+  useEffect(() => {
+    if (searchParams.loginRequired) {
+      setLoginOpen(true);
+      showToast("يرجى تسجيل الدخول أولاً للوصول إلى حسابك");
+    }
+  }, [searchParams.loginRequired]);
+
   useEffect(() => {
     try { localStorage.setItem("velore_cart", JSON.stringify(cart)); } catch {/* noop */}
   }, [cart]);
@@ -178,25 +121,10 @@ function Index() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll when cart open
+  // Lock body scroll when any modal is open
   useEffect(() => {
-    document.body.style.overflow = cartOpen || mobileOpen || searchOpen || detailProduct ? "hidden" : "";
-  }, [cartOpen, mobileOpen, searchOpen, detailProduct]);
-
-  // Keyboard accessibility: Escape key closes drawers and modals
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setCartOpen(false);
-        setSearchOpen(false);
-        setMobileOpen(false);
-        setDetailProduct(null);
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-
+    document.body.style.overflow = cartOpen || loginOpen || searchOpen || detailProduct ? "hidden" : "";
+  }, [cartOpen, loginOpen, searchOpen, detailProduct]);
   const cartCount = cart.reduce((a, l) => a + l.qty, 0);
   const cartTotal = cart.reduce((a, l) => a + l.qty * l.product.price, 0);
 
@@ -205,9 +133,20 @@ function Index() {
     window.setTimeout(() => setToast(null), 2200);
   }
   function addToCart(p: Product) {
+    const currentStock = stocks[p.id] ?? 5;
+    if (currentStock <= 0) {
+      showToast("عذراً، نفدت الكمية");
+      return;
+    }
     setCart((c) => {
       const found = c.find((l) => l.product.id === p.id);
-      if (found) return c.map((l) => (l.product.id === p.id ? { ...l, qty: l.qty + 1 } : l));
+      if (found) {
+        if (found.qty >= currentStock) {
+          showToast(`تبقّى ${currentStock} قطع فقط`);
+          return c;
+        }
+        return c.map((l) => (l.product.id === p.id ? { ...l, qty: l.qty + 1 } : l));
+      }
       return [...c, { product: p, qty: 1 }];
     });
     showToast(`تمت إضافة ${p.name} إلى الحقيبة`);
@@ -215,6 +154,11 @@ function Index() {
   function removeLine(id: string) { setCart((c) => c.filter((l) => l.product.id !== id)); }
   function setQty(id: string, qty: number) {
     if (qty <= 0) return removeLine(id);
+    const currentStock = stocks[id] ?? 5;
+    if (qty > currentStock) {
+      showToast(`تبقّى ${currentStock} قطع فقط`);
+      return;
+    }
     setCart((c) => c.map((l) => (l.product.id === id ? { ...l, qty } : l)));
   }
   function toggleWish(id: string) {
@@ -230,14 +174,65 @@ function Index() {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
-  function checkout() {
+  async function checkout() {
     if (cart.length === 0) return;
-    showToast("جارٍ تحويلك إلى الدفع…");
-    window.setTimeout(() => {
-      setCart([]);
-      setCartOpen(false);
-      showToast("شكراً لطلبك! تم إتمام الدفع.");
-    }, 1200);
+    if (!currentUser) {
+      showToast("يرجى تسجيل الدخول أولاً لإتمام الطلب");
+      setLoginOpen(true);
+      return;
+    }
+    
+    setCheckoutLoading(true);
+    showToast("جاري إرسال طلبك…");
+    
+    try {
+      const profile = await getUserProfile();
+      if (!profile.success || !profile.user) {
+        showToast("حدث خطأ في استرداد بيانات الحساب");
+        setCheckoutLoading(false);
+        return;
+      }
+
+      const u = profile.user;
+      if (!u.phone || !u.city || !u.district || !u.street) {
+        showToast("يرجى إكمال عنوان التوصيل ورقم الهاتف في حسابك أولاً");
+        window.setTimeout(() => {
+          navigate({ to: "/account" });
+        }, 1500);
+        return;
+      }
+
+      const addressStr = `${u.building ? u.building + '، ' : ''}${u.street}، ${u.district}، ${u.city} (هاتف: ${u.phone})`;
+
+      const items = cart.map(line => ({
+        productId: line.product.id,
+        productName: line.product.name,
+        quantity: line.qty,
+        unitPrice: line.product.price,
+      }));
+
+      const totalAmount = cart.reduce((sum, line) => sum + line.qty * line.product.price, 0);
+
+      const res = await createOrder({
+        data: {
+          items,
+          totalAmount,
+          shippingAddress: addressStr,
+        }
+      });
+
+      if (res.success) {
+        setCart([]);
+        setCartOpen(false);
+        showToast("تم تسجيل طلبك بنجاح! شكراً لك.");
+      } else {
+        showToast(res.error || "فشل إتمام الطلب");
+      }
+    } catch (err) {
+      showToast("حدث خطأ أثناء الاتصال بالخادم");
+    } finally {
+      setCheckoutLoading(false);
+    }
   }
 
   const visibleProducts = useMemo(() => {
@@ -263,39 +258,43 @@ function Index() {
     return sorted;
   }, [filterCat, searchQuery, sortBy]);
 
-  const SHIPPING_FREE_AT = 4000;
-  const PROMOS: Record<string, number> = { VELORE10: 10, LUXE20: 20, NOIR15: 15 };
-  const promoDiscount = promoApplied ? Math.round(cartTotal * (promoApplied.pct / 100)) : 0;
-  const shippingFee = cartTotal === 0 ? 0 : cartTotal - promoDiscount >= SHIPPING_FREE_AT ? 0 : 250;
-  const grandTotal = Math.max(0, cartTotal - promoDiscount + shippingFee);
-  const shippingProgress = Math.min(100, Math.round((cartTotal / SHIPPING_FREE_AT) * 100));
+  const SHIPPING_FREE_AT = 800;
+  const promoDiscount = promoApplied ? cartTotal * (promoApplied.pct / 100) : 0;
+  const subTotalWithPromo = Math.max(0, cartTotal - promoDiscount);
+  const shippingFee = cartTotal === 0 ? 0 : subTotalWithPromo >= SHIPPING_FREE_AT ? 0 : 250;
+  const grandTotal = Math.max(0, subTotalWithPromo + shippingFee);
+  const shippingProgress = Math.min(100, Math.round((subTotalWithPromo / SHIPPING_FREE_AT) * 100));
 
 
-  function applyPromo() {
+  async function applyPromo() {
     const code = promoInput.trim().toUpperCase();
     if (!code) return;
-    if (PROMOS[code]) {
-      setPromoApplied({ code, pct: PROMOS[code] });
-      showToast(`تم تطبيق كود الخصم ${code} (${PROMOS[code]}%)`);
+    const res = await validatePromo({ data: code });
+    if (res.success) {
+      setPromoApplied({ code: res.code, pct: res.pct });
+      showToast(`تم تطبيق كود الخصم ${res.code} (${res.pct}%)`);
       setPromoInput("");
     } else {
-      showToast("كود غير صالح");
+      showToast(res.error || "كود غير صالح");
     }
   }
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{ __html: VELORE_CSS }} />
 
-      {/* NAV */}
+
       <nav className={scrolled ? "scrolled" : ""}>
-        <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="nav-logo">
-          <span className="nav-logo-text">VELORE</span>
-        </a>
+        <div className="nav-brand">
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }} className="nav-logo">
+            <span className="nav-logo-text">VELORE</span>
+          </a>
+        </div>
+
         <ul className="nav-links">
           <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
         </ul>
-        <div className="nav-right">
+
+        <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div className="nav-search" onClick={() => setSearchOpen(true)} style={{ cursor: 'pointer' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
             <input
@@ -304,15 +303,52 @@ function Index() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchOpen(true)}
-              aria-label="Search"
+              aria-label="البحث عن منتج"
             />
           </div>
+
+          {currentUser ? (
+            <div className="nav-auth" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <Link to="/account" className="nav-login-btn magic-login-btn" style={{ 
+                color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)', 
+                textDecoration: 'none'
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span className="login-label">حسابي</span>
+              </Link>
+              <button 
+                onClick={() => { 
+                  document.cookie = "velore_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                  setCurrentUser(null); 
+                  showToast("تم تسجيل الخروج بنجاح"); 
+                }} 
+                className="nav-login-btn magic-login-btn logout-btn"
+                style={{ 
+                  color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)', 
+                  border: 'none', 
+                  paddingLeft: '8px',
+                  paddingRight: '8px'
+                }}
+                aria-label="تسجيل الخروج"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                <span className="login-label">تسجيل الخروج</span>
+              </button>
+            </div>
+          ) : (
+            <button className="nav-login-btn magic-login-btn" onClick={() => setLoginOpen(true)} style={{ color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              <span className="login-label">تسجيل الدخول</span>
+            </button>
+          )}
+
           <button className="nav-cart-btn" onClick={() => setCartOpen(true)}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
             <span className="cart-label">الحقيبة</span>
             {cartCount > 0 && <span key={cartCount} className="cart-count-badge">{cartCount}</span>}
           </button>
-          <button className="nav-hamburger" aria-label="Menu" onClick={() => setMobileOpen((o) => !o)}>
+          
+          <button className={`nav-hamburger ${mobileOpen ? 'open' : ''}`} aria-label="Menu" onClick={() => setMobileOpen((o) => !o)}>
             <span /><span /><span />
           </button>
         </div>
@@ -320,37 +356,53 @@ function Index() {
 
       {mobileOpen && (
         <div className="mobile-menu open">
+          <div className="mobile-search-wrapper" style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '8px' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--charcoal-dim)' }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+            <input 
+              type="text" 
+              placeholder="ابحث..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => { setMobileOpen(false); setSearchOpen(true); }}
+              style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', padding: '0 12px', fontSize: '1rem', color: 'var(--charcoal)' }}
+            />
+          </div>
+          
           <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
+          
+          {currentUser ? (
+            <>
+              <Link to="/account" onClick={() => setMobileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                حسابي
+              </Link>
+              <button 
+                onClick={() => { 
+                  document.cookie = "velore_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                  setCurrentUser(null); 
+                  setMobileOpen(false);
+                  showToast("تم تسجيل الخروج بنجاح"); 
+                }} 
+                className="mobile-menu-btn"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                تسجيل الخروج
+              </button>
+            </>
+          ) : (
+            <button 
+              onClick={() => { setMobileOpen(false); setLoginOpen(true); }}
+              className="mobile-menu-btn"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+              تسجيل الدخول
+            </button>
+          )}
         </div>
       )}
 
       <main id="main-content">
-      {/* HERO */}
-      <section className="hero">
-        <video ref={videoRef} className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505" }} poster="https://images.unsplash.com/photo-1594035919809-0d67af651cad?q=80&w=2000&auto=format&fit=crop">
-          <source src={`${import.meta.env.BASE_URL}hero-video.mp4`} type="video/mp4" />
-        </video>
-        <div className="hero-overlay" />
-        <div className="hero-leak" />
-        <div className="hero-vignette" />
-        <div className="hero-content">
-          <div className="hero-ornament">
-            <div className="orn-line" />
-            <span className="hero-eyebrow" style={{ margin: 0 }}>Maison de Parfum · Depuis 2010</span>
-            <div className="orn-line right" />
-          </div>
-          <h1 className="hero-title">VELORE</h1>
-          <div className="hero-title-sub">Eau de Parfum</div>
-          <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
-          <div className="hero-actions">
-            <a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }} className="btn-gold">اكتشف المجموعة</a>
-          </div>
-        </div>
-        <div className="hero-scroll">
-          <span className="hero-scroll-label">Explore</span>
-          <span className="hero-scroll-line" />
-        </div>
-      </section>
+      <Hero scrollToProducts={() => scrollTo("products")} />
 
 
 
@@ -418,7 +470,18 @@ function Index() {
                 </div>
                 <div className="pinfo">
                   <div className="pfamily">{p.family}</div>
-                  <div className="pname">{p.name}</div>
+                  <div className="pname">
+                    <Link to={`/product/${p.id}`} onClick={(e) => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'none' }}>
+                      {p.name}
+                    </Link>
+                  </div>
+                  <div className="pstock" style={{ color: (stocks[p.id] ?? 5) < 3 ? '#d9534f' : '#8B6F28', fontSize: '0.75rem', marginBottom: '8px', fontWeight: 'bold' }}>
+                    {stocksLoading ? (
+                      <span className="skeleton-pulse" style={{ display: 'inline-block', width: '80px', height: '12px', background: 'var(--beige)', borderRadius: '4px' }}></span>
+                    ) : (
+                      (stocks[p.id] ?? 5) > 0 ? `الكمية المتبقية: ${stocks[p.id] ?? 5} قطع` : 'نفدت الكمية'
+                    )}
+                  </div>
                   <div className="pnotes">{p.notes}</div>
                   <div className="pfooter">
                     <div>
@@ -440,16 +503,18 @@ function Index() {
                   if (!line) {
                     return (
                       <button className="pcard-buy" onClick={(e) => { e.stopPropagation(); addToCart(p); }}>
-                        <span className="pcard-buy-icon">+</span>
-                        <span>Add to Cart — أضف للحقيبة</span>
+                        <span className="pcard-buy-icon">
+                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
+                        </span>
+                        <span>أضف للحقيبة</span>
                       </button>
                     );
                   }
                   return (
-                    <div className="pcard-qty" onClick={(e) => e.stopPropagation()}>
-                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty - 1); }} aria-label="−">−</button>
-                      <span>في الحقيبة: <strong>{line.qty}</strong></span>
-                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty + 1); }} aria-label="+">+</button>
+                    <div className="pcard-qty" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', gap: '30px', padding: '10px 0', background: 'rgba(0,0,0,0.03)', margin: '0 8px 12px', borderRadius: '4px' }}>
+                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty - 1); }} aria-label="−" style={{ fontSize: '1.4rem', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0 10px' }}>−</button>
+                      <span style={{ fontSize: '1.2rem', fontWeight: 700 }}>{line.qty}</span>
+                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty + 1); }} aria-label="+" style={{ fontSize: '1.4rem', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0 10px' }}>+</button>
                     </div>
                   );
                 })()}
@@ -460,6 +525,8 @@ function Index() {
       </section>
 
 
+      </main>
+
       {/* FOOTER */}
       <footer>
         <div>
@@ -469,8 +536,8 @@ function Index() {
           <span className="footer-logo-sub">MAISON DE PARFUM</span>
           <p className="footer-tagline">صناعة العطور كفنّ — كل قارورة قصة، كل رائحة ذكرى.</p>
           <div className="footer-socials">
-            {["IG", "FB", "TW", "YT"].map((s) => (
-              <a href="#" key={s} className="social-btn" onClick={(e) => e.preventDefault()}>{s}</a>
+            {["إنستقرام", "فيسبوك", "إكس", "يوتيوب"].map((s) => (
+              <span key={s} className="social-btn" style={{ fontSize: '0.85rem' }}>{s}</span>
             ))}
           </div>
         </div>
@@ -483,9 +550,9 @@ function Index() {
         <div className="footer-col">
           <h4>Service</h4>
           <ul>
-            <li><a href="#" onClick={(e) => e.preventDefault()}>الشحن</a></li>
-            <li><a href="#" onClick={(e) => e.preventDefault()}>الإرجاع</a></li>
-            <li><a href="#" onClick={(e) => e.preventDefault()}>الأسئلة</a></li>
+            <li><span>الشحن</span></li>
+            <li><span>الإرجاع</span></li>
+            <li><span>الأسئلة</span></li>
           </ul>
         </div>
         <div className="footer-col">
@@ -503,175 +570,56 @@ function Index() {
           {["VISA", "MASTER", "MADA", "APPLE PAY"].map((c) => <span key={c} className="pay-chip">{c}</span>)}
         </div>
       </div>
-      </main>
 
-      {/* CART DRAWER */}
-      <div className={`drawer-backdrop ${cartOpen ? "open" : ""}`} onClick={() => setCartOpen(false)} />
-      <aside className={`cart-drawer ${cartOpen ? "open" : ""}`} aria-hidden={!cartOpen} role="dialog" aria-modal="true" aria-label="سلة التسوق">
-        <div className="cart-head">
-          <h3>الحقيبة <span>({cartCount})</span></h3>
-          <button className="cart-close" onClick={() => setCartOpen(false)} aria-label="إغلاق">×</button>
-        </div>
-        <div className="cart-body">
-          {cart.length === 0 ? (
-            <div className="cart-empty">
-              <div style={{ fontSize: "3rem", marginBottom: 12 }}>🛍️</div>
-              <p>حقيبتك فارغة</p>
-              <button className="btn-gold" onClick={() => { setCartOpen(false); scrollTo("products"); }}>تصفح العطور</button>
-            </div>
-          ) : (
-            cart.map((l) => (
-              <div className="cart-line" key={l.product.id}>
-                <div className="cart-line-img"><Bottle variant={l.product.bottle} label={l.product.label} /></div>
-                <div className="cart-line-info">
-                  <div className="cart-line-name">{l.product.name}</div>
-                  <div className="cart-line-fam">{l.product.family} · {l.product.volume}</div>
-                  <div className="cart-line-price">{l.product.price * l.qty} ج.م</div>
-                  <div className="qty">
-                    <button onClick={() => setQty(l.product.id, l.qty - 1)} aria-label="-">−</button>
-                    <span>{l.qty}</span>
-                    <button onClick={() => setQty(l.product.id, l.qty + 1)} aria-label="+">+</button>
-                    <button className="qty-remove" onClick={() => removeLine(l.product.id)}>حذف</button>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-        {cart.length > 0 && (
-          <div className="cart-foot">
-            <div className="ship-progress">
-              {shippingFee === 0 ? (
-                <div className="ship-msg ship-ok">🎉 تأهلت للشحن المجاني!</div>
-              ) : (
-                <div className="ship-msg">أضف <strong>{SHIPPING_FREE_AT - cartTotal} ج.م</strong> للحصول على شحن مجاني</div>
-              )}
-              <div className="ship-bar"><div className="ship-fill" style={{ width: `${shippingProgress}%` }} /></div>
-            </div>
+      <CartDrawer
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        cart={cart}
+        setQty={setQty}
+        removeLine={removeLine}
+        shippingFee={shippingFee}
+        cartTotal={cartTotal}
+        promoApplied={promoApplied}
+        promoInput={promoInput}
+        setPromoInput={setPromoInput}
+        applyPromo={applyPromo}
+        grandTotal={grandTotal}
+        checkout={checkout}
+        checkoutLoading={checkoutLoading}
+        shippingProgress={shippingProgress}
+      />
 
-            <div className="promo-row">
-              {promoApplied ? (
-                <div className="promo-applied">
-                  <span>✓ كود <strong>{promoApplied.code}</strong> — خصم {promoApplied.pct}%</span>
-                  <button onClick={() => setPromoApplied(null)} aria-label="إزالة">×</button>
-                </div>
-              ) : (
-                <>
-                  <input
-                    className="promo-input"
-                    placeholder="كود الخصم (جرب VELORE10)"
-                    value={promoInput}
-                    onChange={(e) => setPromoInput(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") applyPromo(); }}
-                  />
-                  <button className="promo-btn" onClick={applyPromo}>تطبيق</button>
-                </>
-              )}
-            </div>
+      <LoginModal
+        isOpen={loginOpen}
+        onClose={() => setLoginOpen(false)}
+        onLogin={(userId) => {
+          setCurrentUser(userId);
+          showToast("تم تسجيل الدخول بنجاح!");
+        }}
+      />
 
-            <div className="cart-summary">
-              <div className="cart-row"><span>المجموع الفرعي</span><span>{cartTotal} ج.م</span></div>
-              {promoDiscount > 0 && <div className="cart-row discount"><span>الخصم</span><span>−{promoDiscount} ج.م</span></div>}
-              <div className="cart-row"><span>الشحن</span><span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ج.م`}</span></div>
-              <div className="cart-total">
-                <span>الإجمالي</span>
-                <strong>{grandTotal} ج.م</strong>
-              </div>
-            </div>
-            <button className="btn-gold" style={{ width: "100%" }} onClick={checkout}>إتمام الدفع</button>
-          </div>
-        )}
-      </aside>
+      <ProductDetailModal
+        product={detailProduct}
+        onClose={() => setDetailProduct(null)}
+        stocks={stocks}
+        addToCart={addToCart}
+        wishlist={wishlist}
+        toggleWish={toggleWish}
+      />
 
-      {/* SEARCH MODAL */}
-      <div className={`drawer-backdrop ${searchOpen ? "open" : ""}`} onClick={() => setSearchOpen(false)} />
-      {searchOpen && (
-        <div className="search-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="نافذة البحث">
-          <input
-            autoFocus
-            className="search-input"
-            placeholder="ابحث عن عطر، عائلة، نوتة..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <div className="search-results">
-            {PRODUCTS.filter((p) => {
-              if (!searchQuery.trim()) return true;
-              const q = searchQuery.toLowerCase();
-              return p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q);
-            }).map((p) => (
-              <button key={p.id} className="search-item" onClick={() => { setSearchOpen(false); setDetailProduct(p); }}>
-                <span>{p.name}</span>
-                <span className="search-item-fam">{p.family} · {p.price} ج.م</span>
-              </button>
-            ))}
-          </div>
-          <button className="search-close" onClick={() => setSearchOpen(false)}>إغلاق</button>
-        </div>
-      )}
 
-      {/* PRODUCT DETAIL MODAL */}
-      {detailProduct && (
-        <div className="pdetail-backdrop open" onClick={() => setDetailProduct(null)}>
-          <div className="pdetail-modal" role="dialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
-            <button className="pdetail-close" onClick={() => setDetailProduct(null)} aria-label="إغلاق">×</button>
+      <SearchModal
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        onSelectProduct={(p) => setDetailProduct(p)}
+      />
 
-            {/* RIGHT (rendered first in RTL) — image only */}
-            <div className="pdetail-media">
-              {detailProduct.badge && <span className={`pbadge badge-${detailProduct.badge.variant}`}>{detailProduct.badge.label}</span>}
-              <div className="pdetail-media-img">
-                <Bottle variant={detailProduct.bottle} label={detailProduct.label} />
-              </div>
-            </div>
-
-            {/* LEFT (rendered second in RTL) — all info */}
-            <div className="pdetail-info-col">
-              <div className="pfamily">{detailProduct.family}</div>
-              <h3 className="pdetail-name">{detailProduct.name}</h3>
-              <div className="pdetail-vol">{detailProduct.volume}</div>
-              <p className="pdetail-story">{detailProduct.story}</p>
-
-              <div className="pdetail-info-title">معلومات العطر</div>
-              <ul className="pdetail-specs">
-                <li><span>التركيز</span><strong>{detailProduct.concentration}</strong></li>
-                <li><span>الثبات</span><strong>{detailProduct.longevity}</strong></li>
-                <li><span>الانتشار</span><strong>{detailProduct.sillage}</strong></li>
-                <li><span>المناسبة</span><strong>{detailProduct.occasion}</strong></li>
-                <li><span>النوع</span><strong>{detailProduct.gender}</strong></li>
-                <li><span>المنشأ</span><strong>{detailProduct.origin}</strong></li>
-                <li><span>الحجم</span><strong>{detailProduct.volume}</strong></li>
-              </ul>
-
-              <div className="pdetail-pyramid">
-                <div className="pyramid-row"><span className="pyramid-lvl">القمة</span><p>{detailProduct.topNotes}</p></div>
-                <div className="pyramid-row"><span className="pyramid-lvl">القلب</span><p>{detailProduct.heartNotes}</p></div>
-                <div className="pyramid-row"><span className="pyramid-lvl">القاعدة</span><p>{detailProduct.baseNotes}</p></div>
-              </div>
-
-              <div className="pdetail-price">
-                {detailProduct.oldPrice && <span className="pprice-old">{detailProduct.oldPrice} ج.م</span>}
-                <span className="pprice">{detailProduct.price} ج.م</span>
-              </div>
-
-              <div className="pdetail-actions">
-                <button
-                  className="btn-gold pdetail-buy"
-                  onClick={() => { addToCart(detailProduct); setDetailProduct(null); }}
-                >شراء الآن — Add to Cart</button>
-                <button
-                  className={`pwish ${wishlist.has(detailProduct.id) ? "active" : ""}`}
-                  onClick={() => toggleWish(detailProduct.id)}
-                  aria-label="المفضلة"
-                >{wishlist.has(detailProduct.id) ? "♥" : "♡"}</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
+      <BackToTop />
 
       {/* TOAST */}
-      {toast && <div className="toast">{toast}</div>}
+      {toast && <div className="toast" role="alert" aria-live="assertive">{toast}</div>}
     </>
   );
 }
