@@ -9,7 +9,7 @@ export async function appendUserToSheet(name: string, id: string, passwordHash: 
     });
 
     const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient });
+    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
     
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) {

@@ -12,10 +12,10 @@ export const Route = createFileRoute("/product/$productId")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `${loaderData.name} — VELORE` },
-      { name: "description", content: loaderData.story },
-      { property: "og:title", content: `${loaderData.name} — VELORE` },
-      { property: "og:description", content: loaderData.story },
+      { title: `${loaderData?.name} — VELORE` },
+      { name: "description", content: loaderData?.story },
+      { property: "og:title", content: `${loaderData?.name} — VELORE` },
+      { property: "og:description", content: loaderData?.story },
     ],
   }),
   component: ProductPage,
@@ -28,7 +28,7 @@ function ProductPage() {
 
   useEffect(() => {
     getAllStocks().then((res) => {
-      if (res.data) setStocks(res.data);
+      if (res) setStocks(res);
       setStocksLoading(false);
     });
   }, []);

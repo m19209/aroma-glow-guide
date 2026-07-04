@@ -14,9 +14,9 @@ import { loginUser, signupUser } from "@/lib/auth";
 import { getUserProfile, createOrder } from "@/lib/user";
 import { validatePromo } from "@/lib/promo";
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>) => {
+  validateSearch: (search: Record<string, unknown>): { loginRequired?: boolean } => {
     return {
-      loginRequired: search.loginRequired === 'true' || search.loginRequired === true || undefined,
+      loginRequired: search.loginRequired === 'true' || search.loginRequired === true ? true : undefined,
     };
   },
   head: () => ({
@@ -66,7 +66,7 @@ function Index() {
   // Data fetching
   useEffect(() => {
     getAllStocks().then((res) => {
-      if (res.data) setStocks(res.data);
+      if (res) setStocks(res);
       setStocksLoading(false);
     });
   }, []);
@@ -471,7 +471,7 @@ function Index() {
                 <div className="pinfo">
                   <div className="pfamily">{p.family}</div>
                   <div className="pname">
-                    <Link to={`/product/${p.id}`} onClick={(e) => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'none' }}>
+                    <Link to="/product/$productId" params={{ productId: p.id }} onClick={(e) => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'none' }}>
                       {p.name}
                     </Link>
                   </div>
