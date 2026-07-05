@@ -31,7 +31,7 @@ export function SearchModal({
 
   return (
     <>
-      <div className={`drawer-backdrop active`} onClick={onClose} />
+      <div className="drawer-backdrop open" onClick={onClose} />
       <div
         className="search-modal"
         onClick={(e) => e.stopPropagation()}
