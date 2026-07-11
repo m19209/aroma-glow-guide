@@ -56,11 +56,12 @@ export function BackToTop() {
   );
 }
 
-export function Bottle({ variant, label }: { variant: BottleKey; label: string }) {
+export function Bottle({ variant, label, imageSrc }: { variant: BottleKey; label: string; imageSrc?: string }) {
+  const src = imageSrc || BOTTLE_IMAGES[variant];
   return (
     <img
       className="pbottle"
-      src={BOTTLE_IMAGES[variant]}
+      src={src}
       alt={label}
       loading="lazy"
       width={1024}
