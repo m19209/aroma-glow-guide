@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { PRODUCTS, Product, getAllStocks, validatePromo } from "@/lib/inventory";
+import { listCustomProducts } from "@/lib/admin-service";
 import { loginUser, signupUser, getUserProfile, createOrder } from "@/lib/auth-service";
 import { Bottle, Hero, BackToTop } from "@/components/ui-elements";
 import { LoginModal, ProductDetailModal, SearchModal } from "@/components/modals";
