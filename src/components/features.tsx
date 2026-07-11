@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Product } from "@/lib/inventory";
-import { updateUserProfile } from "@/lib/auth-service";
+import { updateUserProfile, getUserProfile } from "@/lib/auth-service";
 import { Bottle } from "@/components/ui-elements";
 
 // --- Types ---
@@ -58,7 +58,9 @@ export function CartDrawer({
   grandTotal,
   checkout,
   checkoutLoading,
-  shippingProgress
+  shippingProgress,
+  currentUser,
+  onLoginRequired
 }: {
   isOpen: boolean;
   onClose: () => void;
@@ -72,14 +74,51 @@ export function CartDrawer({
   setPromoInput: (val: string) => void;
   applyPromo: () => void;
   grandTotal: number;
-  checkout: () => void;
+  checkout: (data: {
+    customerName: string;
+    customerPhone: string;
+    governorate: string;
+    city: string;
+    district: string;
+    street: string;
+    building: string;
+    orderNotes: string;
+    paymentMethod: 'cod' | 'vodafone';
+  }) => void;
   checkoutLoading: boolean;
   shippingProgress: number;
+  currentUser: string | null;
+  onLoginRequired: () => void;
 }) {
   const drawerRef = useRef<HTMLDivElement>(null);
+  
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [customerName, setCustomerName] = useState("");
+  const [customerPhone, setCustomerPhone] = useState("");
+  const [governorate, setGovernorate] = useState("");
+  const [city, setCity] = useState("");
+  const [district, setDistrict] = useState("");
+  const [street, setStreet] = useState("");
+  const [building, setBuilding] = useState("");
+  const [orderNotes, setOrderNotes] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<'cod' | 'vodafone'>('cod');
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (isOpen) {
+      setIsCheckingOut(false);
+      setFormErrors({});
+      getUserProfile().then((res) => {
+        if (res.success && res.user) {
+          setCustomerName(res.user.name || "");
+          setCustomerPhone(res.user.phone || "");
+          setGovernorate(res.user.governorate || "");
+          setCity(res.user.city || "");
+          setDistrict(res.user.district || "");
+          setStreet(res.user.street || "");
+          setBuilding(res.user.building || "");
+        }
+      });
       drawerRef.current?.focus();
     }
   }, [isOpen]);
@@ -94,6 +133,42 @@ export function CartDrawer({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  const handleProceedToCheckout = () => {
+    setIsCheckingOut(true);
+  };
+
+  const handleConfirmOrder = () => {
+    const errors: Record<string, string> = {};
+    if (!customerName.trim()) errors.customerName = "يرجى إدخال الاسم الكامل";
+    if (!customerPhone.trim()) {
+      errors.customerPhone = "يرجى إدخال رقم الهاتف";
+    } else if (customerPhone.trim().length < 10) {
+      errors.customerPhone = "رقم الهاتف غير صحيح";
+    }
+    if (!governorate.trim()) errors.governorate = "يرجى إدخال المحافظة";
+    if (!city.trim()) errors.city = "يرجى إدخال المدينة";
+    if (!district.trim()) errors.district = "يرجى إدخال المنطقة / الحي";
+    if (!street.trim()) errors.street = "يرجى إدخال اسم الشارع";
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    setFormErrors({});
+    checkout({
+      customerName,
+      customerPhone,
+      governorate,
+      city,
+      district,
+      street,
+      building,
+      orderNotes,
+      paymentMethod,
+    });
+  };
+
   return (
     <>
       <div className={`drawer-backdrop ${isOpen ? "open" : ""}`} onClick={onClose} />
@@ -107,117 +182,337 @@ export function CartDrawer({
       >
         <div className="cart-head">
           <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-            <span style={{ fontSize: '1.3rem', fontFamily: '"Cairo", sans-serif', fontWeight: 600, letterSpacing: '0' }}>سلة المشتريات</span>
-            <span style={{ color: 'var(--gold-deep)', fontWeight: 700, fontSize: '1.05rem', letterSpacing: '0.15em', marginTop: '3px', fontFamily: '"Cinzel", serif' }}>— CART</span>
+            {isCheckingOut ? (
+              <>
+                <button 
+                  onClick={() => setIsCheckingOut(false)} 
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0 4px', color: 'var(--charcoal)' }}
+                  aria-label="العودة"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(180deg)' }}><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 19 12 12 5"></polyline></svg>
+                </button>
+                <span style={{ fontSize: '1.3rem', fontFamily: '"Cairo", sans-serif', fontWeight: 600 }}>إتمام الطلب</span>
+              </>
+            ) : (
+              <>
+                <span style={{ fontSize: '1.3rem', fontFamily: '"Cairo", sans-serif', fontWeight: 600, letterSpacing: '0' }}>سلة المشتريات</span>
+                <span style={{ color: 'var(--gold-deep)', fontWeight: 700, fontSize: '1.05rem', letterSpacing: '0.15em', marginTop: '3px', fontFamily: '"Cinzel", serif' }}>— CART</span>
+              </>
+            )}
           </h3>
           <button className="cart-close" onClick={onClose} aria-label="إغلاق السلة">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
-        <div className="cart-body">
-          {cart.length === 0 ? (
-            <div className="cart-empty" style={{ 
-              display: 'flex', 
-              flexDirection: 'column', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              padding: '80px 20px',
-              textAlign: 'center',
-              opacity: 0.6 
-            }}>
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '24px' }}>
-                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <path d="M16 10a4 4 0 0 1-8 0"></path>
-              </svg>
-              <p style={{ fontSize: '1.75rem', fontWeight: 600, margin: 0, letterSpacing: '-0.5px' }}>السلة فارغة</p>
-              <p style={{ fontSize: '1.05rem', marginTop: '12px', fontWeight: 300 }}>لم تقم بإضافة أي عطور بعد.</p>
-            </div>
-          ) : (
-            cart.map(c => (
-              <div key={c.product.id} className="cart-line">
-                <div className="cart-line-img">
-                  <Bottle variant={c.product.bottle} label={c.product.name} />
+        <div className="cart-body" style={{ padding: isCheckingOut ? '24px 20px' : undefined }}>
+          {isCheckingOut ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', direction: 'rtl', textAlign: 'right' }}>
+              <h4 style={{ margin: '0 0 2px', fontSize: '1.05rem', color: 'var(--gold-deep)', fontFamily: '"Cairo", sans-serif' }}>تفاصيل الشحن والتوصيل</h4>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>الاسم الكامل</label>
+                <input 
+                  type="text" 
+                  className={`magic-input ${formErrors.customerName ? 'magic-input-error' : ''}`}
+                  value={customerName}
+                  onChange={e => setCustomerName(e.target.value)}
+                  placeholder="اسم المستلم ثلاثي"
+                  style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                />
+                {formErrors.customerName && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.customerName}</span>}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>رقم الهاتف (للتواصل أو واتساب)</label>
+                <input 
+                  type="tel" 
+                  className={`magic-input ${formErrors.customerPhone ? 'magic-input-error' : ''}`}
+                  value={customerPhone}
+                  onChange={e => setCustomerPhone(e.target.value)}
+                  placeholder="مثال: 010xxxxxxxx"
+                  style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                />
+                {formErrors.customerPhone && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.customerPhone}</span>}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>المحافظة</label>
+                  <input 
+                    type="text" 
+                    className={`magic-input ${formErrors.governorate ? 'magic-input-error' : ''}`}
+                    value={governorate}
+                    onChange={e => setGovernorate(e.target.value)}
+                    placeholder="مثال: القاهرة"
+                    style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                  />
+                  {formErrors.governorate && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.governorate}</span>}
                 </div>
-                <div className="cart-line-info">
-                  <div className="cart-line-name" style={{ fontSize: '1.4rem', fontWeight: 600 }}>{c.product.name}</div>
-                  <div className="cart-line-fam" style={{ fontSize: '0.9rem', marginTop: '4px' }}>{c.product.family}</div>
-                  <div className="cart-line-price" style={{ fontSize: '1.25rem', marginTop: '10px' }}>{c.product.price} ج.م</div>
-                  <div className="qty" style={{ marginTop: '14px' }}>
-                    <button onClick={() => setQty(c.product.id, c.qty - 1)} style={{ width: '32px', height: '32px', fontSize: '1.2rem' }}>-</button>
-                    <span style={{ fontSize: '1.2rem', padding: '0 10px' }}>{c.qty}</span>
-                    <button onClick={() => setQty(c.product.id, c.qty + 1)} style={{ width: '32px', height: '32px', fontSize: '1.2rem' }}>+</button>
-                    <button className="qty-remove" style={{ fontSize: '0.95rem' }} onClick={() => removeLine(c.product.id)}>إزالة</button>
-                  </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>المدينة</label>
+                  <input 
+                    type="text" 
+                    className={`magic-input ${formErrors.city ? 'magic-input-error' : ''}`}
+                    value={city}
+                    onChange={e => setCity(e.target.value)}
+                    placeholder="مثال: مدينة نصر"
+                    style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                  />
+                  {formErrors.city && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.city}</span>}
                 </div>
               </div>
-            ))
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>المنطقة / الحي</label>
+                <input 
+                  type="text" 
+                  className={`magic-input ${formErrors.district ? 'magic-input-error' : ''}`}
+                  value={district}
+                  onChange={e => setDistrict(e.target.value)}
+                  placeholder="مثال: الحي السابع"
+                  style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                />
+                {formErrors.district && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.district}</span>}
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>الشارع</label>
+                  <input 
+                    type="text" 
+                    className={`magic-input ${formErrors.street ? 'magic-input-error' : ''}`}
+                    value={street}
+                    onChange={e => setStreet(e.target.value)}
+                    placeholder="اسم الشارع"
+                    style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                  />
+                  {formErrors.street && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.street}</span>}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>تفاصيل المنزل</label>
+                  <input 
+                    type="text" 
+                    className="magic-input"
+                    value={building}
+                    onChange={e => setBuilding(e.target.value)}
+                    placeholder="مثال: مبنى 10، دور 2"
+                    style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>ملاحظات الطلب</label>
+                <textarea 
+                  className="magic-input"
+                  value={orderNotes}
+                  onChange={e => setOrderNotes(e.target.value)}
+                  placeholder="هل هناك ملاحظات أخرى؟"
+                  style={{ padding: '8px 12px', fontSize: '0.95rem', minHeight: '80px', resize: 'vertical', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                />
+              </div>
+
+              <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '4px 0' }} />
+
+              <h4 style={{ margin: '0 0 2px', fontSize: '1.05rem', color: 'var(--gold-deep)', fontFamily: '"Cairo", sans-serif' }}>طريقة الدفع</h4>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div 
+                  onClick={() => setPaymentMethod('cod')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 14px',
+                    border: paymentMethod === 'cod' ? '2px solid var(--gold-deep)' : '1px solid var(--border)',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    background: paymentMethod === 'cod' ? 'rgba(212, 175, 55, 0.05)' : 'transparent',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '1.1rem' }}>💵</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
+                      <strong style={{ fontSize: '0.9rem' }}>الدفع عند الاستلام (COD)</strong>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>ادفع نقدًا عند توصيل طلبتك للعنوان</span>
+                    </div>
+                  </div>
+                  <input 
+                    type="radio" 
+                    name="paymentMethod" 
+                    checked={paymentMethod === 'cod'} 
+                    onChange={() => setPaymentMethod('cod')}
+                    style={{ accentColor: 'var(--gold-deep)' }}
+                  />
+                </div>
+
+                <div 
+                  onClick={() => setPaymentMethod('vodafone')}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 14px',
+                    border: paymentMethod === 'vodafone' ? '2px solid var(--gold-deep)' : '1px solid var(--border)',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    background: paymentMethod === 'vodafone' ? 'rgba(212, 175, 55, 0.05)' : 'transparent',
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '1.1rem' }}>📱</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
+                      <strong style={{ fontSize: '0.9rem' }}>فودافون كاش (Vodafone Cash)</strong>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>تحويل محفظة إلكترونية فورية</span>
+                    </div>
+                  </div>
+                  <input 
+                    type="radio" 
+                    name="paymentMethod" 
+                    checked={paymentMethod === 'vodafone'} 
+                    onChange={() => setPaymentMethod('vodafone')}
+                    style={{ accentColor: 'var(--gold-deep)' }}
+                  />
+                </div>
+              </div>
+
+              {paymentMethod === 'vodafone' && (
+                <div style={{
+                  background: 'rgba(212, 175, 55, 0.08)',
+                  border: '1px solid rgba(212, 175, 55, 0.3)',
+                  padding: '10px',
+                  borderRadius: '6px',
+                  fontSize: '0.8rem',
+                  color: '#9f7d1c',
+                  lineHeight: '1.5',
+                  textAlign: 'right',
+                  marginTop: '4px'
+                }}>
+                  ⚠️ <strong>ملاحظة هامة للتحويل:</strong> يرجى تحويل مبلغ الطلب الإجمالي إلى الرقم <strong>01012345678</strong> (فودافون كاش) بعد إتمام الطلب، والاحتفاظ بلقطة الشاشة للتأكيد عند تواصلنا معك.
+                </div>
+              )}
+            </div>
+          ) : (
+            cart.length === 0 ? (
+              <div className="cart-empty" style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                padding: '80px 20px',
+                textAlign: 'center',
+                opacity: 0.6 
+              }}>
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '24px' }}>
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                <p style={{ fontSize: '1.75rem', fontWeight: 600, margin: 0, letterSpacing: '-0.5px' }}>السلة فارغة</p>
+                <p style={{ fontSize: '1.05rem', marginTop: '12px', fontWeight: 300 }}>لم تقم بإضافة أي عطور بعد.</p>
+              </div>
+            ) : (
+              cart.map(c => (
+                <div key={c.product.id} className="cart-line">
+                  <div className="cart-line-img">
+                    <Bottle variant={c.product.bottle} label={c.product.name} />
+                  </div>
+                  <div className="cart-line-info">
+                    <div className="cart-line-name" style={{ fontSize: '1.4rem', fontWeight: 600 }}>{c.product.name}</div>
+                    <div className="cart-line-fam" style={{ fontSize: '0.9rem', marginTop: '4px' }}>{c.product.family}</div>
+                    <div className="cart-line-price" style={{ fontSize: '1.25rem', marginTop: '10px' }}>{c.product.price} ج.م</div>
+                    <div className="qty" style={{ marginTop: '14px' }}>
+                      <button onClick={() => setQty(c.product.id, c.qty - 1)} style={{ width: '32px', height: '32px', fontSize: '1.2rem' }}>-</button>
+                      <span style={{ fontSize: '1.2rem', padding: '0 10px' }}>{c.qty}</span>
+                      <button onClick={() => setQty(c.product.id, c.qty + 1)} style={{ width: '32px', height: '32px', fontSize: '1.2rem' }}>+</button>
+                      <button className="qty-remove" style={{ fontSize: '0.95rem' }} onClick={() => removeLine(c.product.id)}>إزالة</button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )
           )}
         </div>
         {cart.length > 0 && (
           <div className="cart-foot">
-            <div className="ship-progress">
-              <div className={shippingProgress === 100 ? "ship-msg ship-ok" : "ship-msg"} style={{ fontSize: "1.05rem", marginBottom: "12px", textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                {shippingProgress === 100 ? (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    <span>تهانينا! طلبك مؤهل للشحن المجاني</span>
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    <span>تبقى <strong>{800 - cartTotal} ج.م</strong> للحصول على شحن مجاني</span>
-                  </>
+            {!isCheckingOut && (
+              <>
+                <div className="ship-progress">
+                  <div className={shippingProgress === 100 ? "ship-msg ship-ok" : "ship-msg"} style={{ fontSize: "1.05rem", marginBottom: "12px", textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    {shippingProgress === 100 ? (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        <span>تهانينا! طلبك مؤهل للشحن المجاني</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span>تبقى <strong>{800 - cartTotal} ج.م</strong> للحصول على شحن مجاني</span>
+                      </>
+                    )}
+                  </div>
+                  <div className="ship-bar">
+                    <div className="ship-fill" style={{ width: `${shippingProgress}%` }} />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+                  <input
+                    type="text"
+                    placeholder="كود الخصم (إن وجد)"
+                    aria-label="كود الخصم"
+                    value={promoInput}
+                    onChange={e => setPromoInput(e.target.value)}
+                    style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--border)', borderRadius: '4px', fontSize: '1.1rem' }}
+                  />
+                  <button onClick={applyPromo} className="btn-gold" style={{ padding: "0 18px", fontSize: "1.1rem" }}>تفعيل</button>
+                </div>
+                {promoApplied && (
+                  <div style={{ color: "#d4af37", fontSize: "1.1rem", marginBottom: "15px" }}>
+                    تم تفعيل الخصم: {promoApplied.pct}%
+                  </div>
                 )}
-              </div>
-              <div className="ship-bar">
-                <div className="ship-fill" style={{ width: `${shippingProgress}%` }} />
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
-              <input
-                type="text"
-                placeholder="كود الخصم (إن وجد)"
-                aria-label="كود الخصم"
-                value={promoInput}
-                onChange={e => setPromoInput(e.target.value)}
-                style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--border)', borderRadius: '4px', fontSize: '1.1rem' }}
-              />
-              <button onClick={applyPromo} className="btn-gold" style={{ padding: "0 18px", fontSize: "1.1rem" }}>تفعيل</button>
-            </div>
-            {promoApplied && (
-              <div style={{ color: "#d4af37", fontSize: "1.1rem", marginBottom: "15px" }}>
-                تم تفعيل الخصم: {promoApplied.pct}%
-              </div>
+              </>
             )}
-            <div className="cart-total" style={{ fontSize: '1.4rem', color: 'var(--muted)' }}>
+            
+            <div className="cart-total" style={{ fontSize: '1.2rem', color: 'var(--muted)', marginTop: isCheckingOut ? '8px' : '0' }}>
               <span>المجموع</span>
               <span>{cartTotal} ج.م</span>
             </div>
-            <div className="cart-total" style={{ fontSize: '1.4rem', color: 'var(--muted)' }}>
+            <div className="cart-total" style={{ fontSize: '1.2rem', color: 'var(--muted)' }}>
               <span>الشحن</span>
               <span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ج.م`}</span>
             </div>
-            <div className="cart-total" style={{ fontWeight: 700, color: 'var(--charcoal)', fontSize: '1.9rem', marginTop: '12px', borderTop: '2px solid var(--border)', paddingTop: '18px', paddingBottom: '12px' }}>
+            <div className="cart-total" style={{ fontWeight: 700, color: 'var(--charcoal)', fontSize: '1.5rem', marginTop: '8px', borderTop: '2px solid var(--border)', paddingTop: '12px', paddingBottom: '12px' }}>
               <span>الإجمالي</span>
               <span>{grandTotal} ج.م</span>
             </div>
-            <button
-              className="btn-gold"
-              style={{ width: "100%", padding: "18px", fontSize: "1.3rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}
-              onClick={checkout}
-              disabled={checkoutLoading}
-            >
-              {checkoutLoading ? "جاري التحويل..." : (
-                <>
-                  <span>إتمام الطلب</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="m12 19-7-7 7-7"/>
-                    <path d="M19 12H5"/>
-                  </svg>
-                </>
-              )}
-            </button>
+            {isCheckingOut ? (
+              <button
+                className="btn-gold"
+                style={{ width: "100%", padding: "12px", fontSize: "1.1rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', borderRadius: '6px' }}
+                onClick={handleConfirmOrder}
+                disabled={checkoutLoading}
+              >
+                {checkoutLoading ? "جاري تسجيل طلبك..." : (
+                  <>
+                    <span>تأكيد الطلب — Confirm Order</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <button
+                className="btn-gold"
+                style={{ width: "100%", padding: "16px", fontSize: "1.2rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', borderRadius: '6px' }}
+                onClick={handleProceedToCheckout}
+              >
+                <span>إتمام الطلب</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="m12 19-7-7 7-7"/>
+                  <path d="M19 12H5"/>
+                </svg>
+              </button>
+            )}
           </div>
         )}
       </div>

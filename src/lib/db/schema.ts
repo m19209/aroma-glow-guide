@@ -7,10 +7,12 @@ export const users = sqliteTable('users', {
   passwordHash: text('password_hash').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   phone: text('phone'),
+  governorate: text('governorate'),
   city: text('city'),
   district: text('district'),
   street: text('street'),
   building: text('building'),
+  role: text('role').notNull().default('user'), // 'user' | 'admin'
 });
 
 export const products = sqliteTable('products', {
@@ -24,6 +26,8 @@ export const orders = sqliteTable('orders', {
   status: text('status').notNull().default('pending'), // pending | processing | shipped | delivered | cancelled
   totalAmount: integer('total_amount').notNull(),
   shippingAddress: text('shipping_address'),
+  notes: text('notes'),
+  paymentMethod: text('payment_method'),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
 });

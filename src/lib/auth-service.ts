@@ -3,6 +3,7 @@ import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { db } from './db';
 import { users, orders, orderItems, products } from './db/schema';
 import { eq, desc } from 'drizzle-orm';
+import { appendOrderToSheet, updateProductStockInSheet, getOrderStatusesFromSheet } from './sheets';
 
 // --- Rate Limiting ---
 const rateLimit = new Map<string, { count: number; timestamp: number }>();
@@ -29,7 +30,7 @@ async function hashPassword(password: string) {
 // --- Auth Endpoints ---
 export const loginUser = createServerFn()
   .validator((data: { email: string; password: string }) => {
-    if (!data.email.includes('@') || data.password.length < 4) {
+    if (!data.email.includes('@') || data.password.length < 6) {
       throw new Error('Invalid input');
     }
     return data;
@@ -49,7 +50,7 @@ export const loginUser = createServerFn()
 
 export const signupUser = createServerFn()
   .validator((data: { name?: string; email: string; password: string }) => {
-    if (!data.email.includes('@') || data.password.length < 4) {
+    if (!data.email.includes('@') || data.password.length < 6) {
       throw new Error('Invalid input');
     }
     return data;
@@ -102,6 +103,7 @@ export const getUserProfile = createServerFn().handler(async () => {
       district: user.district || '',
       street: user.street || '',
       building: user.building || '',
+      role: user.role,
       createdAt: user.createdAt,
     },
   };
@@ -148,6 +150,34 @@ export const getUserOrders = createServerFn().handler(async () => {
     .orderBy(desc(orders.createdAt))
     .all();
 
+    // Sync statuses from Google Sheets before returning
+    try {
+      const sheetStatuses = await getOrderStatusesFromSheet();
+      for (const order of userOrders) {
+        const sheetStatus = sheetStatuses[order.id];
+        // Only update if the sheet has a valid status and it's different
+        if (sheetStatus && sheetStatus !== order.status) {
+          // If the user typed Arabic, map it back to English enum for DB, or we can just accept Arabic.
+          // Let's assume the user types: pending, processing, shipped, delivered, cancelled
+          // OR Arabic versions: معلق, قيد المعالجة, تم الشحن, تم التوصيل, ملغي
+          let normalizedStatus = sheetStatus;
+          if (sheetStatus === 'معلق') normalizedStatus = 'pending';
+          else if (sheetStatus === 'قيد المعالجة') normalizedStatus = 'processing';
+          else if (sheetStatus === 'تم الشحن') normalizedStatus = 'shipped';
+          else if (sheetStatus === 'تم التوصيل') normalizedStatus = 'delivered';
+          else if (sheetStatus === 'ملغي') normalizedStatus = 'cancelled';
+          
+          await db.update(orders)
+            .set({ status: normalizedStatus, updatedAt: new Date() })
+            .where(eq(orders.id, order.id));
+            
+          order.status = normalizedStatus; // update the object in memory too
+        }
+      }
+    } catch (e) {
+      console.error('Failed to sync statuses from sheet:', e);
+    }
+
   const ordersWithItems = [];
   for (const order of userOrders) {
     const items = await db.select()
@@ -172,34 +202,65 @@ export const createOrder = createServerFn()
       unitPrice: number;
     }>;
     totalAmount: number;
-    shippingAddress: string;
+    customerName: string;
+    customerPhone: string;
+    governorate: string;
+    city: string;
+    district: string;
+    street: string;
+    building?: string;
+    notes?: string;
+    paymentMethod: 'cod' | 'vodafone';
   }) => data)
   .handler(async ({ data }) => {
-    const userId = getCookie('velore_session');
-    if (!userId) return { success: false, error: 'غير مصرح' };
+    const userId = getCookie('velore_session') || 'guest';
 
     const orderId = crypto.randomUUID();
+    const addressStr = `${data.building ? data.building + '، ' : ''}${data.street}، ${data.district}، ${data.city}، ${data.governorate} (هاتف: ${data.customerPhone})`;
 
     try {
       await db.transaction(async (tx) => {
+        // Update user profile info so it is prefilled next time (only if logged in)
+        if (userId !== 'guest') {
+          await tx.update(users)
+            .set({
+              name: data.customerName,
+              phone: data.customerPhone,
+              governorate: data.governorate,
+              city: data.city,
+              district: data.district,
+              street: data.street,
+              building: data.building || null,
+            })
+            .where(eq(users.id, userId));
+        }
+
+        // Insert the order
         await tx.insert(orders).values({
           id: orderId,
           userId,
           status: 'pending',
           totalAmount: data.totalAmount,
-          shippingAddress: data.shippingAddress,
+          shippingAddress: addressStr,
+          notes: data.notes || null,
+          paymentMethod: data.paymentMethod,
           createdAt: new Date(),
           updatedAt: new Date(),
         });
 
         for (const item of data.items) {
-          const current = await tx.select({ stock: products.stock })
+          let current = await tx.select({ stock: products.stock })
             .from(products)
             .where(eq(products.id, item.productId))
             .get();
 
           if (!current) {
-            throw new Error(`المنتج غير موجود: ${item.productName}`);
+            // Seed the product in the database with default stock if it doesn't exist
+            await tx.insert(products).values({
+              id: item.productId,
+              stock: 100
+            });
+            current = { stock: 100 };
           }
           if (current.stock < item.quantity) {
             throw new Error(`كمية غير متوفرة للمنتج: ${item.productName}`);
@@ -217,11 +278,206 @@ export const createOrder = createServerFn()
           await tx.update(products)
             .set({ stock: current.stock - item.quantity })
             .where(eq(products.id, item.productId));
+            
+          // Update Google Sheets synchronously to avoid race condition with getAllStocks
+          try {
+            await updateProductStockInSheet(item.productId, item.productName, current.stock - item.quantity);
+          } catch (err) {
+            console.error("Failed to update stock in Google Sheets:", err);
+          }
         }
       });
     } catch (e: any) {
       return { success: false, error: e.message || 'حدث خطأ أثناء إنشاء الطلب' };
     }
 
+    // Send Telegram Notification
+    try {
+      const botToken = process.env.TELEGRAM_BOT_TOKEN;
+      const chatId = process.env.TELEGRAM_CHAT_ID;
+      
+      if (botToken && chatId) {
+        const paymentLabel = data.paymentMethod === 'vodafone' ? 'فودافون كاش' : 'الدفع عند الاستلام';
+        const dateStr = new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' });
+        
+        const itemsList = data.items.map(i => `▪️ ${i.productName} (العدد: ${i.quantity})`).join('\n');
+        const message = `🛍️ <b>طلب جديد!</b>\n` +
+          `🔢 <b>رقم الطلب:</b> <code>${orderId.slice(0, 8)}</code>\n` +
+          `🕒 <b>الوقت:</b> ${dateStr}\n\n` +
+          `👤 <b>أسم العميل:</b> ${data.customerName}\n` +
+          `📞 <b>رقم الهاتف:</b> <code>${data.customerPhone}</code>\n` +
+          `💳 <b>طريقة الدفع:</b> ${paymentLabel}\n\n` +
+          `📦 <b>المنتجات:</b>\n${itemsList}\n\n` +
+          `📍 <b>العنوان بالتفصيل:</b>\n` +
+          `المحافظة: ${data.governorate}\n` +
+          `المدينة: ${data.city}\n` +
+          `المنطقة/الحي: ${data.district}\n` +
+          `الشارع: ${data.street} ${data.building ? ' - مبنى: ' + data.building : ''}\n\n` +
+          (data.notes ? `📝 <b>ملاحظات:</b>\n${data.notes}\n\n` : '') +
+          `💰 <b>إجمالي الطلب:</b> ${data.totalAmount} ج.م`;
+        
+        await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'HTML'
+          })
+        });
+      }
+    } catch (telegramError) {
+      console.error("Failed to send telegram notification:", telegramError);
+      // We don't fail the order if the notification fails
+    }
+
+    // Append to Google Sheets for Admin tracking
+    const productsString = data.items.map(item => `${item.productName} (x${item.quantity})`).join('\n');
+    await appendOrderToSheet({
+      id: orderId,
+      date: new Date().toLocaleString('ar-EG'),
+      customerName: data.customerName,
+      phone: data.customerPhone,
+      address: addressStr,
+      products: productsString,
+      total: data.totalAmount,
+      notes: data.notes || '',
+      status: 'pending' // will display as "معلق" initially in sheets, you can change it to pending, processing, shipped, delivered, cancelled in the sheet
+    });
+
     return { success: true, orderId };
+  });
+
+export const getAdminStats = createServerFn().handler(async () => {
+  const userId = getCookie('velore_session');
+  if (!userId) return { success: false, error: 'غير مصرح' };
+  
+  const user = await db.select().from(users).where(eq(users.id, userId)).get();
+  if (!user || user.role !== 'admin') {
+    return { success: false, error: 'غير مصرح - للمسؤولين فقط' };
+  }
+
+  // Aggregate stats
+  const allOrders = await db.select().from(orders).all();
+  const totalRevenue = allOrders
+    .filter(o => o.status === 'delivered') // only count delivered orders for revenue
+    .reduce((sum, o) => sum + o.totalAmount, 0);
+
+  const totalOrders = allOrders.length;
+  const pendingOrders = allOrders.filter(o => o.status === 'pending').length;
+
+  // Stock alerts
+  const lowStockItems = await db.select().from(products).all();
+  const { PRODUCTS } = await import('./inventory');
+  const alertItems = lowStockItems
+    .filter(p => p.stock <= 5)
+    .map(p => {
+      const prodMeta = PRODUCTS.find(meta => meta.id === p.id);
+      return {
+        id: p.id,
+        name: prodMeta ? prodMeta.name : p.id,
+        stock: p.stock
+      };
+    });
+
+  return {
+    success: true,
+    stats: {
+      totalRevenue,
+      totalOrders,
+      pendingOrders,
+      lowStockItems: alertItems
+    }
+  };
+});
+
+export const getAdminOrders = createServerFn().handler(async () => {
+  const userId = getCookie('velore_session');
+  if (!userId) return { success: false, error: 'غير مصرح' };
+
+  const user = await db.select().from(users).where(eq(users.id, userId)).get();
+  if (!user || user.role !== 'admin') {
+    return { success: false, error: 'غير مصرح - للمسؤولين فقط' };
+  }
+
+  // Sync statuses from Google Sheets before returning admin list
+  try {
+    const sheetStatuses = await getOrderStatusesFromSheet();
+    const dbOrders = await db.select().from(orders).all();
+    for (const order of dbOrders) {
+      const sheetStatus = sheetStatuses[order.id];
+      if (sheetStatus && sheetStatus !== order.status) {
+        let normalizedStatus = sheetStatus;
+        if (sheetStatus === 'معلق') normalizedStatus = 'pending';
+        else if (sheetStatus === 'قيد المعالجة') normalizedStatus = 'processing';
+        else if (sheetStatus === 'تم الشحن') normalizedStatus = 'shipped';
+        else if (sheetStatus === 'تم التوصيل') normalizedStatus = 'delivered';
+        else if (sheetStatus === 'ملغي') normalizedStatus = 'cancelled';
+        
+        await db.update(orders)
+          .set({ status: normalizedStatus, updatedAt: new Date() })
+          .where(eq(orders.id, order.id));
+      }
+    }
+  } catch (e) {
+    console.error('Failed to sync statuses from sheet for admin:', e);
+  }
+
+  const allOrders = await db.select()
+    .from(orders)
+    .orderBy(desc(orders.createdAt))
+    .all();
+
+  const ordersWithItems = [];
+  for (const order of allOrders) {
+    const items = await db.select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, order.id))
+      .all();
+    ordersWithItems.push({
+      ...order,
+      items,
+    });
+  }
+
+  return { success: true, orders: ordersWithItems };
+});
+
+export const updateOrderStatus = createServerFn()
+  .validator((data: { orderId: string; status: string }) => data)
+  .handler(async ({ data }) => {
+    const userId = getCookie('velore_session');
+    if (!userId) return { success: false, error: 'غير مصرح' };
+
+    const user = await db.select().from(users).where(eq(users.id, userId)).get();
+    if (!user || user.role !== 'admin') {
+      return { success: false, error: 'غير مصرح - للمسؤولين فقط' };
+    }
+
+    try {
+      // Update local SQLite
+      await db.update(orders)
+        .set({ status: data.status, updatedAt: new Date() })
+        .where(eq(orders.id, data.orderId));
+
+      // Update Google Sheets
+      let arabicStatus = data.status;
+      if (data.status === 'pending') arabicStatus = 'معلق';
+      else if (data.status === 'processing') arabicStatus = 'قيد المعالجة';
+      else if (data.status === 'shipped') arabicStatus = 'تم الشحن';
+      else if (data.status === 'delivered') arabicStatus = 'تم التوصيل';
+      else if (data.status === 'cancelled') arabicStatus = 'ملغي';
+
+      try {
+        const { updateOrderInSheet } = await import('./sheets');
+        await updateOrderInSheet(data.orderId, arabicStatus);
+      } catch (sheetsErr) {
+        console.error("Sheets update error in updateOrderStatus:", sheetsErr);
+      }
+
+      return { success: true };
+    } catch (e: any) {
+      console.error(e);
+      return { success: false, error: e.message || 'حدث خطأ أثناء التحديث' };
+    }
   });

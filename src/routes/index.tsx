@@ -7,9 +7,10 @@ import { Bottle, Hero, BackToTop } from "@/components/ui-elements";
 import { LoginModal, ProductDetailModal, SearchModal } from "@/components/modals";
 import { CartDrawer } from "@/components/features";
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>): { loginRequired?: boolean } => {
+  validateSearch: (search: Record<string, unknown>): { loginRequired?: boolean; adminRequired?: boolean } => {
     return {
       loginRequired: search.loginRequired === 'true' || search.loginRequired === true ? true : undefined,
+      adminRequired: search.adminRequired === 'true' || search.adminRequired === true ? true : undefined,
     };
   },
   head: () => ({
@@ -44,7 +45,7 @@ function Index() {
   const [authEmail, setAuthEmail] = useState("");
   const [authPassword, setAuthPassword] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<{ id: string; role: string | null } | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [stocksLoading, setStocksLoading] = useState(true);
@@ -56,12 +57,22 @@ function Index() {
   const [stocks, setStocks] = useState<Record<string, number>>({});
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  // Data fetching
+  // Data fetching (poll every second for realtime updates)
   useEffect(() => {
+    // Initial fetch
     getAllStocks().then((res) => {
       if (res) setStocks(res);
       setStocksLoading(false);
     });
+
+    // Poll every 1 second
+    const interval = setInterval(() => {
+      getAllStocks().then((res) => {
+        if (res) setStocks(res);
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const [filterCat, setFilterCat] = useState<string | null>(null);
@@ -85,19 +96,21 @@ function Index() {
   useEffect(() => {
     getUserProfile().then((res) => {
       if (res.success && res.user) {
-        setCurrentUser(res.user.id);
+        setCurrentUser({ id: res.user.id, role: res.user.role ?? null });
       }
     });
   }, []);
 
-  // Handle loginRequired search param redirect
+  // Handle loginRequired or adminRequired search param redirect
   const searchParams = Route.useSearch();
   useEffect(() => {
     if (searchParams.loginRequired) {
       setLoginOpen(true);
       showToast("يرجى تسجيل الدخول أولاً للوصول إلى حسابك");
+    } else if (searchParams.adminRequired) {
+      showToast("غير مصرح لك بدخول صفحة الإدارة!");
     }
-  }, [searchParams.loginRequired]);
+  }, [searchParams.loginRequired, searchParams.adminRequired]);
 
   useEffect(() => {
     try { localStorage.setItem("velore_cart", JSON.stringify(cart)); } catch {/* noop */}
@@ -135,7 +148,7 @@ function Index() {
       const found = c.find((l) => l.product.id === p.id);
       if (found) {
         if (found.qty >= currentStock) {
-          showToast(`تبقّى ${currentStock} قطع فقط`);
+          showToast(`نفدت الكمية المتاحة للإضافة`);
           return c;
         }
         return c.map((l) => (l.product.id === p.id ? { ...l, qty: l.qty + 1 } : l));
@@ -167,36 +180,22 @@ function Index() {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   }
-  async function checkout() {
+  async function checkout(formData: {
+    customerName: string;
+    customerPhone: string;
+    city: string;
+    district: string;
+    street: string;
+    building: string;
+    orderNotes: string;
+    paymentMethod: 'cod' | 'vodafone';
+  }) {
     if (cart.length === 0) return;
-    if (!currentUser) {
-      showToast("يرجى تسجيل الدخول أولاً لإتمام الطلب");
-      setLoginOpen(true);
-      return;
-    }
     
     setCheckoutLoading(true);
     showToast("جاري إرسال طلبك…");
     
     try {
-      const profile = await getUserProfile();
-      if (!profile.success || !profile.user) {
-        showToast("حدث خطأ في استرداد بيانات الحساب");
-        setCheckoutLoading(false);
-        return;
-      }
-
-      const u = profile.user;
-      if (!u.phone || !u.city || !u.district || !u.street) {
-        showToast("يرجى إكمال عنوان التوصيل ورقم الهاتف في حسابك أولاً");
-        window.setTimeout(() => {
-          navigate({ to: "/account" });
-        }, 1500);
-        return;
-      }
-
-      const addressStr = `${u.building ? u.building + '، ' : ''}${u.street}، ${u.district}، ${u.city} (هاتف: ${u.phone})`;
-
       const items = cart.map(line => ({
         productId: line.product.id,
         productName: line.product.name,
@@ -210,7 +209,14 @@ function Index() {
         data: {
           items,
           totalAmount,
-          shippingAddress: addressStr,
+          customerName: formData.customerName,
+          customerPhone: formData.customerPhone,
+          city: formData.city,
+          district: formData.district,
+          street: formData.street,
+          building: formData.building,
+          notes: formData.orderNotes,
+          paymentMethod: formData.paymentMethod,
         }
       });
 
@@ -218,6 +224,10 @@ function Index() {
         setCart([]);
         setCartOpen(false);
         showToast("تم تسجيل طلبك بنجاح! شكراً لك.");
+        // Refetch stocks after successful checkout to update the UI
+        getAllStocks().then((updatedStocks) => {
+          if (updatedStocks) setStocks(updatedStocks);
+        });
       } else {
         showToast(res.error || "فشل إتمام الطلب");
       }
@@ -450,7 +460,11 @@ function Index() {
             {visibleProducts.length === 0 && (
               <div className="empty-state">لا توجد عطور تطابق بحثك.</div>
             )}
-            {visibleProducts.map((p) => (
+            {visibleProducts.map((p) => {
+              const line = cart.find((l) => l.product.id === p.id);
+              const cartQty = line ? line.qty : 0;
+              const availableStock = Math.max(0, (stocks[p.id] ?? 5) - cartQty);
+              return (
               <div
                 className="pcard"
                 key={p.id}
@@ -471,11 +485,11 @@ function Index() {
                       {p.name}
                     </Link>
                   </div>
-                  <div className="pstock" style={{ color: (stocks[p.id] ?? 5) < 3 ? '#d9534f' : '#8B6F28', fontSize: '0.75rem', marginBottom: '8px', fontWeight: 'bold' }}>
+                  <div className="pstock" style={{ color: availableStock < 3 ? '#d9534f' : '#8B6F28', fontSize: '0.75rem', marginBottom: '8px', fontWeight: 'bold' }}>
                     {stocksLoading ? (
                       <span className="skeleton-pulse" style={{ display: 'inline-block', width: '80px', height: '12px', background: 'var(--beige)', borderRadius: '4px' }}></span>
                     ) : (
-                      (stocks[p.id] ?? 5) > 0 ? `الكمية المتبقية: ${stocks[p.id] ?? 5} قطع` : 'نفدت الكمية'
+                      availableStock > 0 ? `الكمية المتبقية: ${availableStock} قطع` : 'نفدت الكمية'
                     )}
                   </div>
                   <div className="pnotes">{p.notes}</div>
@@ -515,7 +529,8 @@ function Index() {
                   );
                 })()}
               </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -583,13 +598,25 @@ function Index() {
         checkout={checkout}
         checkoutLoading={checkoutLoading}
         shippingProgress={shippingProgress}
+        currentUser={currentUser?.id ?? null}
+        onLoginRequired={() => {
+          setCartOpen(false);
+          setLoginOpen(true);
+        }}
       />
 
       <LoginModal
         isOpen={loginOpen}
         onClose={() => setLoginOpen(false)}
         onLogin={(userId) => {
-          setCurrentUser(userId);
+          // Re-fetch profile to get role after login
+          getUserProfile().then((res) => {
+            if (res.success && res.user) {
+              setCurrentUser({ id: res.user.id, role: res.user.role ?? null });
+            } else {
+              setCurrentUser({ id: userId, role: null });
+            }
+          });
           showToast("تم تسجيل الدخول بنجاح!");
         }}
       />
@@ -598,6 +625,7 @@ function Index() {
         product={detailProduct}
         onClose={() => setDetailProduct(null)}
         stocks={stocks}
+        cartQty={detailProduct ? cart.find((l) => l.product.id === detailProduct.id)?.qty || 0 : 0}
         addToCart={addToCart}
         wishlist={wishlist}
         toggleWish={toggleWish}

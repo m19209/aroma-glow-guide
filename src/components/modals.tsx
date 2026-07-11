@@ -251,6 +251,7 @@ export function ProductDetailModal({
   product,
   onClose,
   stocks,
+  cartQty,
   addToCart,
   wishlist,
   toggleWish
@@ -258,6 +259,7 @@ export function ProductDetailModal({
   product: Product | null;
   onClose: () => void;
   stocks: Record<string, number>;
+  cartQty: number;
   addToCart: (p: Product) => void;
   wishlist: Set<string>;
   toggleWish: (id: string) => void;
@@ -334,9 +336,14 @@ export function ProductDetailModal({
             </div>
           </div>
           
-          {(stocks[product.id] ?? 5) <= 2 && (
+          {Math.max(0, (stocks[product.id] ?? 5) - cartQty) <= 2 && Math.max(0, (stocks[product.id] ?? 5) - cartQty) > 0 && (
             <div style={{ color: "#d9534f", fontSize: "0.85rem", marginTop: "10px", fontWeight: "bold" }}>
-              تبقى {(stocks[product.id] ?? 5)} قطع فقط!
+              تبقى {Math.max(0, (stocks[product.id] ?? 5) - cartQty)} قطع فقط!
+            </div>
+          )}
+          {Math.max(0, (stocks[product.id] ?? 5) - cartQty) === 0 && (
+            <div style={{ color: "#d9534f", fontSize: "0.85rem", marginTop: "10px", fontWeight: "bold" }}>
+              نفدت الكمية
             </div>
           )}
 

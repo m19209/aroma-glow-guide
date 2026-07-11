@@ -101,6 +101,10 @@ export const PRODUCTS: Product[] = [
 
 
 // --- Stock/Inventory Endpoints ---
+import { syncInventoryToSheet, getInventoryFromSheet } from './sheets';
+
+let lastSyncTime = 0;
+
 export const getProductStock = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -110,6 +114,28 @@ export const getProductStock = createServerFn()
 
 export const getAllStocks = createServerFn()
   .handler(async () => {
+    // Sync from Google Sheets once every 30 seconds to avoid API limits and slowness
+    const now = Date.now();
+    if (now - lastSyncTime > 30000) {
+      try {
+        const sheetInventory = await getInventoryFromSheet();
+        if (Object.keys(sheetInventory).length > 0) {
+          // Update local DB to match Sheet (Sheet is the master database)
+          for (const [id, stock] of Object.entries(sheetInventory)) {
+            let current = await db.select().from(products).where(eq(products.id, id)).get();
+            if (!current) {
+              await db.insert(products).values({ id, stock });
+            } else if (current.stock !== stock) {
+              await db.update(products).set({ stock }).where(eq(products.id, id));
+            }
+          }
+          lastSyncTime = now;
+        }
+      } catch (e) {
+        console.error("Failed to sync from sheets", e);
+      }
+    }
+
     const result = await db.select().from(products).all();
     const stockMap = result.reduce((acc, p) => {
       acc[p.id] = p.stock;
@@ -131,4 +157,25 @@ export const validatePromo = createServerFn()
       return { success: true as const, pct: PROMOS[code], code };
     }
     return { success: false as const, error: 'رمز الخصم غير صحيح أو منتهي الصلاحية' };
+  });
+
+export const syncGoogleSheetsInventory = createServerFn()
+  .handler(async () => {
+    // Get all DB stocks
+    const dbStocks = await db.select().from(products).all();
+    const stockMap = dbStocks.reduce((acc, p) => {
+      acc[p.id] = p.stock;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Merge with PRODUCTS array to get names
+    const productsList = PRODUCTS.map(p => ({
+      id: p.id,
+      name: p.name,
+      stock: stockMap[p.id] ?? 100 // default 100 if not in DB yet
+    }));
+
+    await syncInventoryToSheet(productsList);
+    
+    return { success: true };
   });

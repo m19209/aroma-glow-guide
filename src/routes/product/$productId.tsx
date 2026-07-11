@@ -24,6 +24,18 @@ function ProductPage() {
   const product = Route.useLoaderData();
   const [stocks, setStocks] = useState<Record<string, number>>({});
   const [stocksLoading, setStocksLoading] = useState(true);
+  const [cartQty, setCartQty] = useState(0);
+
+  useEffect(() => {
+    try {
+      const c = localStorage.getItem("velore_cart");
+      if (c) {
+        const cart = JSON.parse(c);
+        const line = cart.find((l: any) => l.product.id === product.id);
+        if (line) setCartQty(line.qty);
+      }
+    } catch {/* noop */}
+  }, [product.id]);
 
   useEffect(() => {
     getAllStocks().then((res) => {
@@ -95,11 +107,11 @@ function ProductPage() {
               </div>
             </div>
             
-            <div className="pstock" style={{ color: (stocks[product.id] ?? 5) < 3 ? '#d9534f' : '#8B6F28', fontSize: '0.9rem', marginTop: '10px', fontWeight: 'bold' }}>
+            <div className="pstock" style={{ color: Math.max(0, (stocks[product.id] ?? 5) - cartQty) < 3 ? '#d9534f' : '#8B6F28', fontSize: '0.9rem', marginTop: '10px', fontWeight: 'bold' }}>
               {stocksLoading ? (
                 <span className="skeleton-pulse" style={{ display: 'inline-block', width: '80px', height: '12px', background: 'var(--beige)', borderRadius: '4px' }}></span>
               ) : (
-                (stocks[product.id] ?? 5) > 0 ? `الكمية المتبقية: ${stocks[product.id] ?? 5} قطع` : 'نفدت الكمية'
+                Math.max(0, (stocks[product.id] ?? 5) - cartQty) > 0 ? `الكمية المتبقية: ${Math.max(0, (stocks[product.id] ?? 5) - cartQty)} قطع` : 'نفدت الكمية'
               )}
             </div>
             
