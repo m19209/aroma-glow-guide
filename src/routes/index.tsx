@@ -254,7 +254,7 @@ function Index() {
     else if (sortBy === "price-desc") sorted.sort((a, b) => b.price - a.price);
     else if (sortBy === "name") sorted.sort((a, b) => a.name.localeCompare(b.name));
     return sorted;
-  }, [filterCat, searchQuery, sortBy]);
+  }, [filterCat, searchQuery, sortBy, customProducts]);
 
   const SHIPPING_FREE_AT = 800;
   const promoDiscount = promoApplied ? cartTotal * (promoApplied.pct / 100) : 0;
