@@ -56,7 +56,7 @@ export function BackToTop() {
   );
 }
 
-export function Bottle({ variant, label }: { variant: Product["bottle"]; label: string }) {
+export function Bottle({ variant, label }: { variant: BottleKey; label: string }) {
   return (
     <img
       className="pbottle"
