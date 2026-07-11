@@ -462,7 +462,7 @@ function Index() {
                 {p.badge && <span className={`pbadge badge-${p.badge.variant}`}>{p.badge.label}</span>}
                 <div className="pimg-wrap">
                   <div className="pimg-glow" />
-                  <div className="pimg-inner"><Bottle variant={p.bottle} label={p.label} /></div>
+                  <div className="pimg-inner"><Bottle variant={p.bottle} label={p.label} imageSrc={p.imageData} /></div>
                 </div>
                 <div className="pinfo">
                   <div className="pfamily">{p.family}</div>
