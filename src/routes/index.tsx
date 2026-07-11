@@ -234,7 +234,7 @@ function Index() {
   }
 
   const visibleProducts = useMemo(() => {
-    let list = PRODUCTS;
+    let list: Product[] = [...customProducts, ...PRODUCTS];
     if (filterCat) {
       list = list.filter((p) => {
         const f = p.family.toLowerCase();
