@@ -1,18 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { PRODUCTS, Product } from "@/lib/product-data";
-import { Bottle } from "@/components/Bottle";
-import { Hero } from "@/components/Hero";
-import { CartDrawer } from "@/components/CartDrawer";
-import { LoginModal } from "@/components/LoginModal";
-import { ProductDetailModal } from "@/components/ProductDetailModal";
-import { SearchModal } from "@/components/SearchModal";
-import { BackToTop } from "@/components/BackToTop";
-import { getAllStocks } from "@/lib/products";
-import { loginUser, signupUser } from "@/lib/auth";
-import { getUserProfile, createOrder } from "@/lib/user";
-import { validatePromo } from "@/lib/promo";
+import { PRODUCTS, Product, getAllStocks, validatePromo } from "@/lib/inventory";
+import { loginUser, signupUser, getUserProfile, createOrder } from "@/lib/auth-service";
+import { Bottle, Hero, BackToTop } from "@/components/ui-elements";
+import { LoginModal, ProductDetailModal, SearchModal } from "@/components/modals";
+import { CartDrawer } from "@/components/features";
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): { loginRequired?: boolean } => {
     return {

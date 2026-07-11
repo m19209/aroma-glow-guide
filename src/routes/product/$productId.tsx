@@ -1,8 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { PRODUCTS, Product } from "@/lib/product-data";
-import { Bottle } from "@/components/Bottle";
+import { PRODUCTS, Product, getAllStocks } from "@/lib/inventory";
+import { Bottle } from "@/components/ui-elements";
 import { useState, useEffect } from "react";
-import { getAllStocks } from "@/lib/products";
 
 export const Route = createFileRoute("/product/$productId")({
   loader: async ({ params }) => {

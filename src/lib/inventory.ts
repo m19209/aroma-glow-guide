@@ -11,6 +11,12 @@ import imgEmeraude from "@/assets/perfume-emeraude.jpg";
 import imgZahra from "@/assets/perfume-zahra.png";
 import imgMusk from "@/assets/perfume-musk.png";
 
+import { createServerFn } from '@tanstack/react-start';
+import { db } from './db';
+import { products } from './db/schema';
+import { eq } from 'drizzle-orm';
+
+// --- Types & Data ---
 export type BottleKey = "noir" | "rose" | "oud" | "azur" | "vert" | "velvet" | "ambre" | "blanc" | "saphir" | "emeraude" | "zahra" | "musk";
 
 export const BOTTLE_IMAGES: Record<BottleKey, string> = {
@@ -92,3 +98,37 @@ export const PRODUCTS: Product[] = [
     topNotes: "البودرة · الليمون الهادئ", heartNotes: "المسك الأبيض · الورد", baseNotes: "خشب الأرز · العنبر الخفيف",
     story: "نقاء البدايات — عبق المسك الأبيض الذي يأسر الحواس." }
 ];
+
+
+// --- Stock/Inventory Endpoints ---
+export const getProductStock = createServerFn()
+  .validator((id: string) => id)
+  .handler(async ({ data: id }) => {
+    const result = await db.select({ stock: products.stock }).from(products).where(eq(products.id, id)).get();
+    return result?.stock ?? 0;
+  });
+
+export const getAllStocks = createServerFn()
+  .handler(async () => {
+    const result = await db.select().from(products).all();
+    const stockMap = result.reduce((acc, p) => {
+      acc[p.id] = p.stock;
+      return acc;
+    }, {} as Record<string, number>);
+    return stockMap;
+  });
+
+// --- Promo Code Endpoints ---
+const PROMOS: Record<string, number> = { VELORE10: 10, LUXE20: 20, NOIR15: 15 };
+
+export const validatePromo = createServerFn()
+  .validator((code: string) => code.trim().toUpperCase())
+  .handler(async ({ data: code }) => {
+    // Artificial delay to prevent brute-forcing
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    if (PROMOS[code]) {
+      return { success: true as const, pct: PROMOS[code], code };
+    }
+    return { success: false as const, error: 'رمز الخصم غير صحيح أو منتهي الصلاحية' };
+  });

@@ -1,7 +1,7 @@
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { UserProfilePage } from "@/components/UserProfilePage";
-import { getUserProfile, getUserOrders } from "@/lib/user";
+import { UserProfilePage } from "@/components/features";
+import { getUserProfile, getUserOrders } from "@/lib/auth-service";
 
 export const Route = createFileRoute("/account")({
   loader: async () => {

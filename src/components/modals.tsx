@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { loginUser, signupUser } from "@/lib/auth";
+import { loginUser, signupUser } from "@/lib/auth-service";
+import { Product, PRODUCTS } from "@/lib/inventory";
+import { Bottle } from "@/components/ui-elements";
+
+// --- Login Modal ---
 
 type FieldErrors = {
   name?: string;
@@ -81,7 +85,6 @@ export function LoginModal({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
-  // Re-validate touched fields as user types
   useEffect(() => {
     if (Object.keys(touched).length === 0) return;
     const errors = validateFields(isRegister, authName, authEmail, authPassword);
@@ -99,14 +102,13 @@ export function LoginModal({
   };
 
   const handleSubmit = async () => {
-    // Mark all fields as touched
     setTouched({ name: true, email: true, password: true });
 
     const errors = validateFields(isRegister, authName, authEmail, authPassword);
     setFieldErrors(errors);
 
     if (Object.keys(errors).length > 0) {
-      return; // Don't submit if there are validation errors
+      return;
     }
 
     setAuthLoading(true);
@@ -231,7 +233,7 @@ export function LoginModal({
             
             <div className="magic-switch">
               {isRegister ? "لديك حساب بالفعل؟ " : "ليس لديك حساب؟ "}
-              <a href="#" onClick={(e) => { e.preventDefault(); setIsRegister(!isRegister); setErrorMsg(""); setFieldErrors({}); setTouched({}); }}>
+              <a href="#switch" onClick={(e) => { e.preventDefault(); setIsRegister(!isRegister); setErrorMsg(""); setFieldErrors({}); setTouched({}); }}>
                 {isRegister ? "تسجيل الدخول" : "إنشاء حساب"}
               </a>
             </div>
@@ -243,3 +245,191 @@ export function LoginModal({
   );
 }
 
+// --- Product Detail Modal ---
+
+export function ProductDetailModal({
+  product,
+  onClose,
+  stocks,
+  addToCart,
+  wishlist,
+  toggleWish
+}: {
+  product: Product | null;
+  onClose: () => void;
+  stocks: Record<string, number>;
+  addToCart: (p: Product) => void;
+  wishlist: Set<string>;
+  toggleWish: (id: string) => void;
+}) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (product) {
+      modalRef.current?.focus();
+    }
+  }, [product]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && product) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [product, onClose]);
+
+  if (!product) return null;
+
+  return (
+    <div className="pdetail-backdrop open" onMouseDown={(e) => { if(e.target === e.currentTarget) onClose(); }}>
+      <div
+        className="pdetail-modal"
+        role="dialog"
+        aria-modal="true"
+        ref={modalRef}
+        tabIndex={-1}
+      >
+        <button className="pdetail-close" onClick={onClose} aria-label="إغلاق">✕</button>
+        
+        <div className="pdetail-media">
+          <div className="pdetail-media-img">
+            <Bottle variant={product.bottle} label={product.name} />
+          </div>
+          {product.badge && (
+            <span className={`pbadge ${product.badge.variant}`}>
+              {product.badge.label}
+            </span>
+          )}
+        </div>
+
+        <div className="pdetail-info-col">
+          <div className="pfamily">{product.family}</div>
+          <h2 className="pdetail-name">{product.name}</h2>
+          <div className="pdetail-vol">{product.volume}</div>
+          
+          <p className="pdetail-story">{product.story}</p>
+          
+          <div className="pdetail-info-title">المواصفات</div>
+          <ul className="pdetail-specs">
+            <li><span>التركيز</span><strong>{product.concentration}</strong></li>
+            <li><span>الثبات</span><strong>{product.longevity}</strong></li>
+            <li><span>الفوحان</span><strong>{product.sillage}</strong></li>
+          </ul>
+
+          <div className="pdetail-info-title">الهرم العطري</div>
+          <div className="pdetail-pyramid">
+            <div className="pyramid-row">
+              <span className="pyramid-lvl">القمة</span>
+              <p>{product.topNotes}</p>
+            </div>
+            <div className="pyramid-row">
+              <span className="pyramid-lvl">القلب</span>
+              <p>{product.heartNotes}</p>
+            </div>
+            <div className="pyramid-row">
+              <span className="pyramid-lvl">القاعدة</span>
+              <p>{product.baseNotes}</p>
+            </div>
+          </div>
+          
+          {(stocks[product.id] ?? 5) <= 2 && (
+            <div style={{ color: "#d9534f", fontSize: "0.85rem", marginTop: "10px", fontWeight: "bold" }}>
+              تبقى {(stocks[product.id] ?? 5)} قطع فقط!
+            </div>
+          )}
+
+          <div className="pdetail-price">
+            {product.oldPrice && <span className="pprice-old">{product.oldPrice} ج.م</span>}
+            <span className="pprice">{product.price} ج.م</span>
+          </div>
+          
+          <div className="pdetail-actions">
+            <button
+              className="btn-gold pdetail-buy"
+              disabled={(stocks[product.id] ?? 5) <= 0}
+              style={{ opacity: (stocks[product.id] ?? 5) <= 0 ? 0.5 : 1 }}
+              onClick={() => { addToCart(product); onClose(); }}
+            >
+              شراء الآن — Add to Cart
+            </button>
+            <button
+              className={`pwish ${wishlist.has(product.id) ? "active" : ""}`}
+              onClick={() => toggleWish(product.id)}
+              aria-label="المفضلة"
+            >
+              {wishlist.has(product.id) ? "♥" : "♡"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// --- Search Modal ---
+
+export function SearchModal({
+  isOpen,
+  onClose,
+  searchQuery,
+  setSearchQuery,
+  onSelectProduct
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  searchQuery: string;
+  setSearchQuery: (val: string) => void;
+  onSelectProduct: (p: Product) => void;
+}) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  return (
+    <>
+      <div className="drawer-backdrop open" onClick={onClose} />
+      <div
+        className="search-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="نافذة البحث"
+        ref={modalRef}
+        tabIndex={-1}
+      >
+        <input
+          autoFocus
+          className="search-input"
+          placeholder="ابحث عن عطر، عائلة، نوتة..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <div className="search-results">
+          {PRODUCTS.filter((p) => {
+            if (!searchQuery.trim()) return true;
+            const q = searchQuery.toLowerCase();
+            return p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q);
+          }).map((p) => (
+            <button key={p.id} className="search-item" onClick={() => { onClose(); onSelectProduct(p); }}>
+              <span>{p.name}</span>
+              <span className="search-item-fam">{p.family} · {p.price} ج.م</span>
+            </button>
+          ))}
+        </div>
+        <button className="search-close" onClick={onClose}>إغلاق</button>
+      </div>
+    </>
+  );
+}
