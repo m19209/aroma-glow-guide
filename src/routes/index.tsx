@@ -70,12 +70,14 @@ function Index() {
 
     listCustomProducts().then((res) => {
       if (Array.isArray(res)) setCustomProducts(res as Product[]);
-    }).catch(() => {});
+    }).catch(() => { });
 
     // Poll every 1 second for realtime stock updates
     const interval = setInterval(() => {
       getAllStocks().then((res) => {
-        if (res) setStocks(res);
+        if (res) {
+          setStocks(prev => JSON.stringify(prev) === JSON.stringify(res) ? prev : res);
+        }
       });
     }, 1000);
 
@@ -96,7 +98,7 @@ function Index() {
       if (c) setCart(JSON.parse(c));
       const w = localStorage.getItem("velore_wish");
       if (w) setWishlist(new Set(JSON.parse(w)));
-    } catch {/* noop */}
+    } catch {/* noop */ }
   }, []);
 
   // Check user session from cookie on mount securely
@@ -120,10 +122,10 @@ function Index() {
   }, [searchParams.loginRequired, searchParams.adminRequired]);
 
   useEffect(() => {
-    try { localStorage.setItem("velore_cart", JSON.stringify(cart)); } catch {/* noop */}
+    try { localStorage.setItem("velore_cart", JSON.stringify(cart)); } catch {/* noop */ }
   }, [cart]);
   useEffect(() => {
-    try { localStorage.setItem("velore_wish", JSON.stringify([...wishlist])); } catch {/* noop */}
+    try { localStorage.setItem("velore_wish", JSON.stringify([...wishlist])); } catch {/* noop */ }
   }, [wishlist]);
 
   // Scroll
@@ -198,10 +200,10 @@ function Index() {
     paymentMethod: 'cod' | 'vodafone';
   }) {
     if (cart.length === 0) return;
-    
+
     setCheckoutLoading(true);
     showToast("جاري إرسال طلبك…");
-    
+
     try {
       const items = cart.map(line => ({
         productId: line.product.id,
@@ -319,23 +321,23 @@ function Index() {
 
           {currentUser ? (
             <div className="nav-auth" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <Link to="/account" className="nav-login-btn magic-login-btn" style={{ 
-                color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)', 
+              <Link to="/account" className="nav-login-btn magic-login-btn" style={{
+                color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)',
                 textDecoration: 'none'
               }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                 <span className="login-label">حسابي</span>
               </Link>
-              <button 
-                onClick={() => { 
+              <button
+                onClick={() => {
                   document.cookie = "velore_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                  setCurrentUser(null); 
-                  showToast("تم تسجيل الخروج بنجاح"); 
-                }} 
+                  setCurrentUser(null);
+                  showToast("تم تسجيل الخروج بنجاح");
+                }}
                 className="nav-login-btn magic-login-btn logout-btn"
-                style={{ 
-                  color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)', 
-                  border: 'none', 
+                style={{
+                  color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)',
+                  border: 'none',
                   paddingLeft: '8px',
                   paddingRight: '8px'
                 }}
@@ -357,7 +359,7 @@ function Index() {
             <span className="cart-label">الحقيبة</span>
             {cartCount > 0 && <span key={cartCount} className="cart-count-badge">{cartCount}</span>}
           </button>
-          
+
           <button className={`nav-hamburger ${mobileOpen ? 'open' : ''}`} aria-label="Menu" onClick={() => setMobileOpen((o) => !o)}>
             <span /><span /><span />
           </button>
@@ -368,179 +370,197 @@ function Index() {
         <>
           <div className="drawer-backdrop open" style={{ zIndex: 298 }} onClick={() => setMobileOpen(false)} />
           <div className="mobile-menu open">
-          <div className="mobile-search-wrapper" style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '8px' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--charcoal-dim)' }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-            <input 
-              type="text" 
-              placeholder="ابحث..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onFocus={() => { setMobileOpen(false); setSearchOpen(true); }}
-              style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', padding: '0 12px', fontSize: '1rem', color: 'var(--charcoal)' }}
-            />
-          </div>
-          
-          <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
-          
-          {currentUser ? (
-            <>
-              <Link to="/account" onClick={() => setMobileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                حسابي
-              </Link>
-              <button 
-                onClick={() => { 
-                  document.cookie = "velore_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                  setCurrentUser(null); 
-                  setMobileOpen(false);
-                  showToast("تم تسجيل الخروج بنجاح"); 
-                }} 
+            <div className="mobile-search-wrapper" style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '8px' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--charcoal-dim)' }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
+              <input
+                type="text"
+                placeholder="ابحث..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => { setMobileOpen(false); setSearchOpen(true); }}
+                style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', padding: '0 12px', fontSize: '1rem', color: 'var(--charcoal)' }}
+              />
+            </div>
+
+            <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
+
+            {currentUser ? (
+              <>
+                <Link to="/account" onClick={() => setMobileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  حسابي
+                </Link>
+                <button
+                  onClick={() => {
+                    document.cookie = "velore_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                    setCurrentUser(null);
+                    setMobileOpen(false);
+                    showToast("تم تسجيل الخروج بنجاح");
+                  }}
+                  className="mobile-menu-btn"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                  تسجيل الخروج
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => { setMobileOpen(false); setLoginOpen(true); }}
                 className="mobile-menu-btn"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                تسجيل الخروج
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                تسجيل الدخول
               </button>
-            </>
-          ) : (
-            <button 
-              onClick={() => { setMobileOpen(false); setLoginOpen(true); }}
-              className="mobile-menu-btn"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              تسجيل الدخول
-            </button>
-          )}
-        </div>
+            )}
+          </div>
         </>
       )}
 
       <main id="main-content">
-      <Hero scrollToProducts={() => scrollTo("products")} />
+        <Hero scrollToProducts={() => scrollTo("products")} />
 
 
 
 
 
 
-      <div className="divider">
-        <div className="div-line" />
-        <div className="div-ornament">
-          <div className="div-diamond" />
-          <span style={{ fontFamily: "'Cinzel',serif", fontSize: ".6rem", letterSpacing: ".3em", color: "var(--gold-dim)" }}>VELORE</span>
-          <div className="div-diamond" />
-        </div>
-        <div className="div-line" />
-      </div>
-
-      {/* PRODUCTS */}
-      <section id="products">
-        <div className="section-header products-header">
-          <div className="section-eyebrow">Best Sellers</div>
-          <h2 className="section-title">عطور <em>تُعرِّفك</em></h2>
-        </div>
-        <div className="filter-bar">
-          <div className="filter-chips">
-            <button className={`chip ${!filterCat ? "active" : ""}`} onClick={() => setFilterCat(null)}>الكل</button>
-            {CATEGORIES.map((c) => (
-              <button
-                key={c.key}
-                className={`chip ${filterCat === c.key ? "active" : ""}`}
-                onClick={() => setFilterCat(filterCat === c.key ? null : c.key)}
-              >
-                <span className="chip-icon">{c.icon}</span>{c.name}
-              </button>
-            ))}
+        <div className="divider">
+          <div className="div-line" />
+          <div className="div-ornament">
+            <div className="div-diamond" />
+            <span style={{ fontFamily: "'Cinzel',serif", fontSize: ".6rem", letterSpacing: ".3em", color: "var(--gold-dim)" }}>VELORE</span>
+            <div className="div-diamond" />
           </div>
-          <div className="sort-wrap">
-            <label className="sort-label">ترتيب</label>
-            <select className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
-              <option value="featured">المُختار</option>
-              <option value="price-asc">السعر: من الأقل</option>
-              <option value="price-desc">السعر: من الأعلى</option>
-              <option value="name">الاسم (أ–ي)</option>
-            </select>
-            <span className="result-count">{visibleProducts.length} عطر</span>
-          </div>
+          <div className="div-line" />
         </div>
-        <div className="products">
-          <div className="products-grid">
-            {visibleProducts.length === 0 && (
-              <div className="empty-state">لا توجد عطور تطابق بحثك.</div>
-            )}
-            {visibleProducts.map((p) => {
-              const line = cart.find((l) => l.product.id === p.id);
-              const cartQty = line ? line.qty : 0;
-              const availableStock = Math.max(0, (stocks[p.id] ?? 5) - cartQty);
-              return (
-              <div
-                className="pcard"
-                key={p.id}
-                onClick={() => setDetailProduct(p)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setDetailProduct(p); } }}
-              >
-                {p.badge && <span className={`pbadge badge-${p.badge.variant}`}>{p.badge.label}</span>}
-                <div className="pimg-wrap">
-                  <div className="pimg-glow" />
-                  <div className="pimg-inner"><Bottle variant={p.bottle} label={p.label} imageSrc={p.imageData} /></div>
-                </div>
-                <div className="pinfo">
-                  <div className="pfamily">{p.family}</div>
-                  <div className="pname">
-                    <Link to="/product/$productId" params={{ productId: p.id }} onClick={(e) => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'none' }}>
-                      {p.name}
-                    </Link>
-                  </div>
-                  <div className="pstock" style={{ color: availableStock < 3 ? '#d9534f' : '#8B6F28', fontSize: '0.75rem', marginBottom: '8px', fontWeight: 'bold' }}>
-                    {stocksLoading ? (
-                      <span className="skeleton-pulse" style={{ display: 'inline-block', width: '80px', height: '12px', background: 'var(--beige)', borderRadius: '4px' }}></span>
-                    ) : (
-                      availableStock > 0 ? `الكمية المتبقية: ${availableStock} قطع` : 'نفدت الكمية'
-                    )}
-                  </div>
-                  <div className="pnotes">{p.notes}</div>
-                  <div className="pfooter">
-                    <div>
-                      {p.oldPrice && <span className="pprice-old">{p.oldPrice}</span>}
-                      <span className="pprice">{p.price} ج.م</span>
-                    </div>
-                    <div className="pright">
-                      <span className="pvol">{p.volume}</span>
+
+        {/* PRODUCTS */}
+        <section id="products">
+          <div className="section-header products-header">
+            <div className="section-eyebrow">Best Sellers</div>
+            <h2 className="section-title">عطور <em>تُعرِّفك</em></h2>
+          </div>
+          <div className="filter-bar">
+            <div className="filter-chips">
+              <button className={`chip ${!filterCat ? "active" : ""}`} onClick={() => setFilterCat(null)}>الكل</button>
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c.key}
+                  className={`chip ${filterCat === c.key ? "active" : ""}`}
+                  onClick={() => setFilterCat(filterCat === c.key ? null : c.key)}
+                >
+                  <span className="chip-icon">{c.icon}</span>{c.name}
+                </button>
+              ))}
+            </div>
+            <div className="sort-wrap">
+              <label className="sort-label">ترتيب</label>
+              <select className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
+                <option value="featured">المُختار</option>
+                <option value="price-asc">السعر: من الأقل</option>
+                <option value="price-desc">السعر: من الأعلى</option>
+                <option value="name">الاسم (أ–ي)</option>
+              </select>
+              <span className="result-count">{visibleProducts.length} عطر</span>
+            </div>
+          </div>
+          <div className="products">
+            <div className="products-grid">
+              {visibleProducts.length === 0 && (
+                <div className="empty-state">لا توجد عطور تطابق بحثك.</div>
+              )}
+              {visibleProducts.map((p) => {
+                const line = cart.find((l) => l.product.id === p.id);
+                const cartQty = line ? line.qty : 0;
+                const availableStock = Math.max(0, (stocks[p.id] ?? 5) - cartQty);
+                return (
+                  <div
+                    className="pcard"
+                    key={p.id}
+                    onClick={() => setDetailProduct(p)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setDetailProduct(p); } }}
+                  >
+                    {p.badge && <span className={`pbadge badge-${p.badge.variant}`}>{p.badge.label}</span>}
+                    <div className="pimg-wrap">
                       <button
                         className={`pwish ${wishlist.has(p.id) ? "active" : ""}`}
                         onClick={(e) => { e.stopPropagation(); toggleWish(p.id); }}
                         aria-label="المفضلة"
                       >{wishlist.has(p.id) ? "♥" : "♡"}</button>
+                      <div className="pimg-glow" />
+                      <div className="pimg-inner"><Bottle variant={p.bottle} label={p.label} imageSrc={p.imageData} /></div>
                     </div>
+                    <div className="pinfo">
+                      <div className="pfamily">{p.family}</div>
+                      <div className="pname">
+                        <Link to="/product/$productId" params={{ productId: p.id }} onClick={(e) => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'none' }}>
+                          {p.name}
+                        </Link>
+                      </div>
+                      <div className="pnotes">{p.notes}</div>
+                      <div className="pfooter">
+                        <div>
+                          {p.oldPrice && <span className="pprice-old">{p.oldPrice}</span>}
+                          <span className="pprice">{p.price} ج.م</span>
+                        </div>
+                        <div className="pright">
+                          <span className="pvol">{p.volume}</span>
+                        </div>
+                      </div>
+                      <div className="pstock" style={{ color: availableStock < 3 ? '#d9534f' : 'var(--gold)', fontSize: '0.72rem', marginTop: 'auto', marginBottom: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        {!stocksLoading && <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: availableStock < 3 ? '#d9534f' : 'var(--gold)', boxShadow: `0 0 4px ${availableStock < 3 ? 'rgba(217,83,79,0.5)' : 'rgba(196,164,119,0.5)'}` }} />}
+                        {stocksLoading ? (
+                          <span className="skeleton-pulse" style={{ display: 'inline-block', width: '80px', height: '12px', background: 'var(--beige)', borderRadius: '4px' }}></span>
+                        ) : (
+                          availableStock > 0 ? `الكمية المتبقية: ${availableStock} قطع` : 'نفدت الكمية'
+                        )}
+                      </div>
+                    </div>
+                    {(() => {
+                      const line = cart.find((l) => l.product.id === p.id);
+                      if (!line) {
+                        return (
+                          <button className="pcard-buy" onClick={(e) => { e.stopPropagation(); addToCart(p); }}>
+                            <span className="pcard-buy-icon">
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
+                            </span>
+                            <span>أضف للحقيبة</span>
+                          </button>
+                        );
+                      }
+                      return (
+                        <div className="pcard-qty" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty - 1); }}
+                            aria-label="تقليل الكمية"
+                            className="pcard-qty-btn"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                          </button>
+                          <span className="pcard-qty-val">{line.qty}</span>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty + 1); }}
+                            aria-label="زيادة الكمية"
+                            className="pcard-qty-btn"
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                              <line x1="12" y1="5" x2="12" y2="19"></line>
+                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                          </button>
+                        </div>
+                      );
+                    })()}
                   </div>
-                </div>
-                {(() => {
-                  const line = cart.find((l) => l.product.id === p.id);
-                  if (!line) {
-                    return (
-                      <button className="pcard-buy" onClick={(e) => { e.stopPropagation(); addToCart(p); }}>
-                        <span className="pcard-buy-icon">
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
-                        </span>
-                        <span>أضف للحقيبة</span>
-                      </button>
-                    );
-                  }
-                  return (
-                    <div className="pcard-qty" onClick={(e) => e.stopPropagation()} style={{ display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', gap: '30px', padding: '10px 0', background: 'rgba(0,0,0,0.03)', margin: '0 8px 12px', borderRadius: '4px' }}>
-                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty - 1); }} aria-label="−" style={{ fontSize: '1.4rem', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0 10px' }}>−</button>
-                      <span style={{ fontSize: '1.2rem', fontWeight: 700 }}>{line.qty}</span>
-                      <button onClick={(e) => { e.stopPropagation(); setQty(p.id, line.qty + 1); }} aria-label="+" style={{ fontSize: '1.4rem', border: 'none', background: 'transparent', cursor: 'pointer', padding: '0 10px' }}>+</button>
-                    </div>
-                  );
-                })()}
-              </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
 
       </main>

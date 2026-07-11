@@ -21,4 +21,19 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    watch: {
+      ignored: [
+        "**/local.db",
+        "**/local.db-journal",
+        "**/local.db-wal",
+        "**/local.db-shm",
+        "**/.agents/**",
+        "**/specs/**",
+      ],
+    },
+    hmr: {
+      overlay: false,
+    },
+  },
 });

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 import { loginUser, signupUser } from "@/lib/auth-service";
 import { Product, PRODUCTS } from "@/lib/inventory";
 import { Bottle } from "@/components/ui-elements";
@@ -391,18 +391,61 @@ export function SearchModal({
   onSelectProduct: (p: Product) => void;
 }) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const filteredProducts = useMemo(() => {
+    return PRODUCTS.filter((p) => {
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase();
+      return p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q);
+    });
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setActiveIndex(filteredProducts.length > 0 ? 0 : -1);
+  }, [searchQuery, filteredProducts]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
+      if (!isOpen) return;
+      if (e.key === "Escape") {
         onClose();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setActiveIndex((prev) => (filteredProducts.length > 0 ? (prev + 1) % filteredProducts.length : -1));
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setActiveIndex((prev) => (filteredProducts.length > 0 ? (prev - 1 + filteredProducts.length) % filteredProducts.length : -1));
+      } else if (e.key === "Enter") {
+        if (activeIndex >= 0 && activeIndex < filteredProducts.length) {
+          e.preventDefault();
+          const selected = filteredProducts[activeIndex];
+          onClose();
+          onSelectProduct(selected);
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, filteredProducts, activeIndex, onSelectProduct]);
 
   if (!isOpen) return null;
+
+  const highlightText = (text: string, query: string) => {
+    if (!query.trim()) return <span>{text}</span>;
+    const parts = text.split(new RegExp(`(${query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi'));
+    return (
+      <span>
+        {parts.map((part, i) =>
+          part.toLowerCase() === query.toLowerCase() ? (
+            <strong key={i} className="highlight">{part}</strong>
+          ) : (
+            part
+          )
+        )}
+      </span>
+    );
+  };
 
   return (
     <>
@@ -416,22 +459,48 @@ export function SearchModal({
         ref={modalRef}
         tabIndex={-1}
       >
-        <input
-          autoFocus
-          className="search-input"
-          placeholder="ابحث عن عطر، عائلة، نوتة..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+        <div className="search-input-wrapper">
+          <svg className="search-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            autoFocus
+            className="search-input"
+            placeholder="ابحث عن عطر، عائلة، نوتة..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button className="search-clear-btn" onClick={() => setSearchQuery("")} aria-label="مسح البحث">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
+          )}
+        </div>
         <div className="search-results">
-          {PRODUCTS.filter((p) => {
-            if (!searchQuery.trim()) return true;
-            const q = searchQuery.toLowerCase();
-            return p.name.toLowerCase().includes(q) || p.family.toLowerCase().includes(q) || p.notes.includes(q);
-          }).map((p) => (
-            <button key={p.id} className="search-item" onClick={() => { onClose(); onSelectProduct(p); }}>
-              <span>{p.name}</span>
-              <span className="search-item-fam">{p.family} · {p.price} ج.م</span>
+          {filteredProducts.map((p, index) => (
+            <button
+              key={p.id}
+              className={`search-item ${index === activeIndex ? "active" : ""}`}
+              onClick={() => {
+                onClose();
+                onSelectProduct(p);
+              }}
+              onMouseEnter={() => setActiveIndex(index)}
+            >
+              <div className="search-item-info">
+                <div className="search-item-img">
+                  <Bottle variant={p.bottle} label={p.label} imageSrc={p.imageData} />
+                </div>
+                <div className="search-item-details">
+                  <span className="search-item-name">{highlightText(p.name, searchQuery)}</span>
+                  <span className="search-item-family">{p.family}</span>
+                </div>
+              </div>
+              <span className="search-item-price">{p.price} ج.م</span>
             </button>
           ))}
         </div>

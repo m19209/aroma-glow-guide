@@ -46,6 +46,7 @@ export function BackToTop() {
 
   return (
     <button
+      type="button"
       className={`back-to-top ${isVisible ? "is-visible" : ""}`}
       onClick={scrollToTop}
       aria-label="العودة إلى الأعلى"
