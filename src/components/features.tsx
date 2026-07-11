@@ -247,6 +247,7 @@ export function CartDrawer({
                     style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
                   />
                   {formErrors.governorate && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.governorate}</span>}
+
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                   <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>المدينة</label>

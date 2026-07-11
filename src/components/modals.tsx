@@ -297,7 +297,7 @@ export function ProductDetailModal({
         
         <div className="pdetail-media">
           <div className="pdetail-media-img">
-            <Bottle variant={product.bottle} label={product.name} />
+            <Bottle variant={product.bottle} label={product.name} imageSrc={product.imageData} />
           </div>
           {product.badge && (
             <span className={`pbadge ${product.badge.variant}`}>

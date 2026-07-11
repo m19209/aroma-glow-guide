@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { PRODUCTS, Product, getAllStocks, validatePromo } from "@/lib/inventory";
+import { listCustomProducts } from "@/lib/admin-service";
 import { loginUser, signupUser, getUserProfile, createOrder } from "@/lib/auth-service";
 import { Bottle, Hero, BackToTop } from "@/components/ui-elements";
 import { LoginModal, ProductDetailModal, SearchModal } from "@/components/modals";
@@ -57,7 +58,9 @@ function Index() {
   const [stocks, setStocks] = useState<Record<string, number>>({});
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  // Data fetching (poll every second for realtime updates)
+  // Data fetching
+  const [customProducts, setCustomProducts] = useState<Product[]>([]);
+
   useEffect(() => {
     // Initial fetch
     getAllStocks().then((res) => {
@@ -65,7 +68,11 @@ function Index() {
       setStocksLoading(false);
     });
 
-    // Poll every 1 second
+    listCustomProducts().then((res) => {
+      if (Array.isArray(res)) setCustomProducts(res as Product[]);
+    }).catch(() => {});
+
+    // Poll every 1 second for realtime stock updates
     const interval = setInterval(() => {
       getAllStocks().then((res) => {
         if (res) setStocks(res);
@@ -239,7 +246,7 @@ function Index() {
   }
 
   const visibleProducts = useMemo(() => {
-    let list = PRODUCTS;
+    let list: Product[] = [...customProducts, ...PRODUCTS];
     if (filterCat) {
       list = list.filter((p) => {
         const f = p.family.toLowerCase();
@@ -259,7 +266,7 @@ function Index() {
     else if (sortBy === "price-desc") sorted.sort((a, b) => b.price - a.price);
     else if (sortBy === "name") sorted.sort((a, b) => a.name.localeCompare(b.name));
     return sorted;
-  }, [filterCat, searchQuery, sortBy]);
+  }, [filterCat, searchQuery, sortBy, customProducts]);
 
   const SHIPPING_FREE_AT = 800;
   const promoDiscount = promoApplied ? cartTotal * (promoApplied.pct / 100) : 0;
@@ -476,7 +483,7 @@ function Index() {
                 {p.badge && <span className={`pbadge badge-${p.badge.variant}`}>{p.badge.label}</span>}
                 <div className="pimg-wrap">
                   <div className="pimg-glow" />
-                  <div className="pimg-inner"><Bottle variant={p.bottle} label={p.label} /></div>
+                  <div className="pimg-inner"><Bottle variant={p.bottle} label={p.label} imageSrc={p.imageData} /></div>
                 </div>
                 <div className="pinfo">
                   <div className="pfamily">{p.family}</div>

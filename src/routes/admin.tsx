@@ -38,6 +38,7 @@ export const Route = createFileRoute("/admin")({
     meta: [
       { title: "لوحة تحكم الإدارة — VELORE" },
       { name: "description", content: "إدارة متجر VELORE، متابعة المخزون والطلبات والإحصائيات." },
+      { name: "robots", content: "noindex, nofollow" },
     ],
   }),
   component: AdminPage,

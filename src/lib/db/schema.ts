@@ -15,6 +15,33 @@ export const users = sqliteTable('users', {
   role: text('role').notNull().default('user'), // 'user' | 'admin'
 });
 
+export const customProducts = sqliteTable('custom_products', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  family: text('family').notNull().default(''),
+  notes: text('notes').notNull().default(''),
+  price: integer('price').notNull().default(0),
+  oldPrice: integer('old_price'),
+  volume: text('volume').notNull().default('50 ML'),
+  badgeLabel: text('badge_label'),
+  badgeVariant: text('badge_variant'),
+  bottle: text('bottle').notNull().default('noir'),
+  label: text('label').notNull().default(''),
+  concentration: text('concentration').notNull().default(''),
+  longevity: text('longevity').notNull().default(''),
+  sillage: text('sillage').notNull().default(''),
+  occasion: text('occasion').notNull().default(''),
+  gender: text('gender').notNull().default(''),
+  origin: text('origin').notNull().default(''),
+  topNotes: text('top_notes').notNull().default(''),
+  heartNotes: text('heart_notes').notNull().default(''),
+  baseNotes: text('base_notes').notNull().default(''),
+  story: text('story').notNull().default(''),
+  imageData: text('image_data').notNull().default(''),
+  stock: integer('stock').notNull().default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
+
 export const products = sqliteTable('products', {
   id: text('id').primaryKey(),
   stock: integer('stock').notNull().default(0),
