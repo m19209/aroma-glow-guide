@@ -58,11 +58,15 @@ function Index() {
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   // Data fetching
+  const [customProducts, setCustomProducts] = useState<Product[]>([]);
   useEffect(() => {
     getAllStocks().then((res) => {
       if (res) setStocks(res);
       setStocksLoading(false);
     });
+    listCustomProducts().then((res) => {
+      if (Array.isArray(res)) setCustomProducts(res as Product[]);
+    }).catch(() => {});
   }, []);
 
   const [filterCat, setFilterCat] = useState<string | null>(null);
