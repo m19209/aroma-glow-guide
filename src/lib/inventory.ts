@@ -46,6 +46,8 @@ export type Product = {
   heartNotes: string;
   baseNotes: string;
   story: string;
+  imageData?: string;
+  isCustom?: boolean;
 };
 
 export const PRODUCTS: Product[] = [

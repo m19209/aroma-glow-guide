@@ -137,7 +137,7 @@ export function CartDrawer({
             cart.map(c => (
               <div key={c.product.id} className="cart-line">
                 <div className="cart-line-img">
-                  <Bottle variant={c.product.bottle} label={c.product.name} />
+                  <Bottle variant={c.product.bottle} label={c.product.name} imageSrc={c.product.imageData} />
                 </div>
                 <div className="cart-line-info">
                   <div className="cart-line-name" style={{ fontSize: '1.4rem', fontWeight: 600 }}>{c.product.name}</div>
