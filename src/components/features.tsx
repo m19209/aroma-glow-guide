@@ -415,7 +415,7 @@ export function CartDrawer({
               </div>
             ) : (
               cart.map(c => (
-                <div key={c.product.id} className="cart-line">
+                <div key={c.product.id} className="cart-line cart-item-card">
                   <div className="cart-line-img">
                     <Bottle variant={c.product.bottle} label={c.product.name} />
                   </div>
@@ -425,18 +425,23 @@ export function CartDrawer({
                     <div className="cart-line-price">{c.product.price} ج.م</div>
                     <div className="qty">
                       <div className="qty-pill">
-                        <button type="button" onClick={() => setQty(c.product.id, c.qty - 1)} aria-label="تقليل الكمية">-</button>
+                        <button type="button" onClick={() => setQty(c.product.id, c.qty - 1)} className="qty-btn qty-minus" aria-label="تقليل الكمية">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
                         <span className="qty-count">{c.qty}</span>
-                        <button type="button" onClick={() => setQty(c.product.id, c.qty + 1)} aria-label="زيادة الكمية">+</button>
+                        <button type="button" onClick={() => setQty(c.product.id, c.qty + 1)} className="qty-btn qty-plus" aria-label="زيادة الكمية">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
                       </div>
                     </div>
                   </div>
                   <button className="cart-remove-btn" onClick={() => removeLine(c.product.id)} aria-label="إزالة المنتج">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-                      <polyline points="3 6 5 6 21 6"></polyline>
-                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                      <line x1="10" y1="11" x2="10" y2="17"></line>
-                      <line x1="14" y1="11" x2="14" y2="17"></line>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="cart-remove-icon">
+                      <path d="M3 6h18" />
+                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                      <line x1="10" x2="10" y1="11" y2="17" />
+                      <line x1="14" x2="14" y1="11" y2="17" />
                     </svg>
                   </button>
                 </div>
@@ -485,17 +490,17 @@ export function CartDrawer({
               </>
             )}
             
-            <div className="cart-total" style={{ fontSize: '1.2rem', color: 'var(--muted)', marginTop: isCheckingOut ? '8px' : '0' }}>
-              <span>المجموع</span>
-              <span>{cartTotal} ج.م</span>
+            <div className="cart-total subtotal-row" style={{ marginTop: isCheckingOut ? '8px' : '0' }}>
+              <span className="cart-total-label">المجموع</span>
+              <span className="cart-total-value">{cartTotal} ج.م</span>
             </div>
-            <div className="cart-total" style={{ fontSize: '1.2rem', color: 'var(--muted)' }}>
-              <span>الشحن</span>
-              <span>{shippingFee === 0 ? "مجاني" : `${shippingFee} ج.م`}</span>
+            <div className="cart-total shipping-row">
+              <span className="cart-total-label">الشحن</span>
+              <span className="cart-total-value">{shippingFee === 0 ? "مجاني" : `${shippingFee} ج.م`}</span>
             </div>
-            <div className="cart-total" style={{ fontWeight: 700, color: 'var(--charcoal)', fontSize: '1.5rem', marginTop: '8px', borderTop: '2px solid var(--border)', paddingTop: '12px', paddingBottom: '12px' }}>
-              <span>الإجمالي</span>
-              <span>{grandTotal} ج.م</span>
+            <div className="cart-total grand-total-row">
+              <span className="cart-total-label grand-label">الإجمالي</span>
+              <span className="cart-total-value grand-value">{grandTotal} ج.م</span>
             </div>
             {isCheckingOut ? (
               <button
