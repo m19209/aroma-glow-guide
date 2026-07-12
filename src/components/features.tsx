@@ -420,16 +420,25 @@ export function CartDrawer({
                     <Bottle variant={c.product.bottle} label={c.product.name} />
                   </div>
                   <div className="cart-line-info">
-                    <div className="cart-line-name" style={{ fontSize: '1.4rem', fontWeight: 600 }}>{c.product.name}</div>
-                    <div className="cart-line-fam" style={{ fontSize: '0.9rem', marginTop: '4px' }}>{c.product.family}</div>
-                    <div className="cart-line-price" style={{ fontSize: '1.25rem', marginTop: '10px' }}>{c.product.price} ج.م</div>
-                    <div className="qty" style={{ marginTop: '14px' }}>
-                      <button onClick={() => setQty(c.product.id, c.qty - 1)} style={{ width: '32px', height: '32px', fontSize: '1.2rem' }}>-</button>
-                      <span style={{ fontSize: '1.2rem', padding: '0 10px' }}>{c.qty}</span>
-                      <button onClick={() => setQty(c.product.id, c.qty + 1)} style={{ width: '32px', height: '32px', fontSize: '1.2rem' }}>+</button>
-                      <button className="qty-remove" style={{ fontSize: '0.95rem' }} onClick={() => removeLine(c.product.id)}>إزالة</button>
+                    <div className="cart-line-name">{c.product.name}</div>
+                    <div className="cart-line-fam">{c.product.family}</div>
+                    <div className="cart-line-price">{c.product.price} ج.م</div>
+                    <div className="qty">
+                      <div className="qty-pill">
+                        <button type="button" onClick={() => setQty(c.product.id, c.qty - 1)} aria-label="تقليل الكمية">-</button>
+                        <span className="qty-count">{c.qty}</span>
+                        <button type="button" onClick={() => setQty(c.product.id, c.qty + 1)} aria-label="زيادة الكمية">+</button>
+                      </div>
                     </div>
                   </div>
+                  <button className="cart-remove-btn" onClick={() => removeLine(c.product.id)} aria-label="إزالة المنتج">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                      <line x1="10" y1="11" x2="10" y2="17"></line>
+                      <line x1="14" y1="11" x2="14" y2="17"></line>
+                    </svg>
+                  </button>
                 </div>
               ))
             )
