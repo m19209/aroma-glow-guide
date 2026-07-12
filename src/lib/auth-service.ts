@@ -218,6 +218,7 @@ export const createOrder = createServerFn()
     const orderId = crypto.randomUUID();
     const addressStr = `${data.building ? data.building + '، ' : ''}${data.street}، ${data.district}، ${data.city}، ${data.governorate} (هاتف: ${data.customerPhone})`;
 
+    let dbSuccess = true;
     try {
       await db.transaction(async (tx) => {
         // Update user profile info so it is prefilled next time (only if logged in)
@@ -288,7 +289,15 @@ export const createOrder = createServerFn()
         }
       });
     } catch (e: any) {
-      return { success: false, error: e.message || 'حدث خطأ أثناء إنشاء الطلب' };
+      console.error("Database transaction failed during order creation:", e);
+      // In production (Vercel) or read-only database, proceed with Sheets/Telegram fallback
+      const isReadOnlyDb = e.message?.includes('READONLY') || e.message?.includes('readonly') || e.message?.includes('Read-only');
+      if (isReadOnlyDb || process.env.NODE_ENV === 'production') {
+        dbSuccess = false;
+        console.warn("Proceeding with Google Sheets & Telegram notification fallback...");
+      } else {
+        return { success: false, error: e.message || 'حدث خطأ أثناء إنشاء الطلب' };
+      }
     }
 
     // Send Telegram Notification
