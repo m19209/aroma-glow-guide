@@ -128,7 +128,8 @@ export const getAllStocks = createServerFn()
         const sheetInventory = await getInventoryFromSheet();
         if (Object.keys(sheetInventory).length > 0) {
           // Update local DB to match Sheet (Sheet is the master database)
-          for (const [id, stock] of Object.entries(sheetInventory)) {
+          for (const [id, sheetProduct] of Object.entries(sheetInventory)) {
+            const stock = sheetProduct.stock;
             let current = await db.select().from(products).where(eq(products.id, id)).get();
             if (!current) {
               await db.insert(products).values({ id, stock });
@@ -155,7 +156,11 @@ export const getAllStocks = createServerFn()
       try {
         const sheetInventory = await getInventoryFromSheet();
         if (Object.keys(sheetInventory).length > 0) {
-          return sheetInventory;
+          const fallbackMap: Record<string, number> = {};
+          for (const [id, sheetProduct] of Object.entries(sheetInventory)) {
+            fallbackMap[id] = sheetProduct.stock;
+          }
+          return fallbackMap;
         }
       } catch (sheetErr) {
         console.error("Google Sheets fallback failed:", sheetErr);
@@ -169,6 +174,36 @@ export const getAllStocks = createServerFn()
       return defaultStocks;
     }
   });
+
+// --- Dynamic Products from Sheets ---
+export const getSheetProducts = createServerFn().handler(async () => {
+  try {
+    const sheetInventory = await getInventoryFromSheet();
+    return Object.values(sheetInventory).map(sp => ({
+      id: sp.id,
+      name: sp.name,
+      family: 'Special Edition',
+      notes: 'إصدار خاص',
+      price: sp.price || 4500, // Default price if not set in column D
+      volume: '50 ML',
+      bottle: 'noir' as BottleKey,
+      label: sp.name.toUpperCase(),
+      concentration: 'Eau de Parfum',
+      longevity: 'متوسط',
+      sillage: 'متوسط',
+      occasion: 'كل الأوقات',
+      gender: 'للجنسين',
+      origin: 'مستورد',
+      topNotes: '',
+      heartNotes: '',
+      baseNotes: '',
+      story: 'تمت إضافته من قائمة المخزون.',
+      isCustom: true
+    }));
+  } catch (e) {
+    return [];
+  }
+});
 
 // --- Promo Code Endpoints ---
 const PROMOS: Record<string, number> = { VELORE10: 10, LUXE20: 20, NOIR15: 15 };

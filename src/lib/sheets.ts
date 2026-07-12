@@ -131,7 +131,9 @@ export async function syncInventoryToSheet(productsList: { id: string, name: str
   }
 }
 
-export async function getInventoryFromSheet(): Promise<Record<string, number>> {
+export type SheetProduct = { id: string; name: string; stock: number; price?: number };
+
+export async function getInventoryFromSheet(): Promise<Record<string, SheetProduct>> {
   try {
     const sheetsClient = await getSheetsClient();
     
@@ -143,20 +145,33 @@ export async function getInventoryFromSheet(): Promise<Record<string, number>> {
 
     const sheetName = 'Inventory';
     
+    // Fetch up to Column D to capture Price if the user adds it
     const getRes = await sheetsClient.spreadsheets.values.get({
       spreadsheetId,
-      range: `${sheetName}!A:C`,
+      range: `${sheetName}!A:D`,
     }).catch(() => null);
     
     const rows = getRes?.data?.values;
-    const stockMap: Record<string, number> = {};
+    const stockMap: Record<string, SheetProduct> = {};
     
     if (rows) {
       // Skip header row if it exists
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
         if (row[0] && row[2]) {
-          stockMap[row[0]] = parseInt(row[2].toString(), 10) || 0;
+          const id = row[0].toString();
+          const name = row[1] ? row[1].toString() : id;
+          const stock = parseInt(row[2].toString(), 10) || 0;
+          
+          let price = undefined;
+          if (row[3]) {
+            const parsedPrice = parseInt(row[3].toString(), 10);
+            if (!isNaN(parsedPrice)) {
+              price = parsedPrice;
+            }
+          }
+
+          stockMap[id] = { id, name, stock, price };
         }
       }
     }

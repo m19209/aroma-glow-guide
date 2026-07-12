@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { PRODUCTS, Product, getAllStocks, validatePromo } from "@/lib/inventory";
+import { PRODUCTS, Product, getAllStocks, validatePromo, getSheetProducts } from "@/lib/inventory";
 import { listCustomProducts } from "@/lib/admin-service";
 import { loginUser, signupUser, getUserProfile, createOrder } from "@/lib/auth-service";
 import { Bottle, Hero, BackToTop } from "@/components/ui-elements";
@@ -60,6 +60,7 @@ function Index() {
 
   // Data fetching
   const [customProducts, setCustomProducts] = useState<Product[]>([]);
+  const [sheetProducts, setSheetProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     // Initial fetch
@@ -70,6 +71,10 @@ function Index() {
 
     listCustomProducts().then((res) => {
       if (Array.isArray(res)) setCustomProducts(res as Product[]);
+    }).catch(() => { });
+
+    getSheetProducts().then((res) => {
+      if (Array.isArray(res)) setSheetProducts(res as Product[]);
     }).catch(() => { });
 
     // Poll every 1 second for realtime stock updates
@@ -250,7 +255,11 @@ function Index() {
   }
 
   const visibleProducts = useMemo(() => {
-    let list: Product[] = [...customProducts, ...PRODUCTS];
+    // Filter out sheet products that are already in customProducts or PRODUCTS by ID
+    const existingIds = new Set([...customProducts.map(p => p.id), ...PRODUCTS.map(p => p.id)]);
+    const uniqueSheetProducts = sheetProducts.filter(sp => !existingIds.has(sp.id));
+    
+    let list: Product[] = [...customProducts, ...uniqueSheetProducts, ...PRODUCTS];
     if (filterCat) {
       list = list.filter((p) => {
         const f = p.family.toLowerCase();
