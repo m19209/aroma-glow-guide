@@ -1,15 +1,26 @@
 import { sheets, auth } from '@googleapis/sheets';
 import path from 'path';
 
+function getGoogleAuth() {
+  const credentialsJson = process.env.GOOGLE_CREDENTIALS_JSON;
+  return new auth.GoogleAuth({
+    ...(credentialsJson
+      ? { credentials: JSON.parse(credentialsJson) }
+      : { keyFile: path.join(process.cwd(), 'google-credentials.json') }
+    ),
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+}
+
+async function getSheetsClient() {
+  const googleAuth = getGoogleAuth();
+  const authClient = await googleAuth.getClient();
+  return sheets({ version: 'v4', auth: authClient as any });
+}
+
 export async function appendUserToSheet(name: string, id: string, passwordHash: string, email: string) {
   try {
-    const googleAuth = new auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+    const sheetsClient = await getSheetsClient();
     
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) {
@@ -36,13 +47,7 @@ export async function appendUserToSheet(name: string, id: string, passwordHash: 
 
 export async function updateProductStockInSheet(productId: string, productName: string, newStock: number) {
   try {
-    const googleAuth = new auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+    const sheetsClient = await getSheetsClient();
     
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) {
@@ -98,13 +103,7 @@ export async function updateProductStockInSheet(productId: string, productName: 
 
 export async function syncInventoryToSheet(productsList: { id: string, name: string, stock: number }[]) {
   try {
-    const googleAuth = new auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+    const sheetsClient = await getSheetsClient();
     
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) {
@@ -134,13 +133,7 @@ export async function syncInventoryToSheet(productsList: { id: string, name: str
 
 export async function getInventoryFromSheet(): Promise<Record<string, number>> {
   try {
-    const googleAuth = new auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-
-    const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+    const sheetsClient = await getSheetsClient();
     
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) {
@@ -205,12 +198,7 @@ const STATUS_COLORS: Record<string, {
 // --- Apply dropdown validation + color formatting to Status column (col I = index 8) ---
 export async function setupOrderSheetDropdown() {
   try {
-    const googleAuth = new auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-    const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+    const sheetsClient = await getSheetsClient();
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) return;
 
@@ -292,12 +280,7 @@ export async function setupOrderSheetDropdown() {
     // deleteConditionalFormatRule fails if there are fewer rules than we tried to delete — that's fine
     // Retry without the delete step in case the sheet is fresh
     try {
-      const googleAuth = new auth.GoogleAuth({
-        keyFile: path.join(process.cwd(), 'google-credentials.json'),
-        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-      });
-      const authClient = await googleAuth.getClient();
-      const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+      const sheetsClient = await getSheetsClient();
       const spreadsheetId = process.env.SPREADSHEET_ID;
       if (!spreadsheetId) return;
 
@@ -376,12 +359,7 @@ export async function appendOrderToSheet(orderData: {
   status: string;
 }) {
   try {
-    const googleAuth = new auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-    const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+    const sheetsClient = await getSheetsClient();
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) return;
 
@@ -417,12 +395,7 @@ export async function appendOrderToSheet(orderData: {
 
 export async function getOrderStatusesFromSheet(): Promise<Record<string, string>> {
   try {
-    const googleAuth = new auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-    const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+    const sheetsClient = await getSheetsClient();
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) return {};
 
@@ -452,12 +425,7 @@ export async function getOrderStatusesFromSheet(): Promise<Record<string, string
 
 export async function updateOrderInSheet(orderId: string, status: string) {
   try {
-    const googleAuth = new auth.GoogleAuth({
-      keyFile: path.join(process.cwd(), 'google-credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-    });
-    const authClient = await googleAuth.getClient();
-    const sheetsClient = sheets({ version: 'v4', auth: authClient as any });
+    const sheetsClient = await getSheetsClient();
     const spreadsheetId = process.env.SPREADSHEET_ID;
     if (!spreadsheetId) return;
 
