@@ -99,6 +99,7 @@ export const getUserProfile = createServerFn().handler(async () => {
       name: user.name,
       email: user.email,
       phone: user.phone || '',
+      governorate: user.governorate || '',
       city: user.city || '',
       district: user.district || '',
       street: user.street || '',
@@ -144,53 +145,58 @@ export const getUserOrders = createServerFn().handler(async () => {
   const userId = getCookie('velore_session');
   if (!userId) return { success: false, error: 'غير مصرح' };
 
-  const userOrders = await db.select()
-    .from(orders)
-    .where(eq(orders.userId, userId))
-    .orderBy(desc(orders.createdAt))
-    .all();
+  try {
+    const userOrders = await db.select()
+      .from(orders)
+      .where(eq(orders.userId, userId))
+      .orderBy(desc(orders.createdAt))
+      .all();
 
-    // Sync statuses from Google Sheets before returning
-    try {
-      const sheetStatuses = await getOrderStatusesFromSheet();
-      for (const order of userOrders) {
-        const sheetStatus = sheetStatuses[order.id];
-        // Only update if the sheet has a valid status and it's different
-        if (sheetStatus && sheetStatus !== order.status) {
-          // If the user typed Arabic, map it back to English enum for DB, or we can just accept Arabic.
-          // Let's assume the user types: pending, processing, shipped, delivered, cancelled
-          // OR Arabic versions: معلق, قيد المعالجة, تم الشحن, تم التوصيل, ملغي
-          let normalizedStatus = sheetStatus;
-          if (sheetStatus === 'معلق') normalizedStatus = 'pending';
-          else if (sheetStatus === 'قيد المعالجة') normalizedStatus = 'processing';
-          else if (sheetStatus === 'تم الشحن') normalizedStatus = 'shipped';
-          else if (sheetStatus === 'تم التوصيل') normalizedStatus = 'delivered';
-          else if (sheetStatus === 'ملغي') normalizedStatus = 'cancelled';
-          
-          await db.update(orders)
-            .set({ status: normalizedStatus, updatedAt: new Date() })
-            .where(eq(orders.id, order.id));
+      // Sync statuses from Google Sheets before returning
+      try {
+        const sheetStatuses = await getOrderStatusesFromSheet();
+        for (const order of userOrders) {
+          const sheetStatus = sheetStatuses[order.id];
+          // Only update if the sheet has a valid status and it's different
+          if (sheetStatus && sheetStatus !== order.status) {
+            // If the user typed Arabic, map it back to English enum for DB, or we can just accept Arabic.
+            // Let's assume the user types: pending, processing, shipped, delivered, cancelled
+            // OR Arabic versions: معلق, قيد المعالجة, تم الشحن, تم التوصيل, ملغي
+            let normalizedStatus = sheetStatus;
+            if (sheetStatus === 'معلق') normalizedStatus = 'pending';
+            else if (sheetStatus === 'قيد المعالجة') normalizedStatus = 'processing';
+            else if (sheetStatus === 'تم الشحن') normalizedStatus = 'shipped';
+            else if (sheetStatus === 'تم التوصيل') normalizedStatus = 'delivered';
+            else if (sheetStatus === 'ملغي') normalizedStatus = 'cancelled';
             
-          order.status = normalizedStatus; // update the object in memory too
+            await db.update(orders)
+              .set({ status: normalizedStatus, updatedAt: new Date() })
+              .where(eq(orders.id, order.id));
+              
+            order.status = normalizedStatus; // update the object in memory too
+          }
         }
+      } catch (e) {
+        console.error('Failed to sync statuses from sheet:', e);
       }
-    } catch (e) {
-      console.error('Failed to sync statuses from sheet:', e);
+
+    const ordersWithItems = [];
+    for (const order of userOrders) {
+      const items = await db.select()
+        .from(orderItems)
+        .where(eq(orderItems.orderId, order.id))
+        .all();
+      ordersWithItems.push({
+        ...order,
+        items,
+      });
     }
 
-  const ordersWithItems = [];
-  for (const order of userOrders) {
-    const items = await db.select()
-      .from(orderItems)
-      .where(eq(orderItems.orderId, order.id))
-      .all();
-    ordersWithItems.push({
-      ...order,
-      items,
-    });
+    return { success: true, orders: ordersWithItems };
+  } catch (e) {
+    console.error("Database query failed in getUserOrders:", e);
+    return { success: false, error: 'خطأ في قاعدة البيانات' };
   }
-
-  return { success: true, orders: ordersWithItems };
 });
 
 export const createOrder = createServerFn()
@@ -361,95 +367,109 @@ export const getAdminStats = createServerFn().handler(async () => {
   const userId = getCookie('velore_session');
   if (!userId) return { success: false, error: 'غير مصرح' };
   
-  const user = await db.select().from(users).where(eq(users.id, userId)).get();
-  if (!user || user.role !== 'admin') {
-    return { success: false, error: 'غير مصرح - للمسؤولين فقط' };
-  }
-
-  // Aggregate stats
-  const allOrders = await db.select().from(orders).all();
-  const totalRevenue = allOrders
-    .filter(o => o.status === 'delivered') // only count delivered orders for revenue
-    .reduce((sum, o) => sum + o.totalAmount, 0);
-
-  const totalOrders = allOrders.length;
-  const pendingOrders = allOrders.filter(o => o.status === 'pending').length;
-
-  // Stock alerts
-  const lowStockItems = await db.select().from(products).all();
-  const { PRODUCTS } = await import('./inventory');
-  const alertItems = lowStockItems
-    .filter(p => p.stock <= 5)
-    .map(p => {
-      const prodMeta = PRODUCTS.find(meta => meta.id === p.id);
-      return {
-        id: p.id,
-        name: prodMeta ? prodMeta.name : p.id,
-        stock: p.stock
-      };
-    });
-
-  return {
-    success: true,
-    stats: {
-      totalRevenue,
-      totalOrders,
-      pendingOrders,
-      lowStockItems: alertItems
+  try {
+    const user = await db.select().from(users).where(eq(users.id, userId)).get();
+    if (!user || user.role !== 'admin') {
+      return { success: false, error: 'غير مصرح - للمسؤولين فقط' };
     }
-  };
+
+    // Aggregate stats
+    const allOrders = await db.select().from(orders).all();
+    const totalRevenue = allOrders
+      .filter(o => o.status === 'delivered') // only count delivered orders for revenue
+      .reduce((sum, o) => sum + o.totalAmount, 0);
+
+    const totalOrders = allOrders.length;
+    const pendingOrders = allOrders.filter(o => o.status === 'pending').length;
+
+    // Stock alerts
+    const lowStockItems = await db.select().from(products).all();
+    const { PRODUCTS } = await import('./inventory');
+    const alertItems = lowStockItems
+      .filter(p => p.stock <= 5)
+      .map(p => {
+        const prodMeta = PRODUCTS.find(meta => meta.id === p.id);
+        return {
+          id: p.id,
+          name: prodMeta ? prodMeta.name : p.id,
+          stock: p.stock
+        };
+      });
+
+    return {
+      success: true,
+      stats: {
+        totalRevenue,
+        totalOrders,
+        pendingOrders,
+        lowStockItems: alertItems
+      }
+    };
+  } catch (e) {
+    console.error("Database query failed in getAdminStats:", e);
+    return {
+      success: false,
+      error: 'خطأ في قاعدة البيانات',
+      stats: { totalRevenue: 0, totalOrders: 0, pendingOrders: 0, lowStockItems: [] }
+    };
+  }
 });
 
 export const getAdminOrders = createServerFn().handler(async () => {
   const userId = getCookie('velore_session');
   if (!userId) return { success: false, error: 'غير مصرح' };
 
-  const user = await db.select().from(users).where(eq(users.id, userId)).get();
-  if (!user || user.role !== 'admin') {
-    return { success: false, error: 'غير مصرح - للمسؤولين فقط' };
-  }
-
-  // Sync statuses from Google Sheets before returning admin list
   try {
-    const sheetStatuses = await getOrderStatusesFromSheet();
-    const dbOrders = await db.select().from(orders).all();
-    for (const order of dbOrders) {
-      const sheetStatus = sheetStatuses[order.id];
-      if (sheetStatus && sheetStatus !== order.status) {
-        let normalizedStatus = sheetStatus;
-        if (sheetStatus === 'معلق') normalizedStatus = 'pending';
-        else if (sheetStatus === 'قيد المعالجة') normalizedStatus = 'processing';
-        else if (sheetStatus === 'تم الشحن') normalizedStatus = 'shipped';
-        else if (sheetStatus === 'تم التوصيل') normalizedStatus = 'delivered';
-        else if (sheetStatus === 'ملغي') normalizedStatus = 'cancelled';
-        
-        await db.update(orders)
-          .set({ status: normalizedStatus, updatedAt: new Date() })
-          .where(eq(orders.id, order.id));
-      }
+    const user = await db.select().from(users).where(eq(users.id, userId)).get();
+    if (!user || user.role !== 'admin') {
+      return { success: false, error: 'غير مصرح - للمسؤولين فقط' };
     }
-  } catch (e) {
-    console.error('Failed to sync statuses from sheet for admin:', e);
-  }
 
-  const allOrders = await db.select()
-    .from(orders)
-    .orderBy(desc(orders.createdAt))
-    .all();
+    // Sync statuses from Google Sheets before returning admin list
+    try {
+      const sheetStatuses = await getOrderStatusesFromSheet();
+      const dbOrders = await db.select().from(orders).all();
+      for (const order of dbOrders) {
+        const sheetStatus = sheetStatuses[order.id];
+        if (sheetStatus && sheetStatus !== order.status) {
+          let normalizedStatus = sheetStatus;
+          if (sheetStatus === 'معلق') normalizedStatus = 'pending';
+          else if (sheetStatus === 'قيد المعالجة') normalizedStatus = 'processing';
+          else if (sheetStatus === 'تم الشحن') normalizedStatus = 'shipped';
+          else if (sheetStatus === 'تم التوصيل') normalizedStatus = 'delivered';
+          else if (sheetStatus === 'ملغي') normalizedStatus = 'cancelled';
+          
+          await db.update(orders)
+            .set({ status: normalizedStatus, updatedAt: new Date() })
+            .where(eq(orders.id, order.id));
+        }
+      }
+    } catch (e) {
+      console.error('Failed to sync statuses from sheet for admin:', e);
+    }
 
-  const ordersWithItems = [];
-  for (const order of allOrders) {
-    const items = await db.select()
-      .from(orderItems)
-      .where(eq(orderItems.orderId, order.id))
+    const allOrders = await db.select()
+      .from(orders)
+      .orderBy(desc(orders.createdAt))
       .all();
-    ordersWithItems.push({
-      ...order,
-      items,
-    });
-  }
 
-  return { success: true, orders: ordersWithItems };
+    const ordersWithItems = [];
+    for (const order of allOrders) {
+      const items = await db.select()
+        .from(orderItems)
+        .where(eq(orderItems.orderId, order.id))
+        .all();
+      ordersWithItems.push({
+        ...order,
+        items,
+      });
+    }
+
+    return { success: true, orders: ordersWithItems };
+  } catch (e) {
+    console.error("Database query failed in getAdminOrders:", e);
+    return { success: false, error: 'خطأ في قاعدة البيانات', orders: [] };
+  }
 });
 
 export const updateOrderStatus = createServerFn()

@@ -192,6 +192,7 @@ function Index() {
   async function checkout(formData: {
     customerName: string;
     customerPhone: string;
+    governorate: string;
     city: string;
     district: string;
     street: string;
@@ -220,6 +221,7 @@ function Index() {
           totalAmount,
           customerName: formData.customerName,
           customerPhone: formData.customerPhone,
+          governorate: formData.governorate,
           city: formData.city,
           district: formData.district,
           street: formData.street,

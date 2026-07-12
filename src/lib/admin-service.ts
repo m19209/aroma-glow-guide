@@ -19,16 +19,16 @@ function adminEmails(): string[] {
     .filter(Boolean);
 }
 
-async function ensureAdminFlag(user: { id: string; email: string; isAdmin: boolean }) {
-  if (user.isAdmin) return true;
+async function ensureAdminFlag(user: { id: string; email: string; role: string }) {
+  if (user.role === 'admin') return true;
   if (adminEmails().includes(user.email.toLowerCase())) {
-    await db.update(users).set({ isAdmin: true }).where(eq(users.id, user.id));
+    await db.update(users).set({ role: 'admin' }).where(eq(users.id, user.id));
     return true;
   }
   // Bootstrap: if no admin exists yet, promote the first authenticated user.
-  const existingAdmin = await db.select({ id: users.id }).from(users).where(eq(users.isAdmin, true)).get();
+  const existingAdmin = await db.select({ id: users.id }).from(users).where(eq(users.role, 'admin')).get();
   if (!existingAdmin) {
-    await db.update(users).set({ isAdmin: true }).where(eq(users.id, user.id));
+    await db.update(users).set({ role: 'admin' }).where(eq(users.id, user.id));
     return true;
   }
   return false;
@@ -42,8 +42,13 @@ export const checkAdmin = createServerFn().handler(async () => {
 });
 
 export const listCustomProducts = createServerFn().handler(async () => {
-  const rows = await db.select().from(customProducts).orderBy(desc(customProducts.createdAt)).all();
-  return rows.map(rowToProduct);
+  try {
+    const rows = await db.select().from(customProducts).orderBy(desc(customProducts.createdAt)).all();
+    return rows.map(rowToProduct);
+  } catch (e) {
+    console.error("Database query failed in listCustomProducts, returning empty array:", e);
+    return [];
+  }
 });
 
 type ProductInput = {

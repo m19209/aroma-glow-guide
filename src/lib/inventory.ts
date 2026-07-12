@@ -110,8 +110,13 @@ let lastSyncTime = 0;
 export const getProductStock = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
-    const result = await db.select({ stock: products.stock }).from(products).where(eq(products.id, id)).get();
-    return result?.stock ?? 0;
+    try {
+      const result = await db.select({ stock: products.stock }).from(products).where(eq(products.id, id)).get();
+      return result?.stock ?? 0;
+    } catch (e) {
+      console.error("Database query failed in getProductStock, falling back to 100:", e);
+      return 100;
+    }
   });
 
 export const getAllStocks = createServerFn()
@@ -138,12 +143,31 @@ export const getAllStocks = createServerFn()
       }
     }
 
-    const result = await db.select().from(products).all();
-    const stockMap = result.reduce((acc, p) => {
-      acc[p.id] = p.stock;
-      return acc;
-    }, {} as Record<string, number>);
-    return stockMap;
+    try {
+      const result = await db.select().from(products).all();
+      const stockMap = result.reduce((acc, p) => {
+        acc[p.id] = p.stock;
+        return acc;
+      }, {} as Record<string, number>);
+      return stockMap;
+    } catch (e) {
+      console.error("Database query failed in getAllStocks, checking Google Sheets fallback:", e);
+      try {
+        const sheetInventory = await getInventoryFromSheet();
+        if (Object.keys(sheetInventory).length > 0) {
+          return sheetInventory;
+        }
+      } catch (sheetErr) {
+        console.error("Google Sheets fallback failed:", sheetErr);
+      }
+
+      // Ultimate fallback: 100 stock for all static products
+      const defaultStocks: Record<string, number> = {};
+      PRODUCTS.forEach(p => {
+        defaultStocks[p.id] = 100;
+      });
+      return defaultStocks;
+    }
   });
 
 // --- Promo Code Endpoints ---
