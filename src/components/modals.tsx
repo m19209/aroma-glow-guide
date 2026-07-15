@@ -294,8 +294,9 @@ export function ProductDetailModal({
         ref={modalRef}
         tabIndex={-1}
       >
+        <button className="pdetail-close" onClick={onClose} aria-label="إغلاق">✕</button>
+        
         <div className="pdetail-media">
-          <button className="pdetail-close" onClick={onClose} aria-label="إغلاق">✕</button>
           <div className="pdetail-media-img">
             <Bottle variant={product.bottle} label={product.name} imageSrc={product.imageData} />
           </div>
@@ -308,18 +309,18 @@ export function ProductDetailModal({
 
         <div className="pdetail-info-col">
           <div className="pfamily">{product.family}</div>
-          <h2 className="pdetail-name" style={{ direction: 'ltr', textAlign: 'right' }}>{product.name}</h2>
+          <h2 className="pdetail-name">{product.name}</h2>
           <div className="pdetail-vol">{product.volume}</div>
           
-          <div className="pdetail-tabs" style={{ display: 'flex', gap: '10px', marginTop: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>
+          <div className="pdetail-tabs">
             <button className={`ptab-btn ${activeTab === 'story' ? 'active' : ''}`} onClick={() => setActiveTab('story')}>الوصف</button>
             <button className={`ptab-btn ${activeTab === 'specs' ? 'active' : ''}`} onClick={() => setActiveTab('specs')}>المواصفات</button>
             <button className={`ptab-btn ${activeTab === 'pyramid' ? 'active' : ''}`} onClick={() => setActiveTab('pyramid')}>الهرم العطري</button>
           </div>
 
-          <div className="pdetail-tab-content" style={{ marginTop: '16px', minHeight: '180px' }}>
+          <div className="pdetail-tab-content">
             {activeTab === 'story' && (
-              <p className="pdetail-story" style={{ lineHeight: '1.8' }}>{product.story}</p>
+              <p className="pdetail-story">{product.story}</p>
             )}
 
             {activeTab === 'specs' && (
