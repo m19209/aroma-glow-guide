@@ -19,6 +19,8 @@
   --border3:   rgba(201,168,76,.6);
   --shadow:    rgba(26,22,18,.08);
   --shadow2:   rgba(26,22,18,.14);
+  --beige:       var(--pearl2);
+  --beige-light: var(--pearl);
 }
 
 body { background: var(--white); color: var(--text); font-family: 'Cairo', sans-serif; font-weight: 300; overflow-x: hidden; direction: rtl; }
@@ -1337,7 +1339,9 @@ nav.scrolled .nav-logo-text { color: var(--charcoal); font-size: 1.3rem; }
 
 /* === Interactive polish === */
 button { -webkit-tap-highlight-color: transparent; }
-justify-content: space-between;
+.search-item {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
   padding: 12px 14px;
   background: transparent;
@@ -1748,7 +1752,7 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
   background: linear-gradient(160deg, var(--pearl), var(--pearl2));
   display: flex; align-items: center; justify-content: center;
   padding: 40px 30px; min-height: 320px;
-  border-bottom: 1px solid var(--border);
+  border-left: 1px solid var(--border);
 }
 .pdetail-media .pbottle { width: 100% !important; height: 100% !important; max-height: 340px; object-fit: contain; }
 .pdetail-media .pbadge { position: absolute; top: 18px; right: 18px; }
@@ -1777,11 +1781,13 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
 .pyramid-row { display: flex; gap: 12px; align-items: flex-start; }
 .pyramid-lvl { flex-shrink: 0; min-width: 56px; font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--gold-deep); padding-top: 3px; border-right: 1px solid var(--border2); padding-right: 10px; }
 .pyramid-row p { flex: 1; font-size: .82rem; line-height: 1.7; color: var(--text); margin: 0; }
-.pdetail-body {
+.pdetail-body,
+.pdetail-info-col {
   padding: 44px 40px; display: flex; flex-direction: column; gap: 14px;
   overflow-y: auto; max-height: 92dvh;
 }
-.pdetail-body .pfamily { font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold-deep); }
+.pdetail-body .pfamily,
+.pdetail-info-col .pfamily { font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold-deep); }
 .pdetail-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 2.2rem; color: var(--charcoal); font-weight: 400; line-height: 1.15; }
 .pdetail-vol { font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: .3em; color: var(--muted); }
 .pdetail-notes { font-size: .92rem; line-height: 1.9; color: var(--text); border-top: 1px solid var(--border); padding-top: 16px; }
@@ -1799,7 +1805,17 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
   inset-inline-end: auto !important;
   width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--border2); background: var(--white); font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted);
 }
-  border: none;
+.back-to-top {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid var(--border2);
+  color: var(--charcoal);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1923,6 +1939,48 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
     border-radius: 0 !important;
   }
   .cart-drawer.open { right: 0 !important; }
+
+  /* Login modal mobile polish */
+  .magic-login-modal {
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .magic-modal-content {
+    flex: 1 !important;
+    padding: 40px 24px !important;
+  }
+  .magic-dropdown-inner {
+    padding: 0 !important;
+  }
+
+  /* Product detail modal mobile stacking */
+  .pdetail-backdrop {
+    padding: 0 !important;
+  }
+  .pdetail-modal {
+    grid-template-columns: 1fr !important;
+    max-height: 100dvh !important;
+    height: 100dvh !important;
+    border-radius: 0 !important;
+    border: none !important;
+    overflow-y: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .pdetail-media {
+    min-height: 280px !important;
+    padding: 20px !important;
+    border-left: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    flex-shrink: 0 !important;
+  }
+  .pdetail-info-col {
+    overflow-y: visible !important;
+    max-height: none !important;
+    padding: 24px 20px calc(32px + env(safe-area-inset-bottom)) !important;
+  }
   
   /* Mobile Menu Container */
   .mobile-menu {
