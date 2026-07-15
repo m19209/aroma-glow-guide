@@ -422,7 +422,7 @@ export function CartDrawer({
                   <div className="cart-line-info">
                     <div className="cart-line-name">{c.product.name}</div>
                     <div className="cart-line-fam">{c.product.family}</div>
-                    <div className="cart-line-price">{c.product.price} ج.م</div>
+                    <div className="cart-line-price"><span dir="ltr">{c.product.price}</span> ج.م</div>
                     <div className="qty">
                       <div className="qty-pill">
                         <button type="button" onClick={() => setQty(c.product.id, c.qty - 1)} className="qty-btn qty-minus" aria-label="تقليل الكمية">
@@ -492,15 +492,15 @@ export function CartDrawer({
             
             <div className="cart-total subtotal-row" style={{ marginTop: isCheckingOut ? '8px' : '0' }}>
               <span className="cart-total-label">المجموع</span>
-              <span className="cart-total-value">{cartTotal} ج.م</span>
+              <span className="cart-total-value"><span dir="ltr">{cartTotal}</span> ج.م</span>
             </div>
             <div className="cart-total shipping-row">
               <span className="cart-total-label">الشحن</span>
-              <span className="cart-total-value">{shippingFee === 0 ? "مجاني" : `${shippingFee} ج.م`}</span>
+              <span className="cart-total-value">{shippingFee === 0 ? "مجاني" : <><span dir="ltr">{shippingFee}</span> ج.م</>}</span>
             </div>
             <div className="cart-total grand-total-row">
               <span className="cart-total-label grand-label">الإجمالي</span>
-              <span className="cart-total-value grand-value">{grandTotal} ج.م</span>
+              <span className="cart-total-value grand-value"><span dir="ltr">{grandTotal}</span> ج.م</span>
             </div>
             {isCheckingOut ? (
               <button
@@ -511,7 +511,10 @@ export function CartDrawer({
               >
                 {checkoutLoading ? "جاري تسجيل طلبك..." : (
                   <>
-                    <span>تأكيد الطلب — Confirm Order</span>
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                      <span>تأكيد الطلب</span>
+                      <span dir="ltr" style={{ opacity: 0.8, fontSize: '0.9em' }}>— Confirm Order</span>
+                    </span>
                   </>
                 )}
               </button>
@@ -573,7 +576,7 @@ export function OrderCard({ order }: { order: Order }) {
             {statusInfo.label}
           </span>
           <span style={{ fontSize: "1.1rem", color: "var(--charcoal)", fontWeight: "bold" }}>
-            {order.totalAmount} ج.م
+            <span dir="ltr">{order.totalAmount}</span> ج.م
           </span>
           <span style={{ fontSize: "0.8rem", color: "var(--muted)" }}>
             {expanded ? "▲" : "▼"}
@@ -590,7 +593,7 @@ export function OrderCard({ order }: { order: Order }) {
                 <span style={{ color: "var(--charcoal)", fontWeight: 500 }}>{item.productName}</span>
                 <div style={{ display: "flex", gap: "20px", color: "var(--muted)" }}>
                   <span>الكمية: {item.quantity}</span>
-                  <span>سعر الوحدة: {item.unitPrice} ج.م</span>
+                  <span>سعر الوحدة: <span dir="ltr">{item.unitPrice}</span> ج.م</span>
                 </div>
               </div>
             ))}

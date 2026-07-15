@@ -308,7 +308,7 @@ export function ProductDetailModal({
 
         <div className="pdetail-info-col">
           <div className="pfamily">{product.family}</div>
-          <h2 className="pdetail-name">{product.name}</h2>
+          <h2 className="pdetail-name" style={{ direction: 'ltr', textAlign: 'right' }}>{product.name}</h2>
           <div className="pdetail-vol">{product.volume}</div>
           
           <div className="pdetail-tabs" style={{ display: 'flex', gap: '10px', marginTop: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>
@@ -360,8 +360,8 @@ export function ProductDetailModal({
           )}
 
           <div className="pdetail-price">
-            {product.oldPrice && <span className="pprice-old">{product.oldPrice} ج.م</span>}
-            <span className="pprice">{product.price} ج.م</span>
+            {product.oldPrice && <span className="pprice-old"><span dir="ltr">{product.oldPrice}</span> ج.م</span>}
+            <span className="pprice"><span dir="ltr">{product.price}</span> ج.م</span>
           </div>
           
           <div className="pdetail-actions">
@@ -371,7 +371,10 @@ export function ProductDetailModal({
               style={{ opacity: (stocks[product.id] ?? 5) <= 0 ? 0.5 : 1 }}
               onClick={() => { addToCart(product); onClose(); }}
             >
-              شراء الآن — Add to Cart
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <span>شراء الآن</span>
+                <span dir="ltr" style={{ opacity: 0.8, fontSize: '0.9em' }}>— Add to Cart</span>
+              </span>
             </button>
             <button
               className={`pwish ${wishlist.has(product.id) ? "active" : ""}`}
@@ -508,11 +511,11 @@ export function SearchModal({
                   <Bottle variant={p.bottle} label={p.label} imageSrc={p.imageData} />
                 </div>
                 <div className="search-item-details">
-                  <span className="search-item-name">{highlightText(p.name, searchQuery)}</span>
+                  <span className="search-item-name" style={{ direction: 'ltr', textAlign: 'right' }}>{highlightText(p.name, searchQuery)}</span>
                   <span className="search-item-family">{p.family}</span>
                 </div>
               </div>
-              <span className="search-item-price">{p.price} ج.م</span>
+              <span className="search-item-price"><span dir="ltr">{p.price}</span> ج.م</span>
             </button>
           ))}
         </div>

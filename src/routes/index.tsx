@@ -509,15 +509,15 @@ function Index() {
                     <div className="pinfo">
                       <div className="pfamily">{p.family}</div>
                       <div className="pname">
-                        <Link to="/product/$productId" params={{ productId: p.id }} onClick={(e) => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'none' }}>
+                        <Link to="/product/$productId" params={{ productId: p.id }} onClick={(e) => e.stopPropagation()} style={{ color: 'inherit', textDecoration: 'none', display: 'inline-block', direction: 'ltr', textAlign: 'right' }}>
                           {p.name}
                         </Link>
                       </div>
                       <div className="pnotes">{p.notes}</div>
                       <div className="pfooter">
                         <div>
-                          {p.oldPrice && <span className="pprice-old">{p.oldPrice}</span>}
-                          <span className="pprice">{p.price} ج.م</span>
+                          {p.oldPrice && <span className="pprice-old"><span dir="ltr">{p.oldPrice}</span> ج.م</span>}
+                          <span className="pprice"><span dir="ltr">{p.price}</span> ج.م</span>
                         </div>
                         <div className="pright">
                           <span className="pvol">{p.volume}</span>
