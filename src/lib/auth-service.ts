@@ -1,16 +1,20 @@
 import { createServerFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { db } from './db';
-import { users, orders, orderItems, products } from './db/schema';
+import { users, orders, orderItems, products, sessions, customProducts } from './db/schema';
 import { eq, desc } from 'drizzle-orm';
 import { appendOrderToSheet, updateProductStockInSheet, getOrderStatusesFromSheet } from './sheets';
+import { pbkdf2Sync, randomBytes } from 'node:crypto';
 
 // --- Rate Limiting ---
 const rateLimit = new Map<string, { count: number; timestamp: number }>();
 function isRateLimited(key: string): boolean {
   const now = Date.now();
+  for (const [k, v] of rateLimit.entries()) {
+    if (now - v.timestamp > 60000) rateLimit.delete(k);
+  }
   const limit = rateLimit.get(key);
-  if (limit && now - limit.timestamp < 60000) {
+  if (limit) {
     if (limit.count > 5) return true;
     limit.count++;
   } else {
@@ -19,12 +23,17 @@ function isRateLimited(key: string): boolean {
   return false;
 }
 
-// --- Auth Hashing ---
-async function hashPassword(password: string) {
-  const msgUint8 = new TextEncoder().encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+// --- Auth Hashing & Session ---
+function hashPassword(password: string, salt: string) {
+  return pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
+}
+
+async function getUserIdFromSession(): Promise<string | null> {
+  const sessionId = getCookie('velore_session');
+  if (!sessionId) return null;
+  const session = await db.select().from(sessions).where(eq(sessions.id, sessionId)).get();
+  if (!session || session.expiresAt.getTime() < Date.now()) return null;
+  return session.userId;
 }
 
 // --- Auth Endpoints ---
@@ -38,12 +47,20 @@ export const loginUser = createServerFn()
   .handler(async ({ data }) => {
     if (isRateLimited(data.email)) return { success: false, error: 'Too many requests' };
     
-    const hashed = await hashPassword(data.password);
     const user = await db.select().from(users).where(eq(users.email, data.email)).get();
     
-    if (user && user.passwordHash === hashed) {
-      setCookie('velore_session', user.id, { httpOnly: true, secure: true, sameSite: 'strict', path: '/', maxAge: 60 * 60 * 24 * 7 });
-      return { success: true, userId: user.id };
+    if (user) {
+      const hashed = hashPassword(data.password, user.passwordSalt);
+      if (user.passwordHash === hashed) {
+        const sessionId = crypto.randomUUID();
+        await db.insert(sessions).values({
+          id: sessionId,
+          userId: user.id,
+          expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+        });
+        setCookie('velore_session', sessionId, { httpOnly: true, secure: true, sameSite: 'strict', path: '/', maxAge: 60 * 60 * 24 * 7 });
+        return { success: true, userId: user.id };
+      }
     }
     return { success: false, error: 'بيانات الدخول غير صحيحة' };
   });
@@ -60,24 +77,32 @@ export const signupUser = createServerFn()
     
     try {
       const id = Math.random().toString(36).substring(2, 8).toUpperCase();
-      const hashed = await hashPassword(data.password);
+      const salt = randomBytes(16).toString('hex');
+      const hashed = hashPassword(data.password, salt);
       
       await db.insert(users).values({
         id,
         name: data.name || null,
         email: data.email,
         passwordHash: hashed,
+        passwordSalt: salt,
         createdAt: new Date(),
       });
 
       try {
         const { appendUserToSheet } = await import('./sheets');
-        await appendUserToSheet(data.name || '', id, data.password, data.email);
+        await appendUserToSheet(data.name || '', id, data.email);
       } catch (webhookErr) {
         console.error("Google Sheets sync error:", webhookErr);
       }
 
-      setCookie('velore_session', id, { httpOnly: true, secure: true, sameSite: 'strict', path: '/', maxAge: 60 * 60 * 24 * 7 });
+      const sessionId = crypto.randomUUID();
+      await db.insert(sessions).values({
+        id: sessionId,
+        userId: id,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)
+      });
+      setCookie('velore_session', sessionId, { httpOnly: true, secure: true, sameSite: 'strict', path: '/', maxAge: 60 * 60 * 24 * 7 });
       return { success: true, userId: id };
     } catch (e) {
       return { success: false, error: 'البريد الإلكتروني مسجل بالفعل' };
@@ -86,7 +111,7 @@ export const signupUser = createServerFn()
 
 // --- User Endpoints ---
 export const getUserProfile = createServerFn().handler(async () => {
-  const userId = getCookie('velore_session');
+  const userId = await getUserIdFromSession();
   if (!userId) return { success: false, error: 'غير مصرح' };
 
   const user = await db.select().from(users).where(eq(users.id, userId)).get();
@@ -120,7 +145,7 @@ export const updateUserProfile = createServerFn()
     building: string;
   }) => data)
   .handler(async ({ data }) => {
-    const userId = getCookie('velore_session');
+    const userId = await getUserIdFromSession();
     if (!userId) return { success: false, error: 'غير مصرح' };
 
     if (data.name && data.name.trim().length < 3) {
@@ -142,7 +167,7 @@ export const updateUserProfile = createServerFn()
   });
 
 export const getUserOrders = createServerFn().handler(async () => {
-  const userId = getCookie('velore_session');
+  const userId = await getUserIdFromSession();
   if (!userId) return { success: false, error: 'غير مصرح' };
 
   try {
@@ -219,12 +244,39 @@ export const createOrder = createServerFn()
     paymentMethod: 'cod' | 'vodafone';
   }) => data)
   .handler(async ({ data }) => {
-    const userId = getCookie('velore_session') || 'guest';
+    if (isRateLimited(data.customerPhone)) return { success: false, error: 'لقد تجاوزت الحد الأقصى للطلبات، يرجى المحاولة لاحقاً' };
+    const userId = (await getUserIdFromSession()) || 'guest';
 
     const orderId = crypto.randomUUID();
     const addressStr = `${data.building ? data.building + '، ' : ''}${data.street}، ${data.district}، ${data.city}، ${data.governorate} (هاتف: ${data.customerPhone})`;
 
     let dbSuccess = true;
+
+    // Secure Order Validation: server-side price calculation and size constraints
+    if (data.items.length > 20) {
+      return { success: false, error: 'تجاوزت الحد الأقصى للمنتجات في الطلب الواحد' };
+    }
+
+    let serverTotalAmount = 0;
+    const { PRODUCTS } = await import('./inventory');
+
+    for (const item of data.items) {
+      if (item.productId.startsWith('cp_')) {
+        const cp = await db.select().from(customProducts).where(eq(customProducts.id, item.productId)).get();
+        if (!cp) return { success: false, error: `المنتج غير موجود: ${item.productName}` };
+        item.unitPrice = cp.price;
+        item.productName = cp.name;
+      } else {
+        const std = PRODUCTS.find(p => p.id === item.productId);
+        if (!std) return { success: false, error: `المنتج غير موجود: ${item.productName}` };
+        item.unitPrice = std.price;
+        item.productName = std.name;
+      }
+      serverTotalAmount += item.unitPrice * item.quantity;
+    }
+    
+    data.totalAmount = serverTotalAmount;
+
     try {
       await db.transaction(async (tx) => {
         // Update user profile info so it is prefilled next time (only if logged in)
@@ -364,7 +416,7 @@ export const createOrder = createServerFn()
   });
 
 export const getAdminStats = createServerFn().handler(async () => {
-  const userId = getCookie('velore_session');
+  const userId = await getUserIdFromSession();
   if (!userId) return { success: false, error: 'غير مصرح' };
   
   try {
@@ -416,7 +468,7 @@ export const getAdminStats = createServerFn().handler(async () => {
 });
 
 export const getAdminOrders = createServerFn().handler(async () => {
-  const userId = getCookie('velore_session');
+  const userId = await getUserIdFromSession();
   if (!userId) return { success: false, error: 'غير مصرح' };
 
   try {
@@ -475,7 +527,7 @@ export const getAdminOrders = createServerFn().handler(async () => {
 export const updateOrderStatus = createServerFn()
   .validator((data: { orderId: string; status: string }) => data)
   .handler(async ({ data }) => {
-    const userId = getCookie('velore_session');
+    const userId = await getUserIdFromSession();
     if (!userId) return { success: false, error: 'غير مصرح' };
 
     const user = await db.select().from(users).where(eq(users.id, userId)).get();

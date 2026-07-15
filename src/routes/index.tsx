@@ -141,9 +141,23 @@ function Index() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock body scroll when any modal is open
+  // Lock body scroll when any modal is open (robust for iOS)
   useEffect(() => {
-    document.body.style.overflow = cartOpen || loginOpen || searchOpen || detailProduct ? "hidden" : "";
+    const isModalOpen = cartOpen || loginOpen || searchOpen || detailProduct;
+    if (isModalOpen) {
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+      }
+    }
   }, [cartOpen, loginOpen, searchOpen, detailProduct]);
   const cartCount = cart.reduce((a, l) => a + l.qty, 0);
   const cartTotal = cart.reduce((a, l) => a + l.qty * l.product.price, 0);
@@ -452,18 +466,7 @@ function Index() {
             <h2 className="section-title">عطور <em>تُعرِّفك</em></h2>
           </div>
           <div className="filter-bar">
-            <div className="filter-chips">
-              <button className={`chip ${!filterCat ? "active" : ""}`} onClick={() => setFilterCat(null)}>الكل</button>
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c.key}
-                  className={`chip ${filterCat === c.key ? "active" : ""}`}
-                  onClick={() => setFilterCat(filterCat === c.key ? null : c.key)}
-                >
-                  <span className="chip-icon">{c.icon}</span>{c.name}
-                </button>
-              ))}
-            </div>
+
             <div className="sort-wrap">
               <label className="sort-label">ترتيب</label>
               <select className="sort-select" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>

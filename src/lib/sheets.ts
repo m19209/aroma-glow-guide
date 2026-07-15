@@ -18,7 +18,7 @@ async function getSheetsClient() {
   return sheets({ version: 'v4', auth: authClient as any });
 }
 
-export async function appendUserToSheet(name: string, id: string, passwordHash: string, email: string) {
+export async function appendUserToSheet(name: string, id: string, email: string) {
   try {
     const sheetsClient = await getSheetsClient();
     
@@ -36,7 +36,7 @@ export async function appendUserToSheet(name: string, id: string, passwordHash: 
       valueInputOption: 'USER_ENTERED',
       requestBody: {
         values: [
-          [name || 'بدون اسم', id, passwordHash, email, date]
+          [name || 'بدون اسم', id, email, date]
         ]
       }
     });

@@ -1,15 +1,15 @@
-import imgNoir from "@/assets/perfume-noir.jpg";
-import imgRose from "@/assets/perfume-rose.jpg";
-import imgOud from "@/assets/perfume-oud.jpg";
-import imgAzur from "@/assets/perfume-azur.jpg";
-import imgVert from "@/assets/perfume-vert.jpg";
-import imgVelvet from "@/assets/perfume-velvet.jpg";
-import imgAmbre from "@/assets/perfume-ambre.jpg";
-import imgBlanc from "@/assets/perfume-blanc.jpg";
-import imgSaphir from "@/assets/perfume-saphir.jpg";
-import imgEmeraude from "@/assets/perfume-emeraude.jpg";
-import imgZahra from "@/assets/perfume-zahra.png";
-import imgMusk from "@/assets/perfume-musk.png";
+import imgNoir from "@/assets/perfume-noir.webp";
+import imgRose from "@/assets/perfume-rose.webp";
+import imgOud from "@/assets/perfume-oud.webp";
+import imgAzur from "@/assets/perfume-azur.webp";
+import imgVert from "@/assets/perfume-vert.webp";
+import imgVelvet from "@/assets/perfume-velvet.webp";
+import imgAmbre from "@/assets/perfume-ambre.webp";
+import imgBlanc from "@/assets/perfume-blanc.webp";
+import imgSaphir from "@/assets/perfume-saphir.webp";
+import imgEmeraude from "@/assets/perfume-emeraude.webp";
+import imgZahra from "@/assets/perfume-zahra.webp";
+import imgMusk from "@/assets/perfume-musk.webp";
 
 import { createServerFn } from '@tanstack/react-start';
 import { db } from './db';

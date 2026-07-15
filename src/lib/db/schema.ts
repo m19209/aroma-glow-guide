@@ -5,6 +5,7 @@ export const users = sqliteTable('users', {
   name: text('name'),
   email: text('email').notNull().unique(),
   passwordHash: text('password_hash').notNull(),
+  passwordSalt: text('password_salt').notNull().default(''),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
   phone: text('phone'),
   governorate: text('governorate'),
@@ -13,6 +14,12 @@ export const users = sqliteTable('users', {
   street: text('street'),
   building: text('building'),
   role: text('role').notNull().default('user'), // 'user' | 'admin'
+});
+
+export const sessions = sqliteTable('sessions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
 });
 
 export const customProducts = sqliteTable('custom_products', {

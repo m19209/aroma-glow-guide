@@ -2,11 +2,19 @@ import { createServerFn } from '@tanstack/react-start';
 import { getCookie } from '@tanstack/react-start/server';
 import { eq, desc } from 'drizzle-orm';
 import { db } from './db';
-import { users, customProducts } from './db/schema';
+import { users, customProducts, sessions } from './db/schema';
 import type { Product, BottleKey } from './inventory';
 
+async function getUserIdFromSession(): Promise<string | null> {
+  const sessionId = getCookie('velore_session');
+  if (!sessionId) return null;
+  const session = await db.select().from(sessions).where(eq(sessions.id, sessionId)).get();
+  if (!session || session.expiresAt.getTime() < Date.now()) return null;
+  return session.userId;
+}
+
 async function getSessionUser() {
-  const userId = getCookie('velore_session');
+  const userId = await getUserIdFromSession();
   if (!userId) return null;
   const user = await db.select().from(users).where(eq(users.id, userId)).get();
   return user || null;
