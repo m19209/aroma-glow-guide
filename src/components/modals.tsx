@@ -265,6 +265,7 @@ export function ProductDetailModal({
   toggleWish: (id: string) => void;
 }) {
   const modalRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState<'story' | 'specs' | 'pyramid'>('story');
 
   useEffect(() => {
     if (product) {
@@ -293,9 +294,8 @@ export function ProductDetailModal({
         ref={modalRef}
         tabIndex={-1}
       >
-        <button className="pdetail-close" onClick={onClose} aria-label="إغلاق">✕</button>
-        
         <div className="pdetail-media">
+          <button className="pdetail-close" onClick={onClose} aria-label="إغلاق">✕</button>
           <div className="pdetail-media-img">
             <Bottle variant={product.bottle} label={product.name} imageSrc={product.imageData} />
           </div>
@@ -311,29 +311,41 @@ export function ProductDetailModal({
           <h2 className="pdetail-name">{product.name}</h2>
           <div className="pdetail-vol">{product.volume}</div>
           
-          <p className="pdetail-story">{product.story}</p>
-          
-          <div className="pdetail-info-title">المواصفات</div>
-          <ul className="pdetail-specs">
-            <li><span>التركيز</span><strong>{product.concentration}</strong></li>
-            <li><span>الثبات</span><strong>{product.longevity}</strong></li>
-            <li><span>الفوحان</span><strong>{product.sillage}</strong></li>
-          </ul>
+          <div className="pdetail-tabs" style={{ display: 'flex', gap: '10px', marginTop: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '10px' }}>
+            <button className={`ptab-btn ${activeTab === 'story' ? 'active' : ''}`} onClick={() => setActiveTab('story')}>الوصف</button>
+            <button className={`ptab-btn ${activeTab === 'specs' ? 'active' : ''}`} onClick={() => setActiveTab('specs')}>المواصفات</button>
+            <button className={`ptab-btn ${activeTab === 'pyramid' ? 'active' : ''}`} onClick={() => setActiveTab('pyramid')}>الهرم العطري</button>
+          </div>
 
-          <div className="pdetail-info-title">الهرم العطري</div>
-          <div className="pdetail-pyramid">
-            <div className="pyramid-row">
-              <span className="pyramid-lvl">القمة</span>
-              <p>{product.topNotes}</p>
-            </div>
-            <div className="pyramid-row">
-              <span className="pyramid-lvl">القلب</span>
-              <p>{product.heartNotes}</p>
-            </div>
-            <div className="pyramid-row">
-              <span className="pyramid-lvl">القاعدة</span>
-              <p>{product.baseNotes}</p>
-            </div>
+          <div className="pdetail-tab-content" style={{ marginTop: '16px', minHeight: '180px' }}>
+            {activeTab === 'story' && (
+              <p className="pdetail-story" style={{ lineHeight: '1.8' }}>{product.story}</p>
+            )}
+
+            {activeTab === 'specs' && (
+              <ul className="pdetail-specs">
+                <li><span>التركيز</span><strong>{product.concentration}</strong></li>
+                <li><span>الثبات</span><strong>{product.longevity}</strong></li>
+                <li><span>الفوحان</span><strong>{product.sillage}</strong></li>
+              </ul>
+            )}
+
+            {activeTab === 'pyramid' && (
+              <div className="pdetail-pyramid">
+                <div className="pyramid-row">
+                  <span className="pyramid-lvl">القمة</span>
+                  <p>{product.topNotes}</p>
+                </div>
+                <div className="pyramid-row">
+                  <span className="pyramid-lvl">القلب</span>
+                  <p>{product.heartNotes}</p>
+                </div>
+                <div className="pyramid-row">
+                  <span className="pyramid-lvl">القاعدة</span>
+                  <p>{product.baseNotes}</p>
+                </div>
+              </div>
+            )}
           </div>
           
           {Math.max(0, (stocks[product.id] ?? 5) - cartQty) <= 2 && Math.max(0, (stocks[product.id] ?? 5) - cartQty) > 0 && (

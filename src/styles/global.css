@@ -1345,7 +1345,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 .pcard { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s, border-color .35s; }
 .pcard:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(26,22,18,.18); border-color: var(--border3); }
 .pimg-inner { overflow: hidden; }
-.pimg-inner .pbottle { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.pimg-inner .pbottle { max-height: 85%; width: auto; max-width: 112px; object-fit: contain; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
 .pcard:hover .pimg-inner .pbottle { transform: scale(1.06); }
 .pcard:hover .pimg-glow { opacity: 1; }
 .pimg-glow { transition: opacity .4s; }
@@ -1547,16 +1547,27 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
 }
 .pdetail-close:hover { background: var(--gold); color: var(--white); transform: rotate(90deg); }
 .pdetail-left { display: flex; flex-direction: column; background: linear-gradient(180deg, var(--pearl), #fff); max-height: 92dvh; overflow-y: auto; }
-.pdetail-img {
+.pdetail-media {
   position: relative;
   background: linear-gradient(160deg, var(--pearl), var(--pearl2));
   display: flex; align-items: center; justify-content: center;
   padding: 40px 30px; min-height: 320px;
   border-bottom: 1px solid var(--border);
 }
-.pdetail-img .pbottle { width: 100% !important; height: 100% !important; max-height: 340px; object-fit: contain; }
-.pdetail-img .pbadge { position: absolute; top: 18px; right: 18px; }
+.pdetail-media .pbottle { width: 100% !important; height: 100% !important; max-height: 340px; object-fit: contain; }
+.pdetail-media .pbadge { position: absolute; top: 18px; right: 18px; }
 .pdetail-info { padding: 24px 26px 30px; display: flex; flex-direction: column; gap: 18px; }
+.ptab-btn {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  padding: 6px 12px; font-family: 'Tajawal', sans-serif; font-size: 0.95rem;
+  font-weight: 600; color: #888; cursor: pointer; transition: all 0.2s ease;
+}
+.ptab-btn.active {
+  border-bottom: 2px solid var(--gold); color: var(--gold-deep);
+}
+.ptab-btn:hover {
+  color: var(--gold);
+}
 .pdetail-info-title { font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold-deep); text-align: center; position: relative; padding: 0 12px; }
 .pdetail-info-title::before, .pdetail-info-title::after { content: ''; position: absolute; top: 50%; width: 24px; height: 1px; background: var(--border2); }
 .pdetail-info-title::before { right: 100%; }
