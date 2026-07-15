@@ -1345,7 +1345,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 .pcard { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s, border-color .35s; }
 .pcard:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(26,22,18,.18); border-color: var(--border3); }
 .pimg-inner { overflow: hidden; }
-.pimg-inner .pbottle { max-height: 85%; width: auto; max-width: 112px; object-fit: contain; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.pimg-inner .pbottle { max-height: 85%; width: 85% !important; height: 85% !important; object-fit: contain; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
 .pcard:hover .pimg-inner .pbottle { transform: scale(1.06); }
 .pcard:hover .pimg-glow { opacity: 1; }
 .pimg-glow { transition: opacity .4s; }
@@ -1586,7 +1586,7 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
   overflow-y: auto; max-height: 92dvh;
 }
 .pdetail-body .pfamily { font-family: 'Cinzel', serif; font-size: .68rem; letter-spacing: .28em; text-transform: uppercase; color: var(--gold-deep); }
-.pdetail-name { font-family: 'Cinzel', serif; font-size: 2rem; letter-spacing: .06em; color: var(--charcoal); font-weight: 600; line-height: 1.15; }
+.pdetail-name { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 2.2rem; color: var(--charcoal); font-weight: 400; line-height: 1.15; }
 .pdetail-vol { font-family: 'Cinzel', serif; font-size: .72rem; letter-spacing: .3em; color: var(--muted); }
 .pdetail-notes { font-size: .92rem; line-height: 1.9; color: var(--text); border-top: 1px solid var(--border); padding-top: 16px; }
 .pdetail-story { font-family: 'Cinzel', serif; font-style: italic; font-size: .88rem; line-height: 1.8; color: var(--muted); border-right: 2px solid var(--gold); padding: 4px 14px 4px 0; }
@@ -1594,16 +1594,15 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
 .pdetail-price .pprice { font-family: 'Cinzel', serif; font-size: 1.6rem; color: var(--gold-deep); font-weight: 700; }
 .pdetail-price .pprice-old { font-size: 1rem; color: var(--muted2); text-decoration: line-through; }
 .pdetail-actions { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
-.pdetail-actions .pwish { width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--border2); background: var(--white); font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted); }
-.pdetail-actions .pwish.active { color: #d33a5b; border-color: #d33a5b; }
-@media (max-width: 880px) {
-  .pdetail-modal { grid-template-columns: 1fr; max-height: 94dvh; overflow-y: auto; }
-  .pdetail-left { max-height: none; overflow: visible; }
-  .pdetail-img { min-height: 240px; padding: 24px; }
-  .pdetail-body { padding: 26px 22px; max-height: none; }
-  .pdetail-name { font-size: 1.5rem; }
+.pdetail-actions .pwish {
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  inset-inline-start: auto !important;
+  inset-inline-end: auto !important;
+  width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--border2); background: var(--white); font-size: 1.3rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--muted);
 }
-
 /* ═══════════ USER OVERRIDES ═══════════ */
 
 /* Bigger base font for readability */

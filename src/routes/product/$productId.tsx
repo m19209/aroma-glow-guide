@@ -71,16 +71,16 @@ function ProductPage() {
           </div>
           <div className="pdetail-right" style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div className="pdetail-header">
-              <div className="pfamily" style={{ color: 'var(--gold)', letterSpacing: '0.1em', fontSize: '0.8rem', textTransform: 'uppercase' }}>{product.family}</div>
+              <div className="pfamily" style={{ color: 'var(--gold)', letterSpacing: '0.1em', fontSize: '0.8rem', textTransform: 'uppercase' }}><span dir="ltr" style={{ unicodeBidi: 'isolate' }}>{product.family}</span></div>
               <h1 className="pdetail-title" style={{ fontSize: '2.5rem', fontFamily: 'Cinzel, serif', margin: '10px 0' }}>{product.name}</h1>
-              <div className="pdetail-volume" style={{ fontSize: '1rem', color: 'var(--text-light)' }}>{product.volume}</div>
+              <div className="pdetail-volume" style={{ fontSize: '1rem', color: 'var(--text-light)' }}><span dir="ltr" style={{ unicodeBidi: 'isolate' }}>{product.volume}</span></div>
             </div>
             <p className="pdetail-desc" style={{ fontSize: '1.1rem', lineHeight: 1.6, color: '#d1d1d1' }}>{product.story}</p>
             
             <div className="pdetail-specs" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '15px', marginTop: '20px' }}>
               <div className="pspec-item">
                 <span className="pspec-label" style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>التركيز</span>
-                <strong className="pspec-val" style={{ fontSize: '0.9rem' }}>{product.concentration}</strong>
+                <strong className="pspec-val" style={{ fontSize: '0.9rem', unicodeBidi: 'isolate' }} dir="ltr">{product.concentration}</strong>
               </div>
               <div className="pspec-item">
                 <span className="pspec-label" style={{ display: 'block', fontSize: '0.8rem', color: '#888' }}>الثبات</span>
@@ -116,8 +116,8 @@ function ProductPage() {
             </div>
             
             <div className="pdetail-price-row" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '10px' }}>
-              {product.oldPrice && <span className="pold-price" style={{ textDecoration: 'line-through', color: '#888', fontSize: '1.2rem' }}>{product.oldPrice} ج.م</span>}
-              <span className="pprice" style={{ fontSize: '1.8rem', color: 'var(--gold)', fontWeight: 'bold' }}>{product.price} ج.م</span>
+              {product.oldPrice && <span className="pold-price" style={{ textDecoration: 'line-through', color: '#888', fontSize: '1.2rem' }}>{product.oldPrice} &nbsp;ج.م</span>}
+              <span className="pprice" style={{ fontSize: '1.8rem', color: 'var(--gold)', fontWeight: 'bold' }}>{product.price} &nbsp;ج.م</span>
             </div>
 
             <div className="pdetail-actions" style={{ marginTop: '30px' }}>

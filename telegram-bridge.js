@@ -21,7 +21,7 @@ if (fs.existsSync(lastUpdateIdFile)) {
     lastUpdateId = parseInt(fs.readFileSync(lastUpdateIdFile, 'utf8'), 10) || 0;
 }
 
-console.log("🚀 Telegram Bridge Started. Listening for commands from Telegram...");
+console.log("🚀 Telegram Reactive Bridge Started. Polling...");
 
 async function poll() {
   try {
@@ -43,23 +43,23 @@ async function poll() {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         chat_id: chatId,
-                        text: "🤖 [النظام]: تم استلام طلبك! المساعد الذكي يقوم بالتفكير والعمل عليه الآن..."
+                        text: "🤖 [الذكاء الاصطناعي]: تم استلام رسالتك! جاري المعالجة الفورية وتعديل الكود..."
                     })
                 });
-            } else {
-                 console.log("Ignored message from unauthorized chat_id:", chatId);
+                
+                // Exit to complete task and wake up the agent
+                process.exit(0);
             }
         }
       }
     }
   } catch (e) {
-    // Ignore fetch timeout/disconnect errors to keep polling alive
+    // Ignore timeout network errors
   }
   
-  setTimeout(poll, 1500);
+  setTimeout(poll, 1000);
 }
 
-// First, get the current max offset to avoid processing old messages that are still in the queue upon startup
 async function init() {
     try {
         const res = await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?timeout=0`);
