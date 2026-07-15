@@ -1,11 +1,35 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { PRODUCTS, Product, getAllStocks } from "@/lib/inventory";
+import { PRODUCTS, Product, getAllStocks, getSheetProducts } from "@/lib/inventory";
+import { listCustomProducts } from "@/lib/admin-service";
 import { Bottle } from "@/components/ui-elements";
 import { useState, useEffect } from "react";
 
 export const Route = createFileRoute("/product/$productId")({
   loader: async ({ params }) => {
-    const product = PRODUCTS.find(p => p.id === params.productId);
+    let product: Product | undefined = PRODUCTS.find(p => p.id === params.productId);
+    
+    if (!product) {
+      try {
+        const customProducts = await listCustomProducts();
+        if (Array.isArray(customProducts)) {
+          product = customProducts.find(p => p.id === params.productId);
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    
+    if (!product) {
+      try {
+        const sheetProducts = await getSheetProducts();
+        if (Array.isArray(sheetProducts)) {
+          product = sheetProducts.find(p => p.id === params.productId) as Product | undefined;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+    
     if (!product) throw notFound();
     return product;
   },
