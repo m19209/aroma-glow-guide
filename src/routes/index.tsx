@@ -626,25 +626,6 @@ function Index() {
             <li><span>الأسئلة الشائعة</span></li>
           </ul>
         </div>
-        
-        <div className="footer-col">
-          <h4>نشرتنا البريدية</h4>
-          <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginBottom: '16px', lineHeight: '1.6' }}>
-            اشترك لتصلك أحدث إصداراتنا وعروضنا الحصرية المخصصة لك.
-          </p>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <input 
-              type="email" 
-              placeholder="البريد الإلكتروني" 
-              style={{ flex: 1, padding: '10px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'var(--pearl)', fontSize: '0.85rem' }} 
-            />
-            <button 
-              className="btn-gold" 
-              style={{ padding: '0 16px', borderRadius: '4px', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
-              اشتراك
-            </button>
-          </div>
-        </div>
       </footer>
       <div className="footer-bottom">
         <p>© 2026 VELORE · TOUS DROITS RÉSERVÉS</p>
