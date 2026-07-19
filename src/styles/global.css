@@ -992,15 +992,15 @@ nav.scrolled .nav-logo-text { color: var(--charcoal); font-size: 1.3rem; }
   color: #c0392b;
   border-color: rgba(192, 57, 43, 0.3);
 }
-.cart-foot { border-top: 1px solid var(--border); padding: 14px 18px 16px; background: var(--off-white); }
+.cart-foot { border-top: 1px solid var(--border); padding: 10px 14px 12px; background: var(--off-white); }
 @media (max-width: 768px) {
-  .cart-foot { padding: 10px 14px 12px; }
-  .cart-total { padding: 6px 10px; margin-bottom: 4px; }
-  .cart-total-label { font-size: 0.9rem !important; }
-  .cart-total-value { font-size: 1rem !important; }
-  .grand-label { font-size: 0.95rem !important; }
-  .grand-value { font-size: 1.1rem !important; }
-  .ship-msg { font-size: 0.88rem !important; margin-bottom: 8px !important; }
+  .cart-foot { padding: 8px 12px 10px; }
+  .cart-total { padding: 5px 8px; margin-bottom: 3px; }
+  .cart-total-label { font-size: 0.82rem !important; }
+  .cart-total-value { font-size: 0.9rem !important; }
+  .grand-label { font-size: 0.88rem !important; }
+  .grand-value { font-size: 0.98rem !important; }
+  .ship-msg { font-size: 0.75rem !important; margin-bottom: 4px !important; }
 }
 .cart-total {
   display: flex;

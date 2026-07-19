@@ -457,17 +457,18 @@ export function CartDrawer({
           <div className="cart-foot">
             {!isCheckingOut && (
               <>
-                <div className="ship-progress">
-                  <div className={shippingProgress === 100 ? "ship-msg ship-ok" : "ship-msg"} style={{ fontSize: "0.88rem", marginBottom: "8px", textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                {/* Compact shipping progress bar */}
+                <div className="ship-progress" style={{ marginBottom: '8px' }}>
+                  <div className={shippingProgress === 100 ? "ship-msg ship-ok" : "ship-msg"} style={{ fontSize: "0.78rem", marginBottom: "5px", textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
                     {shippingProgress === 100 ? (
                       <>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                         <span>تهانينا! طلبك مؤهل للشحن المجاني</span>
                       </>
                     ) : (
                       <>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                        <span>تبقى <strong>{800 - cartTotal} ج.م</strong> للحصول على شحن مجاني</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span>تبقى <strong>{800 - cartTotal} ج.م</strong> للشحن المجاني</span>
                       </>
                     )}
                   </div>
@@ -475,61 +476,63 @@ export function CartDrawer({
                     <div className="ship-fill" style={{ width: `${shippingProgress}%` }} />
                   </div>
                 </div>
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
+
+                {/* Compact promo row */}
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
                   <input
                     type="text"
                     placeholder="كود الخصم (إن وجد)"
                     aria-label="كود الخصم"
                     value={promoInput}
                     onChange={e => setPromoInput(e.target.value)}
-                    style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--border)', borderRadius: '4px', fontSize: '1.1rem' }}
+                    style={{ flex: 1, padding: '7px 10px', border: '1px solid var(--border)', borderRadius: '4px', fontSize: '0.88rem' }}
                   />
-                  <button onClick={applyPromo} className="btn-gold" style={{ padding: "0 18px", fontSize: "1.1rem" }}>تفعيل</button>
+                  <button onClick={applyPromo} className="btn-gold" style={{ padding: "0 12px", fontSize: "0.88rem" }}>تفعيل</button>
                 </div>
                 {promoApplied && (
-                  <div style={{ color: "#d4af37", fontSize: "1.1rem", marginBottom: "15px" }}>
+                  <div style={{ color: "#d4af37", fontSize: "0.8rem", marginBottom: "6px" }}>
                     تم تفعيل الخصم: {promoApplied.pct}%
                   </div>
                 )}
               </>
             )}
-            
-            <div className="cart-total subtotal-row" style={{ marginTop: isCheckingOut ? '8px' : '0' }}>
-              <span className="cart-total-label">المجموع</span>
-              <span className="cart-total-value"><span dir="ltr">{cartTotal}</span> ج.م</span>
+
+            {/* Totals — compact single-line rows */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', fontSize: '0.82rem', color: 'var(--muted)' }}>
+              <span>المجموع</span>
+              <span style={{ fontFamily: "'Cinzel', serif", color: 'var(--charcoal)', fontWeight: 600 }}><span dir="ltr">{cartTotal}</span> ج.م</span>
             </div>
-            <div className="cart-total shipping-row">
-              <span className="cart-total-label">الشحن</span>
-              <span className="cart-total-value">{shippingFee === 0 ? "مجاني" : <><span dir="ltr">{shippingFee}</span> ج.م</>}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 0', fontSize: '0.82rem', color: 'var(--muted)' }}>
+              <span>الشحن</span>
+              <span style={{ fontFamily: "'Cinzel', serif", color: shippingFee === 0 ? 'var(--gold-deep)' : 'var(--charcoal)', fontWeight: 600 }}>{shippingFee === 0 ? "مجاني 🎉" : <><span dir="ltr">{shippingFee}</span> ج.م</>}</span>
             </div>
-            <div className="cart-total grand-total-row">
-              <span className="cart-total-label grand-label">الإجمالي</span>
-              <span className="cart-total-value grand-value"><span dir="ltr">{grandTotal}</span> ج.م</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 10px', margin: '6px 0 8px', background: 'rgba(201,168,76,.06)', border: '1.5px solid rgba(201,168,76,.35)', borderRadius: '6px' }}>
+              <span style={{ fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: '0.95rem', color: 'var(--charcoal)' }}>الإجمالي</span>
+              <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '1.05rem', color: 'var(--charcoal)' }}><span dir="ltr">{grandTotal}</span> ج.م</span>
             </div>
+
             {isCheckingOut ? (
               <button
                 className="btn-gold"
-                style={{ width: "100%", padding: "12px", fontSize: "1.1rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', borderRadius: '6px' }}
+                style={{ width: "100%", padding: "11px", fontSize: "0.95rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', borderRadius: '6px' }}
                 onClick={handleConfirmOrder}
                 disabled={checkoutLoading}
               >
                 {checkoutLoading ? "جاري تسجيل طلبك..." : (
-                  <>
-                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                      <span>تأكيد الطلب</span>
-                      <span dir="ltr" style={{ opacity: 0.8, fontSize: '0.9em' }}>— Confirm Order</span>
-                    </span>
-                  </>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <span>تأكيد الطلب</span>
+                    <span dir="ltr" style={{ opacity: 0.8, fontSize: '0.85em' }}>— Confirm</span>
+                  </span>
                 )}
               </button>
             ) : (
               <button
                 className="btn-gold"
-                style={{ width: "100%", padding: "16px", fontSize: "1.2rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', borderRadius: '6px' }}
+                style={{ width: "100%", padding: "13px", fontSize: "1rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', borderRadius: '6px' }}
                 onClick={handleProceedToCheckout}
               >
                 <span>إتمام الطلب</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m12 19-7-7 7-7"/>
                   <path d="M19 12H5"/>
                 </svg>
