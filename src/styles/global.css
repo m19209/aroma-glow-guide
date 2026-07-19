@@ -652,7 +652,8 @@ nav.scrolled .nav-hamburger span { background: var(--charcoal); }
 .pwish:hover { border-color: var(--gold); color: var(--gold-deep); transform: scale(1.15); }
 .pwish.active { color: #d33a5b; border-color: rgba(211,58,91,0.3); background: #fff; }
 @media (max-width: 1024px) {
-  .pwish { display: none; }
+  .pwish,
+  .pdetail-actions .pwish { display: none !important; }
 }
 
 /* \u2b07 PERSISTENT BUY BUTTON \u2014 always visible */
