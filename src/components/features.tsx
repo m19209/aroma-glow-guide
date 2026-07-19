@@ -199,8 +199,8 @@ export function CartDrawer({
               </>
             ) : (
               <>
-                <span style={{ fontSize: '1.3rem', fontFamily: '"Cairo", sans-serif', fontWeight: 600, letterSpacing: '0' }}>سلة المشتريات</span>
-                <span style={{ color: 'var(--gold-deep)', fontWeight: 700, fontSize: '1.05rem', letterSpacing: '0.15em', marginTop: '3px', fontFamily: '"Cinzel", serif' }}>— CART</span>
+                <span style={{ fontSize: '1rem', fontFamily: '"Cairo", sans-serif', fontWeight: 700, letterSpacing: '0' }}>سلة المشتريات</span>
+                <span style={{ color: 'var(--gold-deep)', fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.15em', marginTop: '2px', fontFamily: '"Cinzel", serif' }}>— CART</span>
               </>
             )}
           </h3>
