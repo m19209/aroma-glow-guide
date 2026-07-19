@@ -593,34 +593,57 @@ function Index() {
             <span className="footer-logo-name">VELORE</span>
           </div>
           <span className="footer-logo-sub">MAISON DE PARFUM</span>
-          <p className="footer-tagline">صناعة العطور كفنّ — كل قارورة قصة، كل رائحة ذكرى.</p>
+          <p className="footer-tagline">صناعة العطور كفنّ — كل قارورة قصة، كل رائحة ذكرى تخلد في الأذهان.</p>
           <div className="footer-socials">
-            {["إنستقرام", "فيسبوك", "إكس", "يوتيوب"].map((s) => (
-              <span key={s} className="social-btn" style={{ fontSize: '0.85rem' }}>{s}</span>
-            ))}
+            <a href="#" className="social-btn" aria-label="Instagram">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+            </a>
+            <a href="#" className="social-btn" aria-label="Twitter">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+            </a>
+            <a href="#" className="social-btn" aria-label="Facebook">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
           </div>
         </div>
+        
         <div className="footer-col">
-          <h4>Maison</h4>
+          <h4>التشكيلة</h4>
           <ul>
-            <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>العطور</a></li>
+            <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>أحدث العطور</a></li>
+            <li><span>المجموعات الحصرية</span></li>
+            <li><span>عطور المنزل</span></li>
+            <li><span>هدايا فاخرة</span></li>
           </ul>
         </div>
+        
         <div className="footer-col">
-          <h4>Service</h4>
+          <h4>خدمة العملاء</h4>
           <ul>
-            <li><span>الشحن</span></li>
-            <li><span>الإرجاع</span></li>
-            <li><span>الأسئلة</span></li>
+            <li><span>تتبع الطلب</span></li>
+            <li><span>سياسة الشحن</span></li>
+            <li><span>الاسترجاع والاستبدال</span></li>
+            <li><span>الأسئلة الشائعة</span></li>
           </ul>
         </div>
+        
         <div className="footer-col">
-          <h4>Contact</h4>
-          <ul>
-            <li><a href="mailto:hello@velore.com">hello@velore.com</a></li>
-            <li><a href="tel:+966500000000">+966 50 000 0000</a></li>
-            <li>الرياض · المملكة العربية السعودية</li>
-          </ul>
+          <h4>نشرتنا البريدية</h4>
+          <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)', marginBottom: '16px', lineHeight: '1.6' }}>
+            اشترك لتصلك أحدث إصداراتنا وعروضنا الحصرية المخصصة لك.
+          </p>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input 
+              type="email" 
+              placeholder="البريد الإلكتروني" 
+              style={{ flex: 1, padding: '10px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '4px', color: 'var(--pearl)', fontSize: '0.85rem' }} 
+            />
+            <button 
+              className="btn-gold" 
+              style={{ padding: '0 16px', borderRadius: '4px', fontSize: '0.8rem', whiteSpace: 'nowrap' }}>
+              اشتراك
+            </button>
+          </div>
         </div>
       </footer>
       <div className="footer-bottom">
