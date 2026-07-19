@@ -1750,12 +1750,15 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
 .pdetail-media {
   position: relative;
   background: linear-gradient(160deg, var(--pearl), var(--pearl2));
-  display: flex; align-items: center; justify-content: center;
-  padding: 40px 30px; min-height: 320px;
+  display: flex; align-items: stretch; justify-content: stretch;
+  padding: 0; min-height: 92dvh;
   border-left: 1px solid var(--border);
+  overflow: hidden;
 }
-.pdetail-media .pbottle { width: 100% !important; height: 100% !important; max-height: 340px; object-fit: contain; }
-.pdetail-media .pbadge { position: absolute; top: 18px; right: 18px; }
+.pdetail-media-img { position: absolute; inset: 0; display: block; }
+.pdetail-media-img .pbottle,
+.pdetail-media .pbottle { width: 100% !important; height: 100% !important; max-height: none; object-fit: cover; display: block; }
+.pdetail-media .pbadge { position: absolute; top: 18px; right: 18px; z-index: 4; }
 .pdetail-info { padding: 24px 26px 30px; display: flex; flex-direction: column; gap: 18px; }
 .ptab-btn {
   background: none; border: none; border-bottom: 2px solid transparent;
