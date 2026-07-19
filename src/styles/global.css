@@ -719,7 +719,7 @@ nav.scrolled .nav-hamburger span { background: var(--charcoal); }
 /* ══════════════════════════════
    FOOTER
 ══════════════════════════════ */
-footer { background: var(--off-white); border-top: 1px solid var(--border); padding: 80px 60px 60px; display: grid; grid-template-columns: 2.5fr 1fr 1fr; gap: 64px; color: var(--text); position: relative; overflow: hidden; }
+footer { background: var(--pearl2); border-top: 1px solid var(--border2); padding: 80px 60px 60px; display: grid; grid-template-columns: 2.5fr 1fr 1fr; gap: 64px; color: var(--text); position: relative; overflow: hidden; }
 footer::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: radial-gradient(circle at top left, rgba(201,168,76,0.05), transparent 60%); pointer-events: none; }
 .footer-logo-wrap { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
 .footer-logo-img { height: 56px; width: 56px; object-fit: contain; }
@@ -734,10 +734,10 @@ footer::before { content: ""; position: absolute; top: 0; left: 0; right: 0; hei
 .footer-col li { margin-bottom: 16px; }
 .footer-col a, .footer-col span { color: var(--muted); text-decoration: none; font-size: .85rem; transition: color .3s ease; cursor: pointer; }
 .footer-col a:hover, .footer-col span:hover { color: var(--gold-deep); }
-.footer-bottom { background: var(--pearl); border-top: 1px solid var(--border); padding: 24px 60px; display: flex; justify-content: space-between; align-items: center; }
+.footer-bottom { background: #e5dfd2; border-top: 1px solid rgba(201,168,76,0.15); padding: 24px 60px; display: flex; justify-content: space-between; align-items: center; }
 .footer-bottom p { font-size: .7rem; color: var(--muted2); font-family: 'Cinzel', serif; letter-spacing: .15em; }
 .pay-chips { display: flex; gap: 10px; }
-.pay-chip { border: 1px solid var(--border2); border-radius: 4px; padding: 6px 14px; font-size: .65rem; color: var(--muted); letter-spacing: .08em; font-family: 'Cinzel', serif; background: var(--white); }
+.pay-chip { border: 1px solid rgba(201,168,76,0.2); border-radius: 4px; padding: 6px 14px; font-size: .65rem; color: var(--muted); letter-spacing: .08em; font-family: 'Cinzel', serif; background: rgba(255,255,255,0.4); }
 
 /* ══════════════════════════════
    RESPONSIVE
