@@ -67,7 +67,7 @@ export function Bottle({ variant, label, imageSrc }: { variant: BottleKey; label
       loading="lazy"
       width={1024}
       height={1024}
-      style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
     />
   );
 }
@@ -84,7 +84,7 @@ export function Hero({ scrollToProducts }: { scrollToProducts: () => void }) {
 
   return (
     <section className="hero">
-      <video ref={videoRef} className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505" }} poster="https://images.unsplash.com/photo-1594035919809-0d67af651cad?q=80&w=2000&auto=format&fit=crop">
+      <video ref={videoRef} className="hero-video" autoPlay muted loop playsInline preload="auto" style={{ backgroundColor: "#050505", aspectRatio: "16/9", width: "100%", height: "100%" }} poster="https://images.unsplash.com/photo-1594035919809-0d67af651cad?q=80&w=2000&auto=format&fit=crop">
         <source src={`/hero-video.mp4`} type="video/mp4" />
       </video>
       <div className="hero-overlay" />

@@ -292,6 +292,19 @@ export const createOrder = createServerFn()
               building: data.building || null,
             })
             .where(eq(users.id, userId));
+        } else {
+          // Ensure guest user exists in the DB to satisfy foreign key constraints
+          const guestExists = await tx.select({ id: users.id }).from(users).where(eq(users.id, 'guest')).get();
+          if (!guestExists) {
+            await tx.insert(users).values({
+              id: 'guest',
+              name: 'Guest User',
+              email: `guest_${crypto.randomUUID()}@aroma-glow.com`, // Ensure uniqueness if needed, though 'guest' id is primary
+              passwordHash: 'none',
+              passwordSalt: 'none',
+              createdAt: new Date(),
+            }).onConflictDoNothing();
+          }
         }
 
         // Insert the order
@@ -412,7 +425,42 @@ export const createOrder = createServerFn()
       status: 'pending' // will display as "معلق" initially in sheets, you can change it to pending, processing, shipped, delivered, cancelled in the sheet
     });
 
-    return { success: true, orderId };
+    let redirectUrl: string | undefined;
+
+    if (data.paymentMethod === 'vodafone') {
+      try {
+        const { authenticatePaymob, registerPaymobOrder, getPaymentKey, requestWalletPayment } = await import('./paymob-service');
+        const authToken = await authenticatePaymob();
+        
+        // Convert to cents
+        const amountCents = Math.round(data.totalAmount * 100);
+        
+        const paymobOrderId = await registerPaymobOrder(authToken, orderId, amountCents);
+        
+        const paymentKey = await getPaymentKey(
+          authToken,
+          paymobOrderId,
+          amountCents,
+          {
+            first_name: data.customerName.split(' ')[0] || "Customer",
+            last_name: data.customerName.split(' ').slice(1).join(' ') || "Name",
+            email: "customer@velore.com", 
+            phone_number: data.customerPhone,
+            city: data.city,
+            street: data.street,
+            building: data.building || "NA",
+            country: "EG",
+          }
+        );
+
+        redirectUrl = await requestWalletPayment(paymentKey, data.customerPhone);
+      } catch (err: any) {
+        console.error("Paymob initialization failed:", err);
+        return { success: false, error: err.message || "فشل في تهيئة بوابة الدفع، يرجى المحاولة لاحقاً" };
+      }
+    }
+
+    return { success: true, orderId, redirectUrl };
   });
 
 export const getAdminStats = createServerFn().handler(async () => {

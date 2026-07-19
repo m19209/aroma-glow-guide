@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Product } from "@/lib/inventory";
 import { updateUserProfile, getUserProfile } from "@/lib/auth-service";
 import { Bottle } from "@/components/ui-elements";
@@ -133,8 +134,11 @@ export function CartDrawer({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isOpen, onClose]);
 
+  const navigate = useNavigate();
+
   const handleProceedToCheckout = () => {
-    setIsCheckingOut(true);
+    onClose();
+    navigate({ to: "/checkout" });
   };
 
   const handleConfirmOrder = () => {

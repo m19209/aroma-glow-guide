@@ -33,12 +33,6 @@ async function ensureAdminFlag(user: { id: string; email: string; role: string }
     await db.update(users).set({ role: 'admin' }).where(eq(users.id, user.id));
     return true;
   }
-  // Bootstrap: if no admin exists yet, promote the first authenticated user.
-  const existingAdmin = await db.select({ id: users.id }).from(users).where(eq(users.role, 'admin')).get();
-  if (!existingAdmin) {
-    await db.update(users).set({ role: 'admin' }).where(eq(users.id, user.id));
-    return true;
-  }
   return false;
 }
 

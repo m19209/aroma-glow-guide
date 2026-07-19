@@ -514,7 +514,7 @@ function Index() {
                         </Link>
                       </div>
                       <div className="pnotes">{p.notes}</div>
-                      <div className="pfooter">
+                      <div className="pfooter" style={{ marginTop: 'auto' }}>
                         <div>
                           {p.oldPrice && <span className="pprice-old"><span dir="ltr">{p.oldPrice}</span> ج.م</span>}
                           <span className="pprice"><span dir="ltr">{p.price}</span> ج.م</span>
@@ -523,7 +523,7 @@ function Index() {
                           <span className="pvol">{p.volume}</span>
                         </div>
                       </div>
-                      <div className="pstock" style={{ color: availableStock < 3 ? '#d9534f' : 'var(--gold)', fontSize: '0.72rem', marginTop: 'auto', marginBottom: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div className="pstock" style={{ color: availableStock < 3 ? '#d9534f' : 'var(--gold)', fontSize: '0.72rem', marginBottom: '12px', fontWeight: '600', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         {!stocksLoading && <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: availableStock < 3 ? '#d9534f' : 'var(--gold)', boxShadow: `0 0 4px ${availableStock < 3 ? 'rgba(217,83,79,0.5)' : 'rgba(196,164,119,0.5)'}` }} />}
                         {stocksLoading ? (
                           <span className="skeleton-pulse" style={{ display: 'inline-block', width: '80px', height: '12px', background: 'var(--beige)', borderRadius: '4px' }}></span>
