@@ -133,10 +133,17 @@ function Index() {
     try { localStorage.setItem("velore_wish", JSON.stringify([...wishlist])); } catch {/* noop */ }
   }, [wishlist]);
 
-  // Scroll
+  // Scroll (Optimized to prevent re-render thrashing while scrolling)
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    onScroll();
+    let lastState = window.scrollY > 40;
+    setScrolled(lastState);
+    const onScroll = () => {
+      const isScrolled = window.scrollY > 40;
+      if (isScrolled !== lastState) {
+        lastState = isScrolled;
+        setScrolled(isScrolled);
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);

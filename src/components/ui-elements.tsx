@@ -65,6 +65,7 @@ export function Bottle({ variant, label, imageSrc }: { variant: BottleKey; label
       src={src}
       alt={label}
       loading="lazy"
+      decoding="async"
       width={1024}
       height={1024}
       style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
