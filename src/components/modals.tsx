@@ -311,7 +311,13 @@ export function ProductDetailModal({
           <div className="pfamily">{product.family}</div>
           <h2 className="pdetail-name">{product.name}</h2>
           <div className="pdetail-vol">{product.volume}</div>
-          
+
+          <div className="pdetail-quickinfo">
+            {product.gender && <span className="pquick-chip"><em>الفئة</em>{product.gender}</span>}
+            {product.origin && <span className="pquick-chip"><em>المنشأ</em>{product.origin}</span>}
+            {product.occasion && <span className="pquick-chip"><em>المناسبة</em>{product.occasion}</span>}
+          </div>
+
           <div className="pdetail-tabs">
             <button className={`ptab-btn ${activeTab === 'story' ? 'active' : ''}`} onClick={() => setActiveTab('story')}>الوصف</button>
             <button className={`ptab-btn ${activeTab === 'specs' ? 'active' : ''}`} onClick={() => setActiveTab('specs')}>المواصفات</button>
@@ -328,6 +334,10 @@ export function ProductDetailModal({
                 <li><span>التركيز</span><strong>{product.concentration}</strong></li>
                 <li><span>الثبات</span><strong>{product.longevity}</strong></li>
                 <li><span>الفوحان</span><strong>{product.sillage}</strong></li>
+                {product.gender && <li><span>الفئة</span><strong>{product.gender}</strong></li>}
+                {product.origin && <li><span>المنشأ</span><strong>{product.origin}</strong></li>}
+                {product.occasion && <li><span>المناسبة</span><strong>{product.occasion}</strong></li>}
+                <li><span>الحجم</span><strong>{product.volume}</strong></li>
               </ul>
             )}
 
