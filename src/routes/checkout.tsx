@@ -493,29 +493,43 @@ function CheckoutPage() {
 
 
           {paymentMethod === "vodafone" && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-              <div style={{ background: "linear-gradient(135deg, rgba(201,168,76,.05) 0%, rgba(201,168,76,.15) 100%)", border: "1px solid rgba(201,168,76,.3)", borderRadius: "10px", padding: "20px", display: "flex", alignItems: "center", gap: "18px", boxShadow: "0 8px 24px rgba(201,168,76,.1)" }}>
-                <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "var(--white)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "2px solid var(--gold-pale)", boxShadow: "0 4px 10px rgba(26,22,18,.05)" }}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" /></svg>
+            <div style={{ background: "var(--white)", border: "1px solid var(--gold)", borderRadius: "10px", overflow: "hidden", boxShadow: "0 4px 15px rgba(201,168,76,.08)" }}>
+              {/* Info Section */}
+              <div style={{ background: "var(--pearl)", borderBottom: "1px solid rgba(201,168,76,.15)", padding: "16px 20px", display: "flex", gap: "14px", alignItems: "flex-start" }}>
+                <div style={{ width: "36px", height: "36px", borderRadius: "8px", background: "rgba(201,168,76,.15)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: "2px" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold-deep)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
                 </div>
-                <div>
-                  <h4 style={{ margin: "0 0 4px", fontFamily: "'Cairo', sans-serif", fontSize: ".98rem", color: "var(--charcoal)", fontWeight: 800 }}>
-                    خطوات الدفع بسيطة!
+                <div style={{ flex: 1 }}>
+                  <h4 style={{ margin: "0 0 6px", fontFamily: "'Cairo', sans-serif", fontSize: "1.05rem", color: "var(--charcoal)", fontWeight: 800, lineHeight: 1.3 }}>
+                    الدفع الآمن عبر فودافون كاش
                   </h4>
-                  <p style={{ margin: 0, fontSize: ".82rem", color: "var(--muted)", lineHeight: 1.6 }}>
-                    أدخل رقم محفظتك أدناه، وبعد الضغط على "تأكيد الطلب"، ستصلك رسالة الدفع مباشرة على هاتفك لتأكيد الخصم بالرقم السري بكل أمان وسهولة.
+                  <p style={{ margin: 0, fontFamily: "'Cairo', sans-serif", fontSize: ".9rem", color: "var(--charcoal)", opacity: 0.85, lineHeight: 1.6, fontWeight: 500 }}>
+                    أدخل رقم محفظتك في الأسفل. بعد الضغط على "تأكيد الطلب"، ستصلك رسالة من فودافون كاش على هاتفك مباشرة لتأكيد الخصم برقمك السري بكل أمان.
                   </p>
                 </div>
               </div>
-              
-              <div style={{ background: "var(--white)", border: "2px solid var(--gold)", borderRadius: "10px", padding: "16px", display: "flex", flexDirection: "column", gap: "8px", boxShadow: "0 4px 15px rgba(201,168,76,.15)" }}>
-                <label style={{ fontSize: ".85rem", fontWeight: 800, color: "var(--charcoal)" }}>
-                  📱 رقم محفظة فودافون كاش للدفع
+
+              {/* Input Section */}
+              <div style={{ padding: "20px" }}>
+                <label style={{ display: "block", fontFamily: "'Cairo', sans-serif", fontSize: ".95rem", fontWeight: 700, color: "var(--charcoal)", marginBottom: "10px" }}>
+                  رقم محفظة فودافون كاش <span style={{ color: "#e74c3c", fontSize: "1.1em" }}>*</span>
                 </label>
-                <input type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)}
-                  placeholder="010xxxxxxxx"
-                  style={{ padding: "14px 16px", border: "1px solid var(--border2)", borderRadius: "8px", fontSize: "1.15rem", outline: "none", background: "var(--pearl)", direction: "ltr", textAlign: "center", fontFamily: "'Cinzel', serif", fontWeight: 800, letterSpacing: "2px", color: "var(--charcoal)" }}
-                />
+                <div style={{ position: "relative", maxWidth: "400px" }}>
+                  <span style={{ position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)", color: "var(--muted)", fontSize: "1.2rem", display: "flex", pointerEvents: "none" }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                  </span>
+                  <input type="tel" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)}
+                    placeholder="010xxxxxxxx"
+                    style={{ 
+                      width: "100%", padding: "14px 16px 14px 44px", border: "1.5px solid var(--border2)", 
+                      borderRadius: "8px", fontSize: "1.1rem", outline: "none", background: "var(--white)", 
+                      direction: "ltr", textAlign: "left", fontFamily: "'Cinzel', serif", fontWeight: 700, letterSpacing: "2px", 
+                      color: "var(--charcoal)", transition: "all .2s ease", boxShadow: "inset 0 2px 4px rgba(26,22,18,.02)"
+                    }}
+                    onFocus={(e) => { e.target.style.borderColor = "var(--gold)"; e.target.style.boxShadow = "0 0 0 3px rgba(201,168,76,.15)"; }}
+                    onBlur={(e) => { e.target.style.borderColor = "var(--border2)"; e.target.style.boxShadow = "inset 0 2px 4px rgba(26,22,18,.02)"; }}
+                  />
+                </div>
               </div>
             </div>
           )}
