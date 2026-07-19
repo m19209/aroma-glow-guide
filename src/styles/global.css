@@ -997,15 +997,15 @@ nav.scrolled .nav-logo-text { color: var(--charcoal); font-size: 1.3rem; }
   color: #c0392b;
   border-color: rgba(192, 57, 43, 0.3);
 }
-.cart-foot { border-top: 1px solid var(--border); padding: 10px 14px 12px; background: var(--off-white); }
+.cart-foot { border-top: 1px solid var(--border); padding: 8px 12px 10px; background: var(--off-white); }
 @media (max-width: 768px) {
-  .cart-foot { padding: 8px 12px 10px; }
-  .cart-total { padding: 5px 8px; margin-bottom: 3px; }
-  .cart-total-label { font-size: 0.82rem !important; }
-  .cart-total-value { font-size: 0.9rem !important; }
-  .grand-label { font-size: 0.88rem !important; }
-  .grand-value { font-size: 0.98rem !important; }
-  .ship-msg { font-size: 0.75rem !important; margin-bottom: 4px !important; }
+  .cart-foot { padding: 6px 10px 8px !important; }
+  .cart-total { padding: 4px 6px; margin-bottom: 2px; }
+  .cart-total-label { font-size: 0.78rem !important; }
+  .cart-total-value { font-size: 0.85rem !important; }
+  .grand-label { font-size: 0.85rem !important; }
+  .grand-value { font-size: 0.92rem !important; }
+  .ship-msg { font-size: 0.72rem !important; margin-bottom: 3px !important; }
 }
 .cart-total {
   display: flex;
@@ -1722,7 +1722,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 @media (max-width: 720px) { .filter-bar { padding: 0 24px; } }
 
 /* === Cart shipping/promo/summary === */
-.ship-progress { padding: 14px 18px; background: linear-gradient(135deg, rgba(201,168,76,.08), rgba(201,168,76,.02)); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 14px; }
+.ship-progress { padding: 6px 10px; background: linear-gradient(135deg, rgba(201,168,76,.08), rgba(201,168,76,.02)); border: 1px solid var(--border); border-radius: 4px; margin-bottom: 6px; }
 .ship-msg { font-size: .78rem; color: var(--text); margin-bottom: 10px; text-align: center; }
 .ship-msg strong { color: var(--gold-deep); font-weight: 700; }
 .ship-msg.ship-ok { color: var(--gold-deep); font-weight: 600; font-family: 'Cinzel', serif; font-size: .76rem; letter-spacing: .1em; }
