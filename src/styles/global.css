@@ -23,8 +23,9 @@
   --beige-light: var(--pearl);
 }
 
-html, body { max-width: 100%; overflow-x: hidden; }
-body { background: var(--white); color: var(--text); font-family: 'Cairo', sans-serif; font-weight: 300; direction: rtl; }
+html { max-width: 100%; overflow-x: hidden; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { background: var(--white); color: var(--text); font-family: 'Cairo', sans-serif; font-weight: 300; direction: rtl; max-width: 100%; overflow-x: hidden; font-display: swap; }
+a, button, input, select, textarea, [role="button"], .pcard { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
 /* Accessibility: Focus rings */
 *:focus-visible {
