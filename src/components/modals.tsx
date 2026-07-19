@@ -311,7 +311,13 @@ export function ProductDetailModal({
           <div className="pfamily">{product.family}</div>
           <h2 className="pdetail-name">{product.name}</h2>
           <div className="pdetail-vol">{product.volume}</div>
-          
+
+          <div className="pdetail-quickinfo">
+            {product.gender && <span className="pquick-chip"><em>الفئة</em>{product.gender}</span>}
+            {product.origin && <span className="pquick-chip"><em>المنشأ</em>{product.origin}</span>}
+            {product.occasion && <span className="pquick-chip"><em>المناسبة</em>{product.occasion}</span>}
+          </div>
+
           <div className="pdetail-tabs">
             <button className={`ptab-btn ${activeTab === 'story' ? 'active' : ''}`} onClick={() => setActiveTab('story')}>الوصف</button>
             <button className={`ptab-btn ${activeTab === 'specs' ? 'active' : ''}`} onClick={() => setActiveTab('specs')}>المواصفات</button>
