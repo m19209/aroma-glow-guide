@@ -334,6 +334,10 @@ export function ProductDetailModal({
                 <li><span>التركيز</span><strong>{product.concentration}</strong></li>
                 <li><span>الثبات</span><strong>{product.longevity}</strong></li>
                 <li><span>الفوحان</span><strong>{product.sillage}</strong></li>
+                {product.gender && <li><span>الفئة</span><strong>{product.gender}</strong></li>}
+                {product.origin && <li><span>المنشأ</span><strong>{product.origin}</strong></li>}
+                {product.occasion && <li><span>المناسبة</span><strong>{product.occasion}</strong></li>}
+                <li><span>الحجم</span><strong>{product.volume}</strong></li>
               </ul>
             )}
 
