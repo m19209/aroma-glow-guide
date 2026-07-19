@@ -1543,8 +1543,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-
 
 .pcard { transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s, border-color .35s; }
 .pcard:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(26,22,18,.18); border-color: var(--border3); }
-.pimg-inner { overflow: hidden; }
-.pimg-inner .pbottle { max-height: 85%; width: 85% !important; height: 85% !important; object-fit: contain; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.pimg-inner { overflow: hidden; inset: 0; }
+.pimg-inner .pbottle { width: 100% !important; height: 100% !important; max-height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
 .pcard:hover .pimg-inner .pbottle { transform: scale(1.06); }
 .pcard:hover .pimg-glow { opacity: 1; }
 .pimg-glow { transition: opacity .4s; }
