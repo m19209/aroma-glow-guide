@@ -1990,44 +1990,7 @@ img, .pbottle { -webkit-backface-visibility: hidden; backface-visibility: hidden
    PRODUCT CARD REDESIGN STYLING (PRO MAX)
    ══════════════════════════════════ */
 
-@keyframes stock-pulse {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(217, 83, 79, 0.7);
-  }
-  70% {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 6px rgba(217, 83, 79, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(217, 83, 79, 0);
-  }
-}
-
-@keyframes stock-pulse-gold {
-  0% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(196, 164, 119, 0.7);
-  }
-  70% {
-    transform: scale(1.1);
-    box-shadow: 0 0 0 6px rgba(196, 164, 119, 0);
-  }
-  100% {
-    transform: scale(0.95);
-    box-shadow: 0 0 0 0 rgba(196, 164, 119, 0);
-  }
-}
-
-.pstock span {
-  animation: stock-pulse 2s infinite ease-in-out;
-}
-
-.pstock span[style*="background: var(--gold)"],
-.pstock span[style*="background:var(--gold)"] {
-  animation: stock-pulse-gold 2s infinite ease-in-out !important;
-}
+/* Removed stock pulse animations per user request */
 
 /* Enhancing hover card styling - consolidated in main pcard class */
 
