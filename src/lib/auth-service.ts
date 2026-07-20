@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { getCookie, setCookie } from '@tanstack/react-start/server';
 import { db } from './db';
 import { users, orders, orderItems, products, sessions, customProducts } from './db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, inArray } from 'drizzle-orm';
 import { appendOrderToSheet, updateProductStockInSheet, getOrderStatusesFromSheet } from './sheets';
 import { pbkdf2Sync, randomBytes } from 'node:crypto';
 
@@ -28,13 +28,7 @@ function hashPassword(password: string, salt: string) {
   return pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex');
 }
 
-async function getUserIdFromSession(): Promise<string | null> {
-  const sessionId = getCookie('velore_session');
-  if (!sessionId) return null;
-  const session = await db.select().from(sessions).where(eq(sessions.id, sessionId)).get();
-  if (!session || session.expiresAt.getTime() < Date.now()) return null;
-  return session.userId;
-}
+import { getUserIdFromSession, normalizeOrderStatus, getArabicStatus } from './utils';
 
 // --- Auth Endpoints ---
 export const loginUser = createServerFn()
@@ -76,7 +70,7 @@ export const signupUser = createServerFn()
     if (isRateLimited(data.email)) return { success: false, error: 'Too many requests' };
     
     try {
-      const id = Math.random().toString(36).substring(2, 8).toUpperCase();
+      const id = crypto.randomUUID();
       const salt = randomBytes(16).toString('hex');
       const hashed = hashPassword(data.password, salt);
       
@@ -187,12 +181,7 @@ export const getUserOrders = createServerFn().handler(async () => {
             // If the user typed Arabic, map it back to English enum for DB, or we can just accept Arabic.
             // Let's assume the user types: pending, processing, shipped, delivered, cancelled
             // OR Arabic versions: معلق, قيد المعالجة, تم الشحن, تم التوصيل, ملغي
-            let normalizedStatus = sheetStatus;
-            if (sheetStatus === 'معلق') normalizedStatus = 'pending';
-            else if (sheetStatus === 'قيد المعالجة') normalizedStatus = 'processing';
-            else if (sheetStatus === 'تم الشحن') normalizedStatus = 'shipped';
-            else if (sheetStatus === 'تم التوصيل') normalizedStatus = 'delivered';
-            else if (sheetStatus === 'ملغي') normalizedStatus = 'cancelled';
+            let normalizedStatus = normalizeOrderStatus(sheetStatus);
             
             await db.update(orders)
               .set({ status: normalizedStatus, updatedAt: new Date() })
@@ -205,17 +194,23 @@ export const getUserOrders = createServerFn().handler(async () => {
         console.error('Failed to sync statuses from sheet:', e);
       }
 
-    const ordersWithItems = [];
-    for (const order of userOrders) {
-      const items = await db.select()
-        .from(orderItems)
-        .where(eq(orderItems.orderId, order.id))
-        .all();
-      ordersWithItems.push({
-        ...order,
-        items,
-      });
+    if (userOrders.length === 0) {
+      return { success: true, orders: [] };
     }
+
+    const orderIds = userOrders.map(o => o.id);
+    const allItems = await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds)).all();
+    
+    const itemsByOrder = allItems.reduce((acc, item) => {
+      if (!acc[item.orderId]) acc[item.orderId] = [];
+      acc[item.orderId].push(item);
+      return acc;
+    }, {} as Record<string, typeof allItems>);
+
+    const ordersWithItems = userOrders.map(order => ({
+      ...order,
+      items: itemsByOrder[order.id] || [],
+    }));
 
     return { success: true, orders: ordersWithItems };
   } catch (e) {
@@ -245,7 +240,12 @@ export const createOrder = createServerFn()
   }) => data)
   .handler(async ({ data }) => {
     if (isRateLimited(data.customerPhone)) return { success: false, error: 'لقد تجاوزت الحد الأقصى للطلبات، يرجى المحاولة لاحقاً' };
-    const userId = (await getUserIdFromSession()) || 'guest';
+    let isGuest = false;
+    let userId = await getUserIdFromSession();
+    if (!userId) {
+      userId = crypto.randomUUID();
+      isGuest = true;
+    }
 
     const orderId = crypto.randomUUID();
     const addressStr = `${data.building ? data.building + '، ' : ''}${data.street}، ${data.district}، ${data.city}، ${data.governorate} (هاتف: ${data.customerPhone})`;
@@ -280,7 +280,7 @@ export const createOrder = createServerFn()
     try {
       await db.transaction(async (tx) => {
         // Update user profile info so it is prefilled next time (only if logged in)
-        if (userId !== 'guest') {
+        if (!isGuest) {
           await tx.update(users)
             .set({
               name: data.customerName,
@@ -293,18 +293,21 @@ export const createOrder = createServerFn()
             })
             .where(eq(users.id, userId));
         } else {
-          // Ensure guest user exists in the DB to satisfy foreign key constraints
-          const guestExists = await tx.select({ id: users.id }).from(users).where(eq(users.id, 'guest')).get();
-          if (!guestExists) {
-            await tx.insert(users).values({
-              id: 'guest',
-              name: 'Guest User',
-              email: `guest_${crypto.randomUUID()}@aroma-glow.com`, // Ensure uniqueness if needed, though 'guest' id is primary
-              passwordHash: 'none',
-              passwordSalt: 'none',
-              createdAt: new Date(),
-            }).onConflictDoNothing();
-          }
+          // Insert unique guest user
+          await tx.insert(users).values({
+            id: userId,
+            name: data.customerName || 'Guest User',
+            email: `guest_${userId}@aroma-glow.com`,
+            passwordHash: 'none',
+            passwordSalt: 'none',
+            phone: data.customerPhone,
+            governorate: data.governorate,
+            city: data.city,
+            district: data.district,
+            street: data.street,
+            building: data.building || null,
+            createdAt: new Date(),
+          });
         }
 
         // Insert the order
@@ -437,6 +440,8 @@ export const createOrder = createServerFn()
         
         const paymobOrderId = await registerPaymobOrder(authToken, orderId, amountCents);
         
+        const orderUser = await db.select({ email: users.email }).from(users).where(eq(users.id, userId)).get();
+        
         const paymentKey = await getPaymentKey(
           authToken,
           paymobOrderId,
@@ -444,7 +449,7 @@ export const createOrder = createServerFn()
           {
             first_name: data.customerName.split(' ')[0] || "Customer",
             last_name: data.customerName.split(' ').slice(1).join(' ') || "Name",
-            email: "customer@velore.com", 
+            email: orderUser?.email || "customer@velore.com", 
             phone_number: data.customerPhone,
             city: data.city,
             street: data.street,
@@ -532,12 +537,7 @@ export const getAdminOrders = createServerFn().handler(async () => {
       for (const order of dbOrders) {
         const sheetStatus = sheetStatuses[order.id];
         if (sheetStatus && sheetStatus !== order.status) {
-          let normalizedStatus = sheetStatus;
-          if (sheetStatus === 'معلق') normalizedStatus = 'pending';
-          else if (sheetStatus === 'قيد المعالجة') normalizedStatus = 'processing';
-          else if (sheetStatus === 'تم الشحن') normalizedStatus = 'shipped';
-          else if (sheetStatus === 'تم التوصيل') normalizedStatus = 'delivered';
-          else if (sheetStatus === 'ملغي') normalizedStatus = 'cancelled';
+          let normalizedStatus = normalizeOrderStatus(sheetStatus);
           
           await db.update(orders)
             .set({ status: normalizedStatus, updatedAt: new Date() })
@@ -553,17 +553,23 @@ export const getAdminOrders = createServerFn().handler(async () => {
       .orderBy(desc(orders.createdAt))
       .all();
 
-    const ordersWithItems = [];
-    for (const order of allOrders) {
-      const items = await db.select()
-        .from(orderItems)
-        .where(eq(orderItems.orderId, order.id))
-        .all();
-      ordersWithItems.push({
-        ...order,
-        items,
-      });
+    if (allOrders.length === 0) {
+      return { success: true, orders: [] };
     }
+
+    const orderIds = allOrders.map(o => o.id);
+    const allItems = await db.select().from(orderItems).where(inArray(orderItems.orderId, orderIds)).all();
+    
+    const itemsByOrder = allItems.reduce((acc, item) => {
+      if (!acc[item.orderId]) acc[item.orderId] = [];
+      acc[item.orderId].push(item);
+      return acc;
+    }, {} as Record<string, typeof allItems>);
+
+    const ordersWithItems = allOrders.map(order => ({
+      ...order,
+      items: itemsByOrder[order.id] || [],
+    }));
 
     return { success: true, orders: ordersWithItems };
   } catch (e) {
@@ -590,12 +596,7 @@ export const updateOrderStatus = createServerFn()
         .where(eq(orders.id, data.orderId));
 
       // Update Google Sheets
-      let arabicStatus = data.status;
-      if (data.status === 'pending') arabicStatus = 'معلق';
-      else if (data.status === 'processing') arabicStatus = 'قيد المعالجة';
-      else if (data.status === 'shipped') arabicStatus = 'تم الشحن';
-      else if (data.status === 'delivered') arabicStatus = 'تم التوصيل';
-      else if (data.status === 'cancelled') arabicStatus = 'ملغي';
+      let arabicStatus = getArabicStatus(data.status);
 
       try {
         const { updateOrderInSheet } = await import('./sheets');

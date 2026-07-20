@@ -71,20 +71,20 @@ function Index() {
 
     listCustomProducts().then((res) => {
       if (Array.isArray(res)) setCustomProducts(res as Product[]);
-    }).catch(() => { });
+    }).catch((e) => { console.error("Failed to load custom products:", e); });
 
     getSheetProducts().then((res) => {
       if (Array.isArray(res)) setSheetProducts(res as Product[]);
-    }).catch(() => { });
+    }).catch((e) => { console.error("Failed to load sheet products:", e); });
 
-    // Poll every 1 second for realtime stock updates
+    // Poll every 30 seconds for realtime stock updates
     const interval = setInterval(() => {
       getAllStocks().then((res) => {
         if (res) {
           setStocks(prev => JSON.stringify(prev) === JSON.stringify(res) ? prev : res);
         }
       });
-    }, 1000);
+    }, 30000);
 
     return () => clearInterval(interval);
   }, []);
@@ -169,9 +169,18 @@ function Index() {
   const cartCount = cart.reduce((a, l) => a + l.qty, 0);
   const cartTotal = cart.reduce((a, l) => a + l.qty * l.product.price, 0);
 
+  const toastTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);
+    };
+  }, []);
+
   function showToast(msg: string) {
+    if (toastTimeoutRef.current) window.clearTimeout(toastTimeoutRef.current);
     setToast(msg);
-    window.setTimeout(() => setToast(null), 2200);
+    toastTimeoutRef.current = window.setTimeout(() => setToast(null), 2200);
   }
   function addToCart(p: Product) {
     const currentStock = stocks[p.id] ?? 5;
@@ -339,7 +348,7 @@ function Index() {
         </ul>
 
         <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div className="nav-search" onClick={() => setSearchOpen(true)} style={{ cursor: 'pointer' }}>
+          <div className="nav-search" onClick={() => setSearchOpen(true)} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSearchOpen(true); } }} style={{ cursor: 'pointer' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
             <input
               type="text"

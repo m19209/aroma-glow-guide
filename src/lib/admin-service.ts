@@ -5,13 +5,7 @@ import { db } from './db';
 import { users, customProducts, sessions } from './db/schema';
 import type { Product, BottleKey } from './inventory';
 
-async function getUserIdFromSession(): Promise<string | null> {
-  const sessionId = getCookie('velore_session');
-  if (!sessionId) return null;
-  const session = await db.select().from(sessions).where(eq(sessions.id, sessionId)).get();
-  if (!session || session.expiresAt.getTime() < Date.now()) return null;
-  return session.userId;
-}
+import { getUserIdFromSession } from './utils';
 
 async function getSessionUser() {
   const userId = await getUserIdFromSession();

@@ -364,7 +364,7 @@ function CheckoutPage() {
                 const active = paymentMethod === opt.key;
                 return (
                   <div key={opt.key} style={{ display: "flex", flexDirection: "column" }}>
-                    <div onClick={() => setPaymentMethod(opt.key)}
+                    <div role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setPaymentMethod(opt.key); } }} onClick={() => setPaymentMethod(opt.key)}
                       style={{
                         display: "flex",
                         alignItems: "center",

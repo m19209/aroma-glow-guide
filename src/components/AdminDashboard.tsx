@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { updateOrderStatus } from "@/lib/auth-service";
 
 type OrderItem = {
@@ -58,13 +58,22 @@ export function AdminDashboard({ initialUser, initialStats, initialOrders }: Adm
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  const timeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
   const showNotification = (msg: string, isError = false) => {
+    if (timeoutRef.current) window.clearTimeout(timeoutRef.current);
     if (isError) {
       setErrorMessage(msg);
-      setTimeout(() => setErrorMessage(null), 4000);
+      timeoutRef.current = window.setTimeout(() => setErrorMessage(null), 4000);
     } else {
       setSuccessMessage(msg);
-      setTimeout(() => setSuccessMessage(null), 4000);
+      timeoutRef.current = window.setTimeout(() => setSuccessMessage(null), 4000);
     }
   };
 

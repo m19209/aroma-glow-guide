@@ -473,7 +473,7 @@ export function CartDrawer({
                     )}
                   </div>
                   <div className="ship-bar" style={{ height: '3px' }}>
-                    <div className="ship-fill" style={{ width: `${shippingProgress}%` }} />
+                    <div className="ship-fill" style={{ transform: `scaleX(${shippingProgress / 100})` }} />
                   </div>
                 </div>
 
