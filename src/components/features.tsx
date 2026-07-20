@@ -3,6 +3,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Product } from "@/lib/inventory";
 import { updateUserProfile, getUserProfile } from "@/lib/auth-service";
 import { Bottle } from "@/components/ui-elements";
+import { useI18n } from "@/lib/i18n";
 
 // --- Types ---
 export type CartLine = { product: Product; qty: number };
@@ -91,6 +92,7 @@ export function CartDrawer({
   currentUser: string | null;
   onLoginRequired: () => void;
 }) {
+  const { t: translate, lang } = useI18n();
   const drawerRef = useRef<HTMLDivElement>(null);
   
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -195,11 +197,11 @@ export function CartDrawer({
                 >
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'rotate(180deg)' }}><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 19 12 12 5"></polyline></svg>
                 </button>
-                <span style={{ fontSize: '1.3rem', fontFamily: '"Cairo", sans-serif', fontWeight: 600 }}>إتمام الطلب</span>
+                <span style={{ fontSize: '1.3rem', fontFamily: '"Cairo", sans-serif', fontWeight: 600 }}>{translate("checkout")}</span>
               </>
             ) : (
               <>
-                <span style={{ fontSize: '1rem', fontFamily: '"Cairo", sans-serif', fontWeight: 700, letterSpacing: '0' }}>سلة المشتريات</span>
+                <span style={{ fontSize: '1rem', fontFamily: '"Cairo", sans-serif', fontWeight: 700, letterSpacing: '0' }}>{translate("cartTitle")}</span>
                 <span style={{ color: 'var(--gold-deep)', fontWeight: 700, fontSize: '0.8rem', letterSpacing: '0.15em', marginTop: '2px', fontFamily: '"Cinzel", serif' }}>— CART</span>
               </>
             )}
@@ -414,8 +416,8 @@ export function CartDrawer({
                   <line x1="3" y1="6" x2="21" y2="6"></line>
                   <path d="M16 10a4 4 0 0 1-8 0"></path>
                 </svg>
-                <p style={{ fontSize: '1.75rem', fontWeight: 600, margin: 0, letterSpacing: '-0.5px' }}>السلة فارغة</p>
-                <p style={{ fontSize: '1.05rem', marginTop: '12px', fontWeight: 300 }}>لم تقم بإضافة أي عطور بعد.</p>
+                <p style={{ fontSize: '1.75rem', fontWeight: 600, margin: 0, letterSpacing: '-0.5px' }}>{translate("emptyCartTitle")}</p>
+                <p style={{ fontSize: '1.05rem', marginTop: '12px', fontWeight: 300 }}>{translate("emptyCartSub")}</p>
               </div>
             ) : (
               cart.map(c => (
@@ -463,12 +465,12 @@ export function CartDrawer({
                     {shippingProgress === 100 ? (
                       <>
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                        <span>طلبك مؤهل للشحن المجاني!</span>
+                        <span>{translate("freeShippingEarned")}</span>
                       </>
                     ) : (
                       <>
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                        <span>تبقى <strong>{800 - cartTotal} ج.م</strong> للشحن المجاني</span>
+                        <span>{translate("freeShippingProgress")} <strong>{800 - cartTotal} {translate("currency")}</strong> {translate("freeShippingMore")}</span>
                       </>
                     )}
                   </div>
@@ -481,13 +483,13 @@ export function CartDrawer({
                 <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
                   <input
                     type="text"
-                    placeholder="كود الخصم (إن وجد)"
-                    aria-label="كود الخصم"
+                    placeholder={translate("promoCode")}
+                    aria-label={translate("promoCode")}
                     value={promoInput}
                     onChange={e => setPromoInput(e.target.value)}
                     style={{ flex: 1, padding: '3px 8px', border: '1px solid var(--border)', borderRadius: '3px', fontSize: '0.8rem', height: '26px' }}
                   />
-                  <button onClick={applyPromo} className="btn-gold" style={{ padding: "0 10px", fontSize: "0.78rem", height: '26px' }}>تفعيل</button>
+                  <button onClick={applyPromo} className="btn-gold" style={{ padding: "0 10px", fontSize: "0.78rem", height: '26px' }}>{translate("applyPromo")}</button>
                 </div>
                 {promoApplied && (
                   <div style={{ color: "#d4af37", fontSize: "0.75rem", marginBottom: "3px" }}>
@@ -499,14 +501,14 @@ export function CartDrawer({
 
             {/* Subtotal & Shipping on 1 single line */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2px 2px', fontSize: '0.76rem', color: 'var(--muted)' }}>
-              <span>المجموع: <strong style={{ color: 'var(--charcoal)', fontFamily: "'Cinzel', serif" }}><span dir="ltr">{cartTotal}</span> ج.م</strong></span>
-              <span>الشحن: <strong style={{ color: shippingFee === 0 ? 'var(--gold-deep)' : 'var(--charcoal)', fontFamily: "'Cinzel', serif" }}>{shippingFee === 0 ? "مجاني 🎉" : <><span dir="ltr">{shippingFee}</span> ج.م</>}</strong></span>
+              <span>{translate("subtotal")}: <strong style={{ color: 'var(--charcoal)', fontFamily: "'Cinzel', serif" }}><span dir="ltr">{cartTotal}</span> {translate("currency")}</strong></span>
+              <span>{translate("shipping")}: <strong style={{ color: shippingFee === 0 ? 'var(--gold-deep)' : 'var(--charcoal)', fontFamily: "'Cinzel', serif" }}>{shippingFee === 0 ? translate("freeShipping") + " 🎉" : <><span dir="ltr">{shippingFee}</span> {translate("currency")}</>}</strong></span>
             </div>
 
             {/* Grand Total Box */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', margin: '3px 0 5px', background: 'rgba(201,168,76,.06)', border: '1px solid rgba(201,168,76,.3)', borderRadius: '4px' }}>
-              <span style={{ fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: '0.85rem', color: 'var(--charcoal)' }}>الإجمالي</span>
-              <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '0.95rem', color: 'var(--charcoal)' }}><span dir="ltr">{grandTotal}</span> ج.م</span>
+              <span style={{ fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: '0.85rem', color: 'var(--charcoal)' }}>{translate("total")}</span>
+              <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '0.95rem', color: 'var(--charcoal)' }}><span dir="ltr">{grandTotal}</span> {translate("currency")}</span>
             </div>
 
             {isCheckingOut ? (
@@ -516,10 +518,9 @@ export function CartDrawer({
                 onClick={handleConfirmOrder}
                 disabled={checkoutLoading}
               >
-                {checkoutLoading ? "جاري تسجيل طلبك..." : (
+                {checkoutLoading ? translate("processingOrder") : (
                   <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                    <span>تأكيد الطلب</span>
-                    <span dir="ltr" style={{ opacity: 0.8, fontSize: '0.85em' }}>— Confirm</span>
+                    <span>{translate("confirmCod")}</span>
                   </span>
                 )}
               </button>
@@ -529,7 +530,7 @@ export function CartDrawer({
                 style={{ width: "100%", padding: "9px", fontSize: "0.9rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', borderRadius: '4px' }}
                 onClick={handleProceedToCheckout}
               >
-                <span>إتمام الطلب</span>
+                <span>{translate("checkout")}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m12 19-7-7 7-7"/>
                   <path d="M19 12H5"/>

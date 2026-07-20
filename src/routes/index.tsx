@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useI18n } from "@/lib/i18n";
 
 import { PRODUCTS, Product, getAllStocks, validatePromo, getSheetProducts } from "@/lib/inventory";
 import { listCustomProducts } from "@/lib/admin-service";
@@ -37,6 +38,7 @@ const CATEGORIES = [
 type CartLine = { product: Product; qty: number };
 
 function Index() {
+  const { t: translate, lang, setLang } = useI18n();
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -344,7 +346,7 @@ function Index() {
         </div>
 
         <ul className="nav-links">
-          <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>Parfums</a></li>
+          <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>{translate("collection")}</a></li>
         </ul>
 
         <div className="nav-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -352,11 +354,11 @@ function Index() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
             <input
               type="text"
-              placeholder="ابحث..."
+              placeholder={translate("searchPlaceholder")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchOpen(true)}
-              aria-label="البحث عن منتج"
+              aria-label={translate("search")}
             />
           </div>
 
@@ -367,7 +369,7 @@ function Index() {
                 textDecoration: 'none'
               }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                <span className="login-label">حسابي</span>
+                <span className="login-label">{translate("myAccount")}</span>
               </Link>
               <button
                 onClick={() => {
@@ -382,22 +384,48 @@ function Index() {
                   paddingLeft: '8px',
                   paddingRight: '8px'
                 }}
-                aria-label="تسجيل الخروج"
+                aria-label={translate("logout")}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                <span className="login-label">تسجيل الخروج</span>
+                <span className="login-label">{translate("logout")}</span>
               </button>
             </div>
           ) : (
             <button className="nav-login-btn magic-login-btn" onClick={() => setLoginOpen(true)} style={{ color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)' }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-              <span className="login-label">تسجيل الدخول</span>
+              <span className="login-label">{translate("login")}</span>
             </button>
           )}
 
+          <button 
+            onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
+            className="lang-toggle-btn desktop-only"
+            style={{
+              background: 'transparent',
+              border: '1px solid currentColor', 
+              color: scrolled ? 'var(--charcoal)' : 'rgba(255,255,255,0.9)', 
+              padding: '4px 10px',
+              borderRadius: '99px',
+              fontSize: '0.75rem',
+              cursor: 'pointer',
+              fontFamily: "'Cinzel', serif",
+              fontWeight: 700,
+              letterSpacing: '0.5px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '3px',
+              transition: 'opacity 0.2s'
+            }}
+            aria-label="Toggle language"
+          >
+            <span style={{ opacity: lang === 'en' ? 1 : 0.35 }}>EN</span>
+            <span style={{ opacity: 0.25 }}>/</span>
+            <span style={{ opacity: lang === 'ar' ? 1 : 0.35 }}>AR</span>
+          </button>
+
           <button className="nav-cart-btn" onClick={() => setCartOpen(true)}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
-            <span className="cart-label">الحقيبة</span>
+            <span className="cart-label">{translate("cartTitle")}</span>
             {cartCount > 0 && <span key={cartCount} className="cart-count-badge">{cartCount}</span>}
           </button>
 
@@ -415,7 +443,7 @@ function Index() {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--charcoal-dim)' }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
               <input
                 type="text"
-                placeholder="ابحث..."
+                placeholder={translate("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => { setMobileOpen(false); setSearchOpen(true); }}
@@ -423,13 +451,13 @@ function Index() {
               />
             </div>
 
-            <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>Parfums</a>
+            <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>{translate("collection")}</a>
 
             {currentUser ? (
               <>
                 <Link to="/account" onClick={() => setMobileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                  حسابي
+                  {translate("myAccount")}
                 </Link>
                 <button
                   onClick={() => {
@@ -441,7 +469,7 @@ function Index() {
                   className="mobile-menu-btn"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                  تسجيل الخروج
+                  {translate("logout")}
                 </button>
               </>
             ) : (
@@ -450,9 +478,37 @@ function Index() {
                 className="mobile-menu-btn"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                تسجيل الدخول
+                {translate("login")}
               </button>
             )}
+
+            {/* Language toggle in mobile menu */}
+            <div style={{ borderTop: '1px solid var(--border)', marginTop: '8px', paddingTop: '14px' }}>
+              <button
+                onClick={() => { setLang(lang === 'ar' ? 'en' : 'ar'); setMobileOpen(false); }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--charcoal)',
+                  fontSize: '0.95rem',
+                  fontFamily: "'Cairo', sans-serif",
+                  fontWeight: 600,
+                  padding: '8px 0',
+                  width: '100%',
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, letterSpacing: '1px' }}>
+                  <span style={{ opacity: lang === 'en' ? 1 : 0.4 }}>EN</span>
+                  <span style={{ opacity: 0.3, margin: '0 4px' }}>/</span>
+                  <span style={{ opacity: lang === 'ar' ? 1 : 0.4 }}>AR</span>
+                </span>
+              </button>
+            </div>
           </div>
         </>
       )}
@@ -497,7 +553,7 @@ function Index() {
           <div className="products">
             <div className="products-grid">
               {visibleProducts.length === 0 && (
-                <div className="empty-state">لا توجد عطور تطابق بحثك.</div>
+                <div className="empty-state">{translate("searchNoResults")}</div>
               )}
               {visibleProducts.map((p) => {
                 const line = cart.find((l) => l.product.id === p.id);
@@ -544,7 +600,7 @@ function Index() {
                         {stocksLoading ? (
                           <span className="skeleton-pulse" style={{ display: 'inline-block', width: '80px', height: '12px', background: 'var(--beige)', borderRadius: '4px' }}></span>
                         ) : (
-                          availableStock > 0 ? `الكمية المتبقية: ${availableStock} قطع` : 'نفدت الكمية'
+                            <span>{availableStock > 0 ? (lang === 'ar' ? `الكمية المتبقية: ${availableStock} قطع` : `${availableStock} left in stock`) : translate("outOfStock")}</span>
                         )}
                       </div>
                     </div>
@@ -552,11 +608,11 @@ function Index() {
                       const line = cart.find((l) => l.product.id === p.id);
                       if (!line) {
                         return (
-                          <button className="pcard-buy" onClick={(e) => { e.stopPropagation(); addToCart(p); }}>
+                        <button className="pcard-buy" onClick={(e) => { e.stopPropagation(); addToCart(p); }}>
                             <span className="pcard-buy-icon">
                               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" /></svg>
                             </span>
-                            <span>أضف للحقيبة</span>
+                            <span>{translate("addToCart")}</span>
                           </button>
                         );
                       }
@@ -602,7 +658,7 @@ function Index() {
             <span className="footer-logo-name">VELORE</span>
           </div>
           <span className="footer-logo-sub">MAISON DE PARFUM</span>
-          <p className="footer-tagline">صناعة العطور كفنّ — كل قارورة قصة، كل رائحة ذكرى تخلد في الأذهان.</p>
+          <p className="footer-tagline">{translate("tagline")}</p>
           <div className="footer-socials">
             <a href="#" className="social-btn" aria-label="Instagram">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
@@ -617,7 +673,7 @@ function Index() {
         </div>
         
         <div className="footer-col">
-          <h4>التشكيلة</h4>
+          <h4>{translate("collectionCol")}</h4>
           <ul>
             <li><a href="#products" onClick={(e) => { e.preventDefault(); scrollTo("products"); }}>أحدث العطور</a></li>
             <li><span>المجموعات الحصرية</span></li>
@@ -627,7 +683,7 @@ function Index() {
         </div>
         
         <div className="footer-col">
-          <h4>خدمة العملاء</h4>
+          <h4>{translate("customerServiceCol")}</h4>
           <ul>
             <li><span>تتبع الطلب</span></li>
             <li><span>سياسة الشحن</span></li>

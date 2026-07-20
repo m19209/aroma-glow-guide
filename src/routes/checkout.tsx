@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
+import { useI18n } from "@/lib/i18n";
 import { Product, getAllStocks, validatePromo } from "@/lib/inventory";
 import { createOrder, getUserProfile } from "@/lib/auth-service";
 import { Bottle } from "@/components/ui-elements";
@@ -26,6 +27,7 @@ const EGYPT_GOVERNORATES = [
 ];
 
 function CheckoutPage() {
+  const { t: translate, lang, dir } = useI18n();
   const navigate = useNavigate();
 
   // Cart state from localStorage
@@ -84,8 +86,8 @@ function CheckoutPage() {
   async function applyPromo() {
     setPromoError("");
     try {
-      const res = await validatePromo({ data: { code: promoInput } });
-      if (res.valid && res.pct) {
+      const res = await validatePromo({ data: promoInput });
+      if (res.success && res.pct) {
         setPromoApplied({ code: promoInput.toUpperCase(), pct: res.pct });
       } else {
         setPromoError("كود الخصم غير صالح");
@@ -218,7 +220,7 @@ function CheckoutPage() {
 
       {/* Page Title */}
       <div style={{ textAlign: "center", padding: "48px 24px 24px" }}>
-        <p style={{ fontFamily: "'Cinzel', serif", fontSize: ".65rem", letterSpacing: ".45em", color: "var(--gold-deep)", textTransform: "uppercase", marginBottom: "8px" }}>Luxury Checkout</p>
+        <p style={{ fontFamily: "'Cinzel', serif", fontSize: ".65rem", letterSpacing: ".45em", color: "var(--gold-deep)", textTransform: "uppercase", marginBottom: "8px" }}>Checkout Cart</p>
         <h1 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "2.6rem", fontWeight: 500, fontStyle: "italic", color: "var(--charcoal)", margin: 0 }}>إتمام الطلب</h1>
         <div style={{ width: "54px", height: "2px", background: "linear-gradient(90deg, transparent, var(--gold), transparent)", margin: "16px auto 0" }} />
       </div>
@@ -398,7 +400,7 @@ function CheckoutPage() {
                       </div>
                     </div>
 
-                    // Inline Vodafone Details removed to be placed above input field
+
 
                   </div>
                 );
