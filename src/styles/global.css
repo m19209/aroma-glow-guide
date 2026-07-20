@@ -632,8 +632,8 @@ nav.scrolled .nav-hamburger span { background: var(--charcoal); }
 
 .pinfo { padding: 14px 14px 0; border-top: 1px solid var(--border); flex: 1; display: flex; flex-direction: column; }
 .pfamily { font-size: .56rem; letter-spacing: .32em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 6px; font-family: 'Cinzel', serif; }
-.pname { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400; color: var(--charcoal); margin-bottom: 8px; font-style: italic; }
-.pnotes { font-size: .72rem; color: var(--muted2); margin-bottom: 10px; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.pname { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 400; color: var(--charcoal); margin-bottom: 8px; font-style: italic; min-height: 3.5rem; display: flex; align-items: flex-start; }
+.pnotes { font-size: .72rem; color: var(--muted2); margin-bottom: 10px; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.37rem; }
 .pfooter { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .pprice { font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--gold-deep); font-weight: 600; }
 .pprice-old { font-size: .75rem; color: rgba(122,107,80,.5); text-decoration: line-through; margin-left: 6px; }
