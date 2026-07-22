@@ -210,118 +210,118 @@ export function CartDrawer({
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
         </div>
-        <div className="cart-body" style={{ padding: isCheckingOut ? '24px 20px' : undefined }}>
+        <div className="cart-body" style={{ padding: isCheckingOut ? '24px 20px' : undefined, direction: lang === "ar" ? "rtl" : "ltr" }}>
           {isCheckingOut ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', direction: 'rtl', textAlign: 'right' }}>
-              <h4 style={{ margin: '0 0 2px', fontSize: '1.05rem', color: 'var(--gold-deep)', fontFamily: '"Cairo", sans-serif' }}>تفاصيل الشحن والتوصيل</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', textAlign: lang === "ar" ? "right" : "left" }}>
+              <h4 style={{ margin: '0 0 2px', fontSize: '1.05rem', color: 'var(--gold-deep)', fontFamily: lang === "ar" ? '"Cairo", sans-serif' : 'inherit' }}>{translate("shippingDetails")}</h4>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>الاسم الكامل</label>
+                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>{translate("fullName")}</label>
                 <input 
                   type="text" 
                   className={`magic-input ${formErrors.customerName ? 'magic-input-error' : ''}`}
                   value={customerName}
                   onChange={e => setCustomerName(e.target.value)}
-                  placeholder="اسم المستلم ثلاثي"
-                  style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                  placeholder={translate("fullNamePlaceholder")}
+                  style={{ padding: '10px 14px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
                 />
                 {formErrors.customerName && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.customerName}</span>}
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>رقم الهاتف (للتواصل أو واتساب)</label>
+                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>{translate("phone")}</label>
                 <input 
                   type="tel" 
                   className={`magic-input ${formErrors.customerPhone ? 'magic-input-error' : ''}`}
                   value={customerPhone}
                   onChange={e => setCustomerPhone(e.target.value)}
-                  placeholder="مثال: 010xxxxxxxx"
-                  style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                  placeholder={translate("phonePlaceholder")}
+                  style={{ padding: '10px 14px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)', direction: 'ltr', textAlign: lang === 'ar' ? 'right' : 'left' }}
                 />
                 {formErrors.customerPhone && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.customerPhone}</span>}
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>المحافظة</label>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>{translate("governorate")}</label>
                   <input 
                     type="text" 
                     className={`magic-input ${formErrors.governorate ? 'magic-input-error' : ''}`}
                     value={governorate}
                     onChange={e => setGovernorate(e.target.value)}
-                    placeholder="مثال: القاهرة"
-                    style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                    placeholder={translate("selectGovernorate")}
+                    style={{ padding: '10px 14px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
                   />
                   {formErrors.governorate && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.governorate}</span>}
 
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>المدينة</label>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>{translate("city")}</label>
                   <input 
                     type="text" 
                     className={`magic-input ${formErrors.city ? 'magic-input-error' : ''}`}
                     value={city}
                     onChange={e => setCity(e.target.value)}
-                    placeholder="مثال: مدينة نصر"
-                    style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                    placeholder={translate("cityPlaceholder")}
+                    style={{ padding: '10px 14px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
                   />
                   {formErrors.city && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.city}</span>}
                 </div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>المنطقة / الحي</label>
+                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>{translate("district")}</label>
                 <input 
                   type="text" 
                   className={`magic-input ${formErrors.district ? 'magic-input-error' : ''}`}
                   value={district}
                   onChange={e => setDistrict(e.target.value)}
-                  placeholder="مثال: الحي السابع"
-                  style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                  placeholder={translate("districtPlaceholder")}
+                  style={{ padding: '10px 14px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
                 />
                 {formErrors.district && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.district}</span>}
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>الشارع</label>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>{translate("street")}</label>
                   <input 
                     type="text" 
                     className={`magic-input ${formErrors.street ? 'magic-input-error' : ''}`}
                     value={street}
                     onChange={e => setStreet(e.target.value)}
-                    placeholder="اسم الشارع"
-                    style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                    placeholder={translate("streetPlaceholder")}
+                    style={{ padding: '10px 14px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
                   />
                   {formErrors.street && <span style={{ color: '#e74c3c', fontSize: '0.75rem' }}>{formErrors.street}</span>}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>تفاصيل المنزل</label>
+                  <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>{translate("building")}</label>
                   <input 
                     type="text" 
                     className="magic-input"
                     value={building}
                     onChange={e => setBuilding(e.target.value)}
-                    placeholder="مثال: مبنى 10، دور 2"
-                    style={{ padding: '8px 12px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                    placeholder={translate("buildingPlaceholder")}
+                    style={{ padding: '10px 14px', fontSize: '0.95rem', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
                   />
                 </div>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>ملاحظات الطلب</label>
+                <label style={{ fontSize: '0.85rem', color: 'var(--charcoal)', fontWeight: 600 }}>{translate("notesOptional")}</label>
                 <textarea 
                   className="magic-input"
                   value={orderNotes}
                   onChange={e => setOrderNotes(e.target.value)}
-                  placeholder="هل هناك ملاحظات أخرى؟"
-                  style={{ padding: '8px 12px', fontSize: '0.95rem', minHeight: '80px', resize: 'vertical', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)' }}
+                  placeholder={translate("orderNotesPlaceholder")}
+                  style={{ padding: '10px 14px', fontSize: '0.95rem', minHeight: '80px', resize: 'vertical', border: '1px solid var(--border3)', borderRadius: '6px', backgroundColor: 'var(--beige-light)', fontFamily: lang === "ar" ? '"Cairo", sans-serif' : 'inherit' }}
                 />
               </div>
 
               <hr style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '4px 0' }} />
 
-              <h4 style={{ margin: '0 0 2px', fontSize: '1.05rem', color: 'var(--gold-deep)', fontFamily: '"Cairo", sans-serif' }}>طريقة الدفع</h4>
+              <h4 style={{ margin: '0 0 2px', fontSize: '1.05rem', color: 'var(--gold-deep)', fontFamily: lang === "ar" ? '"Cairo", sans-serif' : 'inherit' }}>{translate("paymentMethod")}</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div 
                   onClick={() => setPaymentMethod('cod')}
@@ -329,9 +329,9 @@ export function CartDrawer({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '10px 14px',
+                    padding: '12px 16px',
                     border: paymentMethod === 'cod' ? '2px solid var(--gold-deep)' : '1px solid var(--border)',
-                    borderRadius: '6px',
+                    borderRadius: '8px',
                     cursor: 'pointer',
                     background: paymentMethod === 'cod' ? 'rgba(212, 175, 55, 0.05)' : 'transparent',
                     transition: 'all 0.2s ease',
@@ -339,9 +339,9 @@ export function CartDrawer({
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ fontSize: '1.1rem' }}>💵</span>
-                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
-                      <strong style={{ fontSize: '0.9rem' }}>الدفع عند الاستلام (COD)</strong>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>ادفع نقدًا عند توصيل طلبتك للعنوان</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: lang === "ar" ? 'right' : 'left' }}>
+                      <strong style={{ fontSize: '0.9rem' }}>{translate("cod")}</strong>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{translate("codDesc")}</span>
                     </div>
                   </div>
                   <input 
@@ -359,9 +359,9 @@ export function CartDrawer({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '10px 14px',
+                    padding: '12px 16px',
                     border: paymentMethod === 'vodafone' ? '2px solid var(--gold-deep)' : '1px solid var(--border)',
-                    borderRadius: '6px',
+                    borderRadius: '8px',
                     cursor: 'pointer',
                     background: paymentMethod === 'vodafone' ? 'rgba(212, 175, 55, 0.05)' : 'transparent',
                     transition: 'all 0.2s ease',
@@ -369,9 +369,9 @@ export function CartDrawer({
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ fontSize: '1.1rem' }}>📱</span>
-                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'right' }}>
-                      <strong style={{ fontSize: '0.9rem' }}>فودافون كاش (Vodafone Cash)</strong>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>تحويل محفظة إلكترونية فورية</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', textAlign: lang === "ar" ? 'right' : 'left' }}>
+                      <strong style={{ fontSize: '0.9rem' }}>{translate("vodafone")}</strong>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--muted)' }}>{translate("vodafoneDesc")}</span>
                     </div>
                   </div>
                   <input 
@@ -388,15 +388,15 @@ export function CartDrawer({
                 <div style={{
                   background: 'rgba(212, 175, 55, 0.08)',
                   border: '1px solid rgba(212, 175, 55, 0.3)',
-                  padding: '10px',
-                  borderRadius: '6px',
-                  fontSize: '0.8rem',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  fontSize: '0.82rem',
                   color: '#9f7d1c',
                   lineHeight: '1.5',
-                  textAlign: 'right',
+                  textAlign: lang === "ar" ? 'right' : 'left',
                   marginTop: '4px'
                 }}>
-                  ⚠️ <strong>ملاحظة هامة للتحويل:</strong> يرجى تحويل مبلغ الطلب الإجمالي إلى الرقم <strong>01012345678</strong> (فودافون كاش) بعد إتمام الطلب، والاحتفاظ بلقطة الشاشة للتأكيد عند تواصلنا معك.
+                  {translate("vodafoneNotice")}
                 </div>
               )}
             </div>
@@ -428,7 +428,7 @@ export function CartDrawer({
                   <div className="cart-line-info">
                     <div className="cart-line-name">{c.product.name}</div>
                     <div className="cart-line-fam">{c.product.family}</div>
-                    <div className="cart-line-price"><span dir="ltr">{c.product.price}</span> ج.م</div>
+                    <div className="cart-line-price"><span dir="ltr">{c.product.price}</span> {translate("currency")}</div>
                     <div className="qty">
                       <div className="qty-pill">
                         <button type="button" onClick={() => setQty(c.product.id, c.qty - 1)} className="qty-btn qty-minus" aria-label="تقليل الكمية">
@@ -456,70 +456,76 @@ export function CartDrawer({
           )}
         </div>
         {cart.length > 0 && (
-          <div className="cart-foot">
+          <div className="cart-foot" style={{ direction: lang === "ar" ? "rtl" : "ltr" }}>
             {!isCheckingOut && (
               <>
-                {/* Ultra-compact shipping progress bar */}
-                <div className="ship-progress" style={{ marginBottom: '4px', padding: '4px 8px' }}>
-                  <div className={shippingProgress === 100 ? "ship-msg ship-ok" : "ship-msg"} style={{ fontSize: "0.72rem", marginBottom: "2px", textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                {/* Spacious shipping progress bar */}
+                <div className="ship-progress" style={{ marginBottom: '12px', padding: '8px 12px', background: 'var(--pearl2)', borderRadius: '8px', border: '1px solid var(--border2)' }}>
+                  <div className={shippingProgress === 100 ? "ship-msg ship-ok" : "ship-msg"} style={{ fontSize: "0.82rem", marginBottom: "6px", textAlign: "center", display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontWeight: 600 }}>
                     {shippingProgress === 100 ? (
                       <>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                         <span>{translate("freeShippingEarned")}</span>
                       </>
                     ) : (
                       <>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                         <span>{translate("freeShippingProgress")} <strong>{800 - cartTotal} {translate("currency")}</strong> {translate("freeShippingMore")}</span>
                       </>
                     )}
                   </div>
-                  <div className="ship-bar" style={{ height: '3px' }}>
-                    <div className="ship-fill" style={{ transform: `scaleX(${shippingProgress / 100})` }} />
+                  <div className="ship-bar" style={{ height: '5px', borderRadius: '99px', background: 'var(--white)', overflow: 'hidden' }}>
+                    <div className="ship-fill" style={{ transform: `scaleX(${shippingProgress / 100})`, height: '100%', background: 'linear-gradient(90deg, var(--gold-dim), var(--gold))', borderRadius: '99px' }} />
                   </div>
                 </div>
 
-                {/* Ultra-compact promo row */}
-                <div style={{ display: 'flex', gap: '4px', marginBottom: '4px' }}>
+                {/* Spacious promo row */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
                   <input
                     type="text"
                     placeholder={translate("promoCode")}
                     aria-label={translate("promoCode")}
                     value={promoInput}
                     onChange={e => setPromoInput(e.target.value)}
-                    style={{ flex: 1, padding: '3px 8px', border: '1px solid var(--border)', borderRadius: '3px', fontSize: '0.8rem', height: '26px' }}
+                    style={{ flex: 1, padding: '10px 14px', border: '1px solid var(--border2)', borderRadius: '6px', fontSize: '0.88rem', height: '38px', outline: 'none', background: 'var(--white)' }}
                   />
-                  <button onClick={applyPromo} className="btn-gold" style={{ padding: "0 10px", fontSize: "0.78rem", height: '26px' }}>{translate("applyPromo")}</button>
+                  <button onClick={applyPromo} className="btn-gold" style={{ padding: "0 18px", fontSize: "0.82rem", height: '38px', borderRadius: '6px', fontWeight: 700 }}>{translate("applyPromo")}</button>
                 </div>
                 {promoApplied && (
-                  <div style={{ color: "#d4af37", fontSize: "0.75rem", marginBottom: "3px" }}>
-                    تم تفعيل الخصم: {promoApplied.pct}%
+                  <div style={{ color: "var(--gold-deep)", fontSize: "0.82rem", marginBottom: "8px", fontWeight: 600 }}>
+                    ✓ {translate("promoAppliedMsg")} {promoApplied.pct}%
                   </div>
                 )}
               </>
             )}
 
-            {/* Subtotal & Shipping on 1 single line */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2px 2px', fontSize: '0.76rem', color: 'var(--muted)' }}>
-              <span>{translate("subtotal")}: <strong style={{ color: 'var(--charcoal)', fontFamily: "'Cinzel', serif" }}><span dir="ltr">{cartTotal}</span> {translate("currency")}</strong></span>
-              <span>{translate("shipping")}: <strong style={{ color: shippingFee === 0 ? 'var(--gold-deep)' : 'var(--charcoal)', fontFamily: "'Cinzel', serif" }}>{shippingFee === 0 ? translate("freeShipping") + " 🎉" : <><span dir="ltr">{shippingFee}</span> {translate("currency")}</>}</strong></span>
+            {/* Subtotal & Shipping breakdown */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px', padding: '0 4px', fontSize: '0.86rem', color: 'var(--muted)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>{translate("subtotal")}</span>
+                <strong style={{ color: 'var(--charcoal)', fontFamily: "'Cinzel', serif" }}><span dir="ltr">{cartTotal}</span> {translate("currency")}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span>{translate("shipping")}</span>
+                <strong style={{ color: shippingFee === 0 ? 'var(--gold-deep)' : 'var(--charcoal)', fontFamily: "'Cinzel', serif" }}>{shippingFee === 0 ? translate("freeShipping") + " 🎉" : <><span dir="ltr">{shippingFee}</span> {translate("currency")}</>}</strong>
+              </div>
             </div>
 
-            {/* Grand Total Box */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '4px 8px', margin: '3px 0 5px', background: 'rgba(201,168,76,.06)', border: '1px solid rgba(201,168,76,.3)', borderRadius: '4px' }}>
-              <span style={{ fontFamily: "'Cairo', sans-serif", fontWeight: 700, fontSize: '0.85rem', color: 'var(--charcoal)' }}>{translate("total")}</span>
-              <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, fontSize: '0.95rem', color: 'var(--charcoal)' }}><span dir="ltr">{grandTotal}</span> {translate("currency")}</span>
+            {/* Spacious Grand Total Box */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', margin: '8px 0 14px', background: 'rgba(201,168,76,.08)', border: '1px solid rgba(201,168,76,.3)', borderRadius: '8px' }}>
+              <span style={{ fontFamily: lang === "ar" ? '"Cairo", sans-serif' : 'inherit', fontWeight: 700, fontSize: '0.92rem', color: 'var(--charcoal)' }}>{translate("total")}</span>
+              <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 800, fontSize: '1.15rem', color: 'var(--gold-deep)' }}><span dir="ltr">{grandTotal}</span> {translate("currency")}</span>
             </div>
 
             {isCheckingOut ? (
               <button
                 className="btn-gold"
-                style={{ width: "100%", padding: "8px", fontSize: "0.88rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', borderRadius: '4px' }}
+                style={{ width: "100%", padding: "14px", fontSize: "0.95rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', borderRadius: '8px' }}
                 onClick={handleConfirmOrder}
                 disabled={checkoutLoading}
               >
                 {checkoutLoading ? translate("processingOrder") : (
-                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     <span>{translate("confirmCod")}</span>
                   </span>
                 )}
@@ -527,11 +533,11 @@ export function CartDrawer({
             ) : (
               <button
                 className="btn-gold"
-                style={{ width: "100%", padding: "9px", fontSize: "0.9rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', borderRadius: '4px' }}
+                style={{ width: "100%", padding: "14px", fontSize: "0.95rem", fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', borderRadius: '8px' }}
                 onClick={handleProceedToCheckout}
               >
                 <span>{translate("checkout")}</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: lang === "ar" ? "rotate(180deg)" : "none" }}>
                   <path d="m12 19-7-7 7-7"/>
                   <path d="M19 12H5"/>
                 </svg>
@@ -760,6 +766,7 @@ type UserProfilePageProps = {
 };
 
 export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageProps) {
+  const { t: translate, lang } = useI18n();
   const [activeTab, setActiveTab] = useState<"info" | "address" | "orders">("info");
   const [user, setUser] = useState<UserData>(initialUser);
   const [ordersList] = useState<Order[]>(initialOrders);
@@ -777,7 +784,7 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
     setInfoSuccess("");
 
     if (!name.trim()) {
-      setInfoError("يرجى إدخال الاسم");
+      setInfoError(translate("fullName"));
       setLoading(false);
       return;
     }
@@ -796,13 +803,13 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
 
       if (res.success) {
         setUser(prev => ({ ...prev, name }));
-        setInfoSuccess("تم تحديث المعلومات بنجاح");
+        setInfoSuccess("Updated profile");
         setIsEditingInfo(false);
       } else {
-        setInfoError(res.error || "حدث خطأ أثناء التحديث");
+        setInfoError(res.error || "Error");
       }
-    } catch (err) {
-      setInfoError("حدث خطأ غير متوقع");
+    } catch {
+      setInfoError("Error");
     } finally {
       setLoading(false);
     }
@@ -842,14 +849,14 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
   const previousOrders = ordersList.filter(o => o.status === "delivered" || o.status === "cancelled");
 
   return (
-    <div className="profile-container-main" style={{ maxWidth: "900px", margin: "40px auto", padding: "0 20px", direction: "rtl" }}>
+    <div className="profile-container-main" style={{ maxWidth: "900px", margin: "40px auto", padding: "0 20px", direction: lang === "ar" ? "rtl" : "ltr" }}>
       <div className="profile-header-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--border2)", paddingBottom: "24px", marginBottom: "30px" }}>
         <div>
-          <h2 className="section-title" style={{ margin: 0, textAlign: "right", color: "var(--charcoal)", fontFamily: "Cinzel, Cairo, sans-serif" }}>
-            حسابي الفاخر
+          <h2 className="section-title" style={{ margin: 0, textAlign: lang === "ar" ? "right" : "left", color: "var(--charcoal)", fontFamily: "Cinzel, Cairo, sans-serif" }}>
+            {translate("myLuxuryAccount")}
           </h2>
           <p style={{ margin: "6px 0 0", color: "var(--muted)", fontSize: "0.95rem" }}>
-            مرحباً بك، {user.name || "عميلنا الكريم"}
+            {translate("welcomeBackUser")} {user.name || translate("valuableCustomer")}
           </p>
         </div>
         <button 
@@ -857,7 +864,7 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
           className="btn-outline-light" 
           style={{ padding: "10px 20px", fontSize: "0.9rem", color: "#e74c3c", borderColor: "rgba(231,76,60,0.3)", background: "transparent", cursor: "pointer" }}
         >
-          تسجيل الخروج
+          {translate("logout")}
         </button>
       </div>
 
@@ -866,33 +873,33 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
           onClick={() => setActiveTab("info")}
           className={`profile-tab-btn ${activeTab === "info" ? "active" : ""}`}
         >
-          المعلومات الشخصية
+          {translate("personalInfoTab")}
         </button>
         <button 
           onClick={() => setActiveTab("address")}
           className={`profile-tab-btn ${activeTab === "address" ? "active" : ""}`}
         >
-          عنوان التوصيل
+          {translate("deliveryAddressTab")}
         </button>
         <button 
           onClick={() => setActiveTab("orders")}
           className={`profile-tab-btn ${activeTab === "orders" ? "active" : ""}`}
         >
-          طلباتي ({ordersList.length})
+          {translate("myOrdersTab")} ({ordersList.length})
         </button>
       </div>
 
       <div className="profile-tab-content">
         {activeTab === "info" && (
           <div className="profile-section-card" style={{ background: "var(--pearl)", padding: "30px", border: "1px solid var(--border)", borderRadius: "4px" }}>
-            <h3 className="section-subtitle" style={{ textAlign: "right", color: "var(--gold-deep)", marginBottom: "20px" }}>
-              بيانات الحساب الأساسية
+            <h3 className="section-subtitle" style={{ textAlign: lang === "ar" ? "right" : "left", color: "var(--gold-deep)", marginBottom: "20px" }}>
+              {translate("basicAccountData")}
             </h3>
 
             {isEditingInfo ? (
               <form onSubmit={handleSaveInfo} className="magic-form">
                 <div className="magic-input-group">
-                  <label className="input-label-ar">الاسم الكامل *</label>
+                  <label className="input-label-ar">{translate("fullName")} *</label>
                   <input 
                     type="text"
                     value={name}
@@ -902,7 +909,7 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
                   />
                 </div>
                 <div className="magic-input-group" style={{ opacity: 0.7 }}>
-                  <label className="input-label-ar">البريد الإلكتروني (غير قابل للتعديل)</label>
+                  <label className="input-label-ar">{translate("email")}</label>
                   <input 
                     type="email"
                     value={user.email}
@@ -915,7 +922,7 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
                 
                 <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
                   <button type="submit" disabled={loading} className="magic-submit-btn" style={{ flex: 1, margin: 0 }}>
-                    {loading ? <span className="magic-loader"></span> : "حفظ التغييرات"}
+                    {loading ? <span className="magic-loader"></span> : translate("saveChanges")}
                   </button>
                   <button 
                     type="button" 
@@ -923,24 +930,24 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
                     className="btn-outline-light" 
                     style={{ flex: 1, background: "transparent", border: "1px solid var(--border)", color: "var(--charcoal)", cursor: "pointer" }}
                   >
-                    إلغاء
+                    {translate("cancel")}
                   </button>
                 </div>
               </form>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 <div className="profile-info-row" style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px dashed var(--border)", paddingBottom: "10px" }}>
-                  <span style={{ color: "var(--muted)", fontSize: "0.95rem" }}>الاسم الكامل:</span>
-                  <strong style={{ color: "var(--charcoal)" }}>{user.name || "بدون اسم"}</strong>
+                  <span style={{ color: "var(--muted)", fontSize: "0.95rem" }}>{translate("fullName")}:</span>
+                  <strong style={{ color: "var(--charcoal)" }}>{user.name || "N/A"}</strong>
                 </div>
                 <div className="profile-info-row" style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px dashed var(--border)", paddingBottom: "10px" }}>
-                  <span style={{ color: "var(--muted)", fontSize: "0.95rem" }}>البريد الإلكتروني:</span>
+                  <span style={{ color: "var(--muted)", fontSize: "0.95rem" }}>{translate("email")}:</span>
                   <strong style={{ color: "var(--charcoal)" }}>{user.email}</strong>
                 </div>
                 <div className="profile-info-row" style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px dashed var(--border)", paddingBottom: "10px" }}>
-                  <span style={{ color: "var(--muted)", fontSize: "0.95rem" }}>تاريخ الانضمام:</span>
+                  <span style={{ color: "var(--muted)", fontSize: "0.95rem" }}>{translate("joinDate")}</span>
                   <strong style={{ color: "var(--charcoal)" }}>
-                    {new Date(user.createdAt).toLocaleDateString("ar-EG")}
+                    {new Date(user.createdAt).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-US")}
                   </strong>
                 </div>
 
@@ -951,7 +958,7 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
                   className="magic-submit-btn"
                   style={{ marginTop: "20px" }}
                 >
-                  تعديل معلومات الحساب
+                  {translate("editAccountInfo")}
                 </button>
               </div>
             )}
@@ -975,21 +982,21 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
 
         {activeTab === "orders" && (
           <div className="profile-section-card" style={{ background: "var(--pearl)", padding: "30px", border: "1px solid var(--border)", borderRadius: "4px" }}>
-            <h3 className="section-subtitle" style={{ textAlign: "right", color: "var(--gold-deep)", marginBottom: "24px" }}>
-              سجل الطلبات
+            <h3 className="section-subtitle" style={{ textAlign: lang === "ar" ? "right" : "left", color: "var(--gold-deep)", marginBottom: "24px" }}>
+              {translate("orderHistoryTitle")}
             </h3>
 
             {ordersList.length === 0 ? (
               <div style={{ textAlign: "center", padding: "40px 0", color: "var(--muted)" }}>
                 <span style={{ fontSize: "3rem", display: "block", marginBottom: "16px" }}>🛒</span>
-                <p>ليس لديك أي طلبات حالية أو سابقة.</p>
+                <p>{translate("noOrders")}</p>
               </div>
             ) : (
               <div>
                 {activeOrders.length > 0 && (
                   <div style={{ marginBottom: "30px" }}>
-                    <h4 style={{ color: "var(--charcoal)", borderRight: "3px solid var(--gold)", paddingRight: "10px", marginBottom: "16px", fontSize: "1rem", textAlign: "right" }}>
-                      الطلبات الجارية
+                    <h4 style={{ color: "var(--charcoal)", borderRight: lang === "ar" ? "3px solid var(--gold)" : "none", borderLeft: lang === "en" ? "3px solid var(--gold)" : "none", paddingRight: lang === "ar" ? "10px" : "0", paddingLeft: lang === "en" ? "10px" : "0", marginBottom: "16px", fontSize: "1rem", textAlign: lang === "ar" ? "right" : "left" }}>
+                      {translate("activeOrdersTitle")}
                     </h4>
                     {activeOrders.map(order => (
                       <OrderCard key={order.id} order={order} />
@@ -999,8 +1006,8 @@ export function UserProfilePage({ initialUser, initialOrders }: UserProfilePageP
 
                 {previousOrders.length > 0 && (
                   <div>
-                    <h4 style={{ color: "var(--muted)", borderRight: "3px solid var(--border2)", paddingRight: "10px", marginBottom: "16px", fontSize: "1rem", textAlign: "right" }}>
-                      الطلبات السابقة
+                    <h4 style={{ color: "var(--muted)", borderRight: lang === "ar" ? "3px solid var(--border2)" : "none", borderLeft: lang === "en" ? "3px solid var(--border2)" : "none", paddingRight: lang === "ar" ? "10px" : "0", paddingLeft: lang === "en" ? "10px" : "0", marginBottom: "16px", fontSize: "1rem", textAlign: lang === "ar" ? "right" : "left" }}>
+                      {translate("previousOrdersTitle")}
                     </h4>
                     {previousOrders.map(order => (
                       <OrderCard key={order.id} order={order} />

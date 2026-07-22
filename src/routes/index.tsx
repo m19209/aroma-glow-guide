@@ -439,75 +439,83 @@ function Index() {
         <>
           <div className="drawer-backdrop open" style={{ zIndex: 298 }} onClick={() => setMobileOpen(false)} />
           <div className="mobile-menu open">
-            <div className="mobile-search-wrapper" style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '14px', marginBottom: '8px' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: 'var(--charcoal-dim)' }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-              <input
-                type="text"
-                placeholder={translate("searchPlaceholder")}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onFocus={() => { setMobileOpen(false); setSearchOpen(true); }}
-                style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', padding: '0 12px', fontSize: '1rem', color: 'var(--charcoal)' }}
-              />
+            {/* Header: Title + Close Button */}
+            <div className="mobile-menu-header">
+              <div className="mobile-menu-title">
+                <span className="brand-cinzel">VELORE</span>
+                <span className="brand-sub">MAISON DE PARFUM</span>
+              </div>
+              <button 
+                className="mobile-menu-close" 
+                onClick={() => setMobileOpen(false)} 
+                aria-label="Close Menu"
+              >
+                ✕
+              </button>
             </div>
 
-            <a href="#products" onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}>{translate("collection")}</a>
+            {/* Navigation List */}
+            <div className="mobile-menu-nav">
+              <a 
+                href="#products" 
+                onClick={(e) => { e.preventDefault(); setMobileOpen(false); scrollTo("products"); }}
+                className="mobile-nav-link"
+              >
+                <span className="mobile-nav-icon">✦</span>
+                <span>{translate("collection")}</span>
+              </a>
 
-            {currentUser ? (
-              <>
-                <Link to="/account" onClick={() => setMobileOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                  {translate("myAccount")}
-                </Link>
+              {currentUser ? (
+                <>
+                  <Link 
+                    to="/account" 
+                    onClick={() => setMobileOpen(false)} 
+                    className="mobile-nav-link"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <span>{translate("myAccount")}</span>
+                  </Link>
+
+                  <button
+                    onClick={() => {
+                      document.cookie = "velore_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                      setCurrentUser(null);
+                      setMobileOpen(false);
+                      showToast("تم تسجيل الخروج بنجاح");
+                    }}
+                    className="mobile-nav-link mobile-logout-btn"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span>{translate("logout")}</span>
+                  </button>
+                </>
+              ) : (
                 <button
-                  onClick={() => {
-                    document.cookie = "velore_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                    setCurrentUser(null);
-                    setMobileOpen(false);
-                    showToast("تم تسجيل الخروج بنجاح");
-                  }}
-                  className="mobile-menu-btn"
+                  onClick={() => { setMobileOpen(false); setLoginOpen(true); }}
+                  className="mobile-nav-link"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                  {translate("logout")}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <span>{translate("login")}</span>
                 </button>
-              </>
-            ) : (
-              <button
-                onClick={() => { setMobileOpen(false); setLoginOpen(true); }}
-                className="mobile-menu-btn"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                {translate("login")}
-              </button>
-            )}
+              )}
+            </div>
 
-            {/* Language toggle in mobile menu */}
-            <div style={{ borderTop: '1px solid var(--border)', marginTop: '8px', paddingTop: '14px' }}>
-              <button
-                onClick={() => { setLang(lang === 'ar' ? 'en' : 'ar'); setMobileOpen(false); }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: 'var(--charcoal)',
-                  fontSize: '0.95rem',
-                  fontFamily: "'Cairo', sans-serif",
-                  fontWeight: 600,
-                  padding: '8px 0',
-                  width: '100%',
-                }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                <span style={{ fontFamily: "'Cinzel', serif", fontWeight: 700, letterSpacing: '1px' }}>
-                  <span style={{ opacity: lang === 'en' ? 1 : 0.4 }}>EN</span>
-                  <span style={{ opacity: 0.3, margin: '0 4px' }}>/</span>
-                  <span style={{ opacity: lang === 'ar' ? 1 : 0.4 }}>AR</span>
-                </span>
-              </button>
+            {/* Footer: Segmented Language Switcher */}
+            <div className="mobile-menu-footer">
+              <div className="mobile-lang-segmented">
+                <button
+                  onClick={() => { setLang('en'); setMobileOpen(false); }}
+                  className={`mobile-lang-btn ${lang === 'en' ? 'active' : ''}`}
+                >
+                  <span>English</span>
+                </button>
+                <button
+                  onClick={() => { setLang('ar'); setMobileOpen(false); }}
+                  className={`mobile-lang-btn ${lang === 'ar' ? 'active' : ''}`}
+                >
+                  <span>العربية</span>
+                </button>
+              </div>
             </div>
           </div>
         </>

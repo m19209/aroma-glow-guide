@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useMemo } from "react";
 import { loginUser, signupUser } from "@/lib/auth-service";
 import { Product, PRODUCTS } from "@/lib/inventory";
 import { Bottle } from "@/components/ui-elements";
+import { useI18n } from "@/lib/i18n";
 
 // --- Login Modal ---
 
@@ -51,6 +52,7 @@ export function LoginModal({
   onClose: () => void;
   onLogin: (userId: string) => void;
 }) {
+  const { t: translate, lang } = useI18n();
   const [isRegister, setIsRegister] = useState(false);
   const [authName, setAuthName] = useState("");
   const [authEmail, setAuthEmail] = useState("");
@@ -140,7 +142,7 @@ export function LoginModal({
     color: "#e74c3c",
     fontSize: "0.78rem",
     marginTop: "4px",
-    textAlign: "right",
+    textAlign: lang === "ar" ? "right" : "left",
     fontWeight: 500,
     display: "flex",
     alignItems: "center",
@@ -161,13 +163,14 @@ export function LoginModal({
         aria-modal="true"
         ref={modalRef}
         tabIndex={-1}
+        style={{ direction: lang === "ar" ? "rtl" : "ltr" }}
       >
         <div className="magic-modal-content">
-          <button className="magic-close" onClick={onClose} aria-label="إغلاق">✕</button>
+          <button className="magic-close" onClick={onClose} aria-label={translate("close")}>✕</button>
           <div className="magic-dropdown-inner">
-            <h2 className="magic-title">{isRegister ? "إنشاء حساب" : "تسجيل الدخول"}</h2>
+            <h2 className="magic-title">{isRegister ? translate("signupModalTitle") : translate("loginModalTitle")}</h2>
             <p className="magic-subtitle">
-              {isRegister ? "انضم إلى مجتمع ڤيلور الفاخر" : "مرحباً بعودتك إلى عالم ڤيلور"}
+              {isRegister ? translate("signupSub") : translate("loginSub")}
             </p>
             
             <div className="magic-form">
@@ -175,7 +178,7 @@ export function LoginModal({
                 <div className="magic-input-group">
                   <input
                     type="text"
-                    placeholder="الاسم الكامل"
+                    placeholder={translate("fullNamePlaceholder")}
                     value={authName}
                     onChange={(e) => setAuthName(e.target.value)}
                     onBlur={() => handleBlur("name")}
@@ -192,7 +195,7 @@ export function LoginModal({
               <div className="magic-input-group">
                 <input
                   type="email"
-                  placeholder="البريد الإلكتروني"
+                  placeholder={translate("phonePlaceholder") ? translate("email") : "البريد الإلكتروني"}
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
                   onBlur={() => handleBlur("email")}
@@ -208,7 +211,7 @@ export function LoginModal({
               <div className="magic-input-group">
                 <input
                   type="password"
-                  placeholder="كلمة المرور (6 أحرف على الأقل)"
+                  placeholder="Password"
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
                   onBlur={() => handleBlur("password")}
@@ -222,19 +225,19 @@ export function LoginModal({
                 )}
               </div>
               {errorMsg && (
-                <div style={{ color: "#e74c3c", fontSize: "0.85rem", marginBottom: "10px", textAlign: "right", background: "rgba(231,76,60,0.08)", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(231,76,60,0.2)" }} role="alert">
+                <div style={{ color: "#e74c3c", fontSize: "0.85rem", marginBottom: "10px", textAlign: lang === "ar" ? "right" : "left", background: "rgba(231,76,60,0.08)", padding: "8px 12px", borderRadius: "6px", border: "1px solid rgba(231,76,60,0.2)" }} role="alert">
                   {errorMsg}
                 </div>
               )}
               <button disabled={authLoading} className="magic-submit-btn" onClick={handleSubmit}>
-                {authLoading ? <span className="magic-loader"></span> : isRegister ? "إنشاء حساب" : "تسجيل الدخول"}
+                {authLoading ? <span className="magic-loader"></span> : isRegister ? translate("signupModalTitle") : translate("loginModalTitle")}
               </button>
             </div>
             
             <div className="magic-switch">
-              {isRegister ? "لديك حساب بالفعل؟ " : "ليس لديك حساب؟ "}
+              {isRegister ? translate("alreadyHaveAccount") : translate("dontHaveAccount")}
               <a href="#switch" onClick={(e) => { e.preventDefault(); setIsRegister(!isRegister); setErrorMsg(""); setFieldErrors({}); setTouched({}); }}>
-                {isRegister ? "تسجيل الدخول" : "إنشاء حساب"}
+                {isRegister ? translate("loginLink") : translate("createAccountLink")}
               </a>
             </div>
           </div>
@@ -264,6 +267,7 @@ export function ProductDetailModal({
   wishlist: Set<string>;
   toggleWish: (id: string) => void;
 }) {
+  const { t: translate, lang } = useI18n();
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<'story' | 'specs' | 'pyramid'>('story');
 
@@ -293,8 +297,9 @@ export function ProductDetailModal({
         aria-modal="true"
         ref={modalRef}
         tabIndex={-1}
+        style={{ direction: lang === "ar" ? "rtl" : "ltr" }}
       >
-        <button className="pdetail-close" onClick={onClose} aria-label="إغلاق">✕</button>
+        <button className="pdetail-close" onClick={onClose} aria-label={translate("close")}>✕</button>
         
         <div className="pdetail-media">
           <div className="pdetail-media-img">
@@ -313,15 +318,15 @@ export function ProductDetailModal({
           <div className="pdetail-vol">{product.volume}</div>
 
           <div className="pdetail-quickinfo">
-            {product.gender && <span className="pquick-chip"><em>الفئة</em>{product.gender}</span>}
-            {product.origin && <span className="pquick-chip"><em>المنشأ</em>{product.origin}</span>}
-            {product.occasion && <span className="pquick-chip"><em>المناسبة</em>{product.occasion}</span>}
+            {product.gender && <span className="pquick-chip"><em>{translate("gender")}</em>{product.gender}</span>}
+            {product.origin && <span className="pquick-chip"><em>{translate("origin")}</em>{product.origin}</span>}
+            {product.occasion && <span className="pquick-chip"><em>{translate("occasion")}</em>{product.occasion}</span>}
           </div>
 
           <div className="pdetail-tabs">
-            <button className={`ptab-btn ${activeTab === 'story' ? 'active' : ''}`} onClick={() => setActiveTab('story')}>الوصف</button>
-            <button className={`ptab-btn ${activeTab === 'specs' ? 'active' : ''}`} onClick={() => setActiveTab('specs')}>المواصفات</button>
-            <button className={`ptab-btn ${activeTab === 'pyramid' ? 'active' : ''}`} onClick={() => setActiveTab('pyramid')}>الهرم العطري</button>
+            <button className={`ptab-btn ${activeTab === 'story' ? 'active' : ''}`} onClick={() => setActiveTab('story')}>{translate("descriptionTab")}</button>
+            <button className={`ptab-btn ${activeTab === 'specs' ? 'active' : ''}`} onClick={() => setActiveTab('specs')}>{translate("specsTab")}</button>
+            <button className={`ptab-btn ${activeTab === 'pyramid' ? 'active' : ''}`} onClick={() => setActiveTab('pyramid')}>{translate("pyramidTab")}</button>
           </div>
 
           <div className="pdetail-tab-content">
@@ -331,28 +336,28 @@ export function ProductDetailModal({
 
             {activeTab === 'specs' && (
               <ul className="pdetail-specs">
-                <li><span>التركيز</span><strong>{product.concentration}</strong></li>
-                <li><span>الثبات</span><strong>{product.longevity}</strong></li>
-                <li><span>الفوحان</span><strong>{product.sillage}</strong></li>
-                {product.gender && <li><span>الفئة</span><strong>{product.gender}</strong></li>}
-                {product.origin && <li><span>المنشأ</span><strong>{product.origin}</strong></li>}
-                {product.occasion && <li><span>المناسبة</span><strong>{product.occasion}</strong></li>}
-                <li><span>الحجم</span><strong>{product.volume}</strong></li>
+                <li><span>{translate("concentration")}</span><strong>{product.concentration}</strong></li>
+                <li><span>{translate("longevity")}</span><strong>{product.longevity}</strong></li>
+                <li><span>{translate("sillage")}</span><strong>{product.sillage}</strong></li>
+                {product.gender && <li><span>{translate("gender")}</span><strong>{product.gender}</strong></li>}
+                {product.origin && <li><span>{translate("origin")}</span><strong>{product.origin}</strong></li>}
+                {product.occasion && <li><span>{translate("occasion")}</span><strong>{product.occasion}</strong></li>}
+                <li><span>{translate("volume")}</span><strong>{product.volume}</strong></li>
               </ul>
             )}
 
             {activeTab === 'pyramid' && (
               <div className="pdetail-pyramid">
                 <div className="pyramid-row">
-                  <span className="pyramid-lvl">القمة</span>
+                  <span className="pyramid-lvl">{translate("topNotesLvl")}</span>
                   <p>{product.topNotes}</p>
                 </div>
                 <div className="pyramid-row">
-                  <span className="pyramid-lvl">القلب</span>
+                  <span className="pyramid-lvl">{translate("heartNotesLvl")}</span>
                   <p>{product.heartNotes}</p>
                 </div>
                 <div className="pyramid-row">
-                  <span className="pyramid-lvl">القاعدة</span>
+                  <span className="pyramid-lvl">{translate("baseNotesLvl")}</span>
                   <p>{product.baseNotes}</p>
                 </div>
               </div>
@@ -361,18 +366,18 @@ export function ProductDetailModal({
           
           {Math.max(0, (stocks[product.id] ?? 5) - cartQty) <= 2 && Math.max(0, (stocks[product.id] ?? 5) - cartQty) > 0 && (
             <div style={{ color: "#d9534f", fontSize: "0.85rem", marginTop: "10px", fontWeight: "bold" }}>
-              تبقى {Math.max(0, (stocks[product.id] ?? 5) - cartQty)} قطع فقط!
+              {translate("onlyLeft")} {Math.max(0, (stocks[product.id] ?? 5) - cartQty)} {translate("piecesLeft")}
             </div>
           )}
           {Math.max(0, (stocks[product.id] ?? 5) - cartQty) === 0 && (
             <div style={{ color: "#d9534f", fontSize: "0.85rem", marginTop: "10px", fontWeight: "bold" }}>
-              نفدت الكمية
+              {translate("outOfStock")}
             </div>
           )}
 
           <div className="pdetail-price">
-            {product.oldPrice && <span className="pprice-old"><span dir="ltr">{product.oldPrice}</span> ج.م</span>}
-            <span className="pprice"><span dir="ltr">{product.price}</span> ج.م</span>
+            {product.oldPrice && <span className="pprice-old"><span dir="ltr">{product.oldPrice}</span> {translate("currency")}</span>}
+            <span className="pprice"><span dir="ltr">{product.price}</span> {translate("currency")}</span>
           </div>
           
           <div className="pdetail-actions">
@@ -383,14 +388,13 @@ export function ProductDetailModal({
               onClick={() => { addToCart(product); onClose(); }}
             >
               <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                <span>شراء الآن</span>
-                <span dir="ltr" style={{ opacity: 0.8, fontSize: '0.9em' }}>— Add to Cart</span>
+                <span>{translate("addToCart")}</span>
               </span>
             </button>
             <button
               className={`pwish ${wishlist.has(product.id) ? "active" : ""}`}
               onClick={() => toggleWish(product.id)}
-              aria-label="المفضلة"
+              aria-label="Wishlist"
             >
               {wishlist.has(product.id) ? "♥" : "♡"}
             </button>
@@ -416,6 +420,7 @@ export function SearchModal({
   setSearchQuery: (val: string) => void;
   onSelectProduct: (p: Product) => void;
 }) {
+  const { t: translate, lang } = useI18n();
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -481,9 +486,10 @@ export function SearchModal({
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label="نافذة البحث"
+        aria-label="Search"
         ref={modalRef}
         tabIndex={-1}
+        style={{ direction: lang === "ar" ? "rtl" : "ltr" }}
       >
         <div className="search-input-wrapper">
           <svg className="search-icon-svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -493,12 +499,12 @@ export function SearchModal({
           <input
             autoFocus
             className="search-input"
-            placeholder="ابحث عن عطر، عائلة، نوتة..."
+            placeholder={translate("searchModalPlaceholder")}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
           {searchQuery && (
-            <button className="search-clear-btn" onClick={() => setSearchQuery("")} aria-label="مسح البحث">
+            <button className="search-clear-btn" onClick={() => setSearchQuery("")} aria-label="Clear Search">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -522,17 +528,17 @@ export function SearchModal({
                   <Bottle variant={p.bottle} label={p.label} imageSrc={p.imageData} />
                 </div>
                 <div className="search-item-details">
-                  <span className="search-item-name" style={{ direction: 'ltr', textAlign: 'right' }}>{highlightText(p.name, searchQuery)}</span>
+                  <span className="search-item-name" style={{ direction: 'ltr', textAlign: lang === 'ar' ? 'right' : 'left' }}>{highlightText(p.name, searchQuery)}</span>
                   <span className="search-item-family">{p.family}</span>
                 </div>
               </div>
-              <span className="search-item-price"><span dir="ltr">{p.price}</span> ج.م</span>
+              <span className="search-item-price"><span dir="ltr">{p.price}</span> {translate("currency")}</span>
             </button>
           ))}
         </div>
-        <button className="search-close" onClick={onClose} aria-label="إغلاق البحث">
+        <button className="search-close" onClick={onClose} aria-label={translate("close")}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          إغلاق
+          {translate("close")}
         </button>
       </div>
     </>

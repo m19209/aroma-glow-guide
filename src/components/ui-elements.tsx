@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { BottleKey, BOTTLE_IMAGES } from "@/lib/inventory";
+import { useI18n } from "@/lib/i18n";
 
 export const ArrowUpIcon = ({ size = 24 }) => (
   <svg
@@ -19,11 +20,11 @@ export const ArrowUpIcon = ({ size = 24 }) => (
 );
 
 export function BackToTop() {
+  const { t: translate } = useI18n();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     const toggleVisibility = () => {
-      // Show button when page is scrolled down 300px
       if (window.scrollY > 300) {
         setIsVisible(true);
       } else {
@@ -32,8 +33,6 @@ export function BackToTop() {
     };
 
     window.addEventListener("scroll", toggleVisibility, { passive: true });
-
-    // Clean up the event listener on component unmount
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
 
@@ -49,8 +48,7 @@ export function BackToTop() {
       type="button"
       className={`back-to-top ${isVisible ? "is-visible" : ""}`}
       onClick={scrollToTop}
-      aria-label="العودة إلى الأعلى"
-      // We keep it in the DOM for smooth opacity transitions per UI/UX guidelines
+      aria-label={translate("backToTop")}
     >
       <ArrowUpIcon size={24} />
     </button>
@@ -74,6 +72,7 @@ export function Bottle({ variant, label, imageSrc }: { variant: BottleKey; label
 }
 
 export function Hero({ scrollToProducts }: { scrollToProducts: () => void }) {
+  const { t: translate } = useI18n();
   const videoRef = useRef<HTMLVideoElement>(null);
   
   useEffect(() => {
@@ -99,9 +98,9 @@ export function Hero({ scrollToProducts }: { scrollToProducts: () => void }) {
         </div>
         <h1 className="hero-title">VELORE</h1>
         <div className="hero-title-sub">Eau de Parfum</div>
-        <p className="hero-desc">عطور فاخرة مُستوحاة من أعمق اللحظات الإنسانية — مُقطَّرة بعناية من أندر المكونات لتترك أثراً لا يُنسى.</p>
+        <p className="hero-desc">{translate("heroDesc")}</p>
         <div className="hero-actions">
-          <a href="#products" onClick={(e) => { e.preventDefault(); scrollToProducts(); }} className="btn-gold">اكتشف المجموعة</a>
+          <a href="#products" onClick={(e) => { e.preventDefault(); scrollToProducts(); }} className="btn-gold">{translate("heroCta")}</a>
         </div>
       </div>
       <div className="hero-scroll">
